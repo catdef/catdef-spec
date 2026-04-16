@@ -18,6 +18,7 @@ A single `.thingalog` file contains everything: the schema (templates, field def
 | [samples/](samples/) | Sample `.thingalog` files you can open in any conformant renderer |
 | [conformance/](conformance/) | The catdef Conformance Test Suite — 98 tests |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to propose changes to the standard |
+| [MCP_REFERENCE.md](MCP_REFERENCE.md) | Non-normative reference design for a Model Context Protocol server exposing catdef catalogs |
 
 ## File format
 
