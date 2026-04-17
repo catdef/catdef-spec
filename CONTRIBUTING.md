@@ -8,6 +8,10 @@ catdef is stewarded independently of any single implementation. The standard exi
 
 **Implementations do not own the spec.** Thingalog, PXMemo, dangerstorm, partner-branded renderers, and any future catdef runtime are equal citizens from the spec's perspective. Each is a consumer. Each can propose changes. No one gets unilateral authorship.
 
+**Maintenance and AI-Assisted Review**
+
+The catdef specification is maintained by the catdef maintainers with AI-assisted review. Routine editorial work — drafting proposals, adding conformance tests, applying patch-level fixes, and responding to incoming feedback — is drafted by Claude sessions operating under the role defined in CLAUDE.md. These sessions may push branches and open pull requests under the dedicated identity `catdef-maintainer <catdef-maintainer@catdef.org>`. Merges to `main`, version bumps, and governance decisions are made only by human maintainers through the normal pull-request review process; the `catdef-maintainer` identity does not have merge authority on protected branches. The full feedback trail — incoming items, triage dispositions, and resulting spec changes — is public at [catdef.org/feedback](https://catdef.org/feedback) and the proposals directory as the spec's institutional memory, readable by any future maintainer, adopter, or AI session.
+
 ## The change-request process
 
 Changes to the specification follow a structured process:
