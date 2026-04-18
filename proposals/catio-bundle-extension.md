@@ -1,13 +1,18 @@
 # Proposal: CATIO bundle extension — `.opencatalog` is the outer archive name
 
 **Status:** Draft
-**Target version:** 1.3.1 (patch — clarifies existing prose)
+**Target version:** 1.4 (minor — introduces a new conformance requirement for importers)
 **Origin:** [canonical/AUTHORING_FEEDBACK.md CA-001](../canonical/AUTHORING_FEEDBACK.md) (first-implementor feedback during canonical authoring)
-**Conformance level affected:** All levels that accept `.opencatalog` / `.openthing` / `.catdef` files.
+**Strategist decision:** [decisions/CA-001.md](../decisions/CA-001.md) — accept with modifications; this revision applies them.
+**Conformance level affected:** All levels that accept `.opencatalog` / `.openthing` files.
 
 ## Summary
 
-Resolve a prose inconsistency in [CATIO_SPEC.md §Bundled Transport (ZIP)](../CATIO_SPEC.md). The example diagram names the outer archive `catalog-export.zip`, but the [MCP conformance proposal](mcp-conformance-levels-and-reference.md) and the canonical reference ([`canonical/riverside-heritage-reference-v1.4.opencatalog`](../canonical/riverside-heritage-reference-v1.4.opencatalog)) name it with the `.opencatalog` extension. This proposal makes `.opencatalog` (and siblings `.openthing` / `.catdef`) the canonical outer-archive extension regardless of whether the bundle is raw JSON or ZIP-packaged. Importers content-sniff to determine packaging. `.zip` outer files remain acceptable for compatibility; `.opencatalog` is preferred.
+Resolve a prose inconsistency in [CATIO_SPEC.md §Bundled Transport (ZIP)](../CATIO_SPEC.md). The example diagram names the outer archive `catalog-export.zip`, but the [MCP conformance proposal](mcp-conformance-levels-and-reference.md) and the canonical reference ([`canonical/riverside-heritage-reference-v1.4.opencatalog`](../canonical/riverside-heritage-reference-v1.4.opencatalog)) name it with the `.opencatalog` extension. This proposal makes `.opencatalog` (and its sibling `.openthing`) the canonical outer-archive extension regardless of whether the bundle is raw JSON or ZIP-packaged, and introduces a new conformance requirement: importers MUST accept `.opencatalog` and `.openthing` as ZIP-packaged extensions (content-sniffing is the discriminator). `.zip` outer files remain acceptable for compatibility; `.opencatalog` is preferred.
+
+The new importer requirement is minor-level per value #5 (forward compatibility): old documents remain valid; the change is to runtime behavior, not document format. This is why the proposal targets v1.4 rather than a 1.3.x patch.
+
+`.catdef` (schema-only) is deliberately out of scope for ZIP-packaging in this proposal — schema-only documents have no media to bundle, and no producer has requested ZIP-packaging for them. A follow-on proposal can extend the rule trivially if a use case emerges.
 
 ## Motivation
 
@@ -71,11 +76,11 @@ Insert after the Structure diagram, before the Rules section:
 
 > ### Outer-archive extension
 >
-> A ZIP-packaged CATIO bundle SHOULD use the catdef content-extension on the outer archive — `.opencatalog` for a full catalog, `.openthing` for a single thing, `.catdef` for schema-only. The extension describes the document's role, matching the pattern established by `.docx`, `.jar`, `.epub`, and similar format families where the outer filename wears the format's content-extension rather than `.zip`.
+> A ZIP-packaged CATIO bundle SHOULD use the catdef content-extension on the outer archive — `.opencatalog` for a full catalog, `.openthing` for a single thing. The extension describes the document's role, matching the pattern established by `.docx`, `.jar`, `.epub`, and similar format families where the outer filename wears the format's content-extension rather than `.zip`.
 >
-> Importers MUST accept ZIP-packaged files with any of the three catdef extensions. Importers SHOULD also accept `.zip` outer files whose root contains a single catdef JSON document, for compatibility with filesystem and email paths that may have re-named the archive. The importer identifies packaging by content-sniffing the first bytes: a PK ZIP signature indicates a ZIP bundle to unpack; any other prefix indicates raw JSON.
+> Importers MUST accept ZIP-packaged files with either of these two catdef extensions. Importers SHOULD also accept `.zip` outer files whose root contains a single catdef JSON document, for compatibility with filesystem and email paths that may have re-named the archive. The importer identifies packaging by content-sniffing the first bytes: a PK ZIP signature indicates a ZIP bundle to unpack; any other prefix indicates raw JSON.
 >
-> Raw-JSON (un-bundled) catdef files continue to use the same three extensions (`.opencatalog`, `.openthing`, `.catdef`) — packaging is an implementation detail invisible to the extension. A consumer reading a `.opencatalog` file does not know and does not need to know whether the bytes are raw JSON or a ZIP wrapping JSON plus photos.
+> Raw-JSON (un-bundled) catdef files continue to use the canonical extensions (`.opencatalog`, `.openthing`, or `.catdef`) per their document role — packaging is an implementation detail invisible to the extension. A consumer reading a `.opencatalog` file does not know and does not need to know whether the bytes are raw JSON or a ZIP wrapping JSON plus photos. `.catdef` (schema-only) is intentionally out of scope for ZIP-packaging in this proposal; see Alternatives considered.
 
 ### Update the Rules section
 
@@ -85,7 +90,7 @@ Rule 1 currently reads:
 
 Add a second paragraph to Rule 1:
 
-> **The outer archive SHOULD share the catdef content-extension of the root JSON document.** A bundle whose root is a `.opencatalog` JSON SHOULD be named `something.opencatalog`; a bundle whose root is `.catdef` SHOULD be named `something.catdef`. Importers that reject outer-extension mismatches are non-conformant; content-sniffing is the authoritative discriminator.
+> **The outer archive SHOULD share the catdef content-extension of the root JSON document.** A bundle whose root is a `.opencatalog` JSON SHOULD be named `something.opencatalog`; a bundle whose root is `.openthing` JSON SHOULD be named `something.openthing`. Importers that reject outer-extension mismatches are non-conformant; content-sniffing is the authoritative discriminator.
 
 ### Update MIME table
 
@@ -99,7 +104,7 @@ Amend to:
 
 > | Format | MIME |
 > |--------|------|
-> | ZIP-packaged CATIO bundle (preferred) | `application/vnd.opencatalog+zip`, `application/vnd.openthing+zip`, or `application/vnd.catdef+zip` — depending on inner document role |
+> | ZIP-packaged CATIO bundle (preferred) | `application/vnd.opencatalog+zip` or `application/vnd.openthing+zip` — depending on inner document role |
 > | ZIP bundle (compatibility) | `application/zip` |
 
 *(MIME-type registration details out of scope for this proposal; this table is informational.)*
@@ -109,13 +114,15 @@ Amend to:
 **Existing catdefs:**
 - Raw-JSON `.opencatalog` / `.openthing` / `.catdef` files: unchanged.
 - ZIP-packaged files with `.zip` extension: still acceptable per the SHOULD-accept rule. No existing file becomes invalid.
-- ZIP-packaged files with `.opencatalog` extension: now explicitly sanctioned, no longer a lint concern.
+- ZIP-packaged files with `.opencatalog` or `.openthing` extension: now explicitly sanctioned, no longer a lint concern.
 
-**Existing runtimes:**
-- Runtimes that accept only `.zip` for ZIP bundles: must extend to also accept `.opencatalog` to remain conformant at L1+. This is the one meaningful runtime-side change — likely small (content-sniffing already required for malformed inputs).
+**Existing runtimes (minor-version conformance change):**
+- Runtimes that accept only `.zip` for ZIP bundles: must extend to also accept `.opencatalog` and `.openthing` to remain conformant at v1.4+. This is a new conformance requirement for importers — content-sniffing is already required for malformed inputs, so the implementation burden is small, but it is a genuine behavior change. Per value #5 (forward compatibility), a new conformance requirement on runtimes is minor-level, not patch-level.
 - Runtimes that accept only `.opencatalog` for ZIP bundles: remain conformant (the SHOULD-accept for `.zip` is a recommendation, not a MUST).
 
-**Migration:** None required for existing files. Future exports SHOULD prefer `.opencatalog`.
+**v1.3 runtimes and v1.4 documents:** A v1.3 runtime encountering a `.opencatalog` ZIP bundle is not obligated by the v1.3 spec to accept it (the spec was silent on outer-extension semantics). A v1.4 runtime must. Old catdef documents remain valid under both versions; the change is in runtime conformance, not document format.
+
+**Migration:** None required for existing files. Future exports SHOULD prefer `.opencatalog` / `.openthing`.
 
 ## Conformance tests
 
@@ -151,6 +158,10 @@ Rejected. Proliferating extensions (`.opencatalog` for raw, `.opencatalog.zip` f
 
 Not applicable. Extensions `.opencatalog` / `.openthing` / `.catdef` are defined in the core spec; this proposal clarifies their scope, not their identifier form.
 
+### E. Include `.catdef` in the ZIP-packaging rule
+
+Rejected (this revision). A schema-only `.catdef` document has no media to bundle; sanctioning `.catdef` ZIPs would add a conformance test, a MIME entry, and a new runtime requirement for a format with no identified producer. Leaner now, extensible later: if a use case emerges (e.g., a schema pack whose subcat values carry seed Photos), a follow-on proposal can extend the ZIP-packaging rule trivially to include `.catdef`. This was the disposition reached by strategist review in [decisions/CA-001.md](../decisions/CA-001.md).
+
 ## Open questions
 
 1. **MIME-type registration.** The proposal sketches `application/vnd.opencatalog+zip` etc. as informational. Should the spec formally register these with IANA, or leave MIME-type handling as an implementation concern? Recommendation: informational for now; formal registration is a separate follow-on with its own paperwork.
@@ -161,7 +172,8 @@ Not applicable. Extensions `.opencatalog` / `.openthing` / `.catdef` are defined
 
 ## Requested maintainer actions
 
-- Sign off on `.opencatalog` (and siblings) as the canonical outer-archive extension for ZIP-packaged CATIO bundles.
+- Sign off on `.opencatalog` and `.openthing` as the canonical outer-archive extensions for ZIP-packaged CATIO bundles, v1.4.
 - Sign off on continued tolerance of `.zip` outer files via SHOULD-accept.
 - Confirm the test fixtures and tests listed above belong in `conformance/`.
 - Approve the CATIO_SPEC.md edits as drafted above (to be applied in a follow-on editorial PR once this proposal is accepted).
+- Ratify that `.catdef` is deliberately out of scope for ZIP-packaging in this proposal, per the strategist decision; a follow-on may revisit if producers emerge.
