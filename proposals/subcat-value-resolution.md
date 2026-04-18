@@ -1,8 +1,9 @@
 # Proposal: Subcat value resolution — `subcats.<name>.values` is authoritative when present
 
 **Status:** Draft
-**Target version:** 1.3.1 (patch — clarifies ambiguous prose; the watches sample and the canonical currently exhibit the redundancy)
+**Target version:** 1.4 (minor — introduces a new importer MUST, a new validation class, and a change to the required resolution order for Enumerated namespaces)
 **Origin:** [canonical/AUTHORING_FEEDBACK.md CA-003](../canonical/AUTHORING_FEEDBACK.md) (first-implementor feedback during canonical authoring)
+**Strategist decision:** [decisions/CA-003.md](../decisions/CA-003.md) — accept with modifications; this revision applies them.
 **Conformance level affected:** All levels that support Enumerated fields — primarily L1 (Enumerated is L1-required) and L2+.
 
 ## Summary
@@ -64,9 +65,19 @@ Insert a new subsection after the Seed Values subsection, titled **Value resolut
 > When a subcat named `<target>` is declared:
 >
 > - `subcats.<target>.values` is **authoritative**. The set of value names in that object is the complete namespace.
-> - `data.values.<target>` is **optional**. If present, its entries MUST be a subset of the keys of `subcats.<target>.values`. Extra names in `data.values.<target>` that do not appear in `subcats.<target>.values` are a validation error.
-> - A writer SHOULD omit `data.values.<target>` when `subcats.<target>.values` is declared, to avoid redundancy.
-> - An importer encountering both MUST resolve from `subcats.<target>.values` and MAY validate that `data.values.<target>` (if present) is a subset.
+> - `data.values.<target>` is **optional**.
+> - A writer MAY omit `data.values.<target>` when `subcats.<target>.values` is declared; the `subcats.<target>.values` keys are the authoritative namespace. A writer MAY also include `data.values.<target>` as a subset — this is useful when the catdef is targeted at L1 runtimes that ignore subcats and benefit from a pre-declared namespace.
+> - An importer encountering both MUST resolve from `subcats.<target>.values`.
+>
+> **Superset validation (mirror of forward-compat asymmetry).**
+>
+> A writer MUST NOT emit a catdef in which `data.values.<target>` contains names that are not keys of `subcats.<target>.values`. Writer-side validation tools MUST reject such documents.
+>
+> A reader encountering such a document MUST NOT reject it on this basis. The reader MAY warn that `data.values.<target>` contains names not seeded in `subcats.<target>.values`. The reader resolves the value namespace from `subcats.<target>.values` only; extra names in `data.values.<target>` are ignored.
+>
+> This asymmetry — writer strict, reader lenient — matches the pattern established by the `catdef` version-stamping rule.
+>
+> **Shared namespaces.** A subcat's value namespace is shared across all templates, fields, and subcats that reference it by target name. Multiple references resolve to the same value set; there is no per-reference scoping.
 >
 > When no subcat is declared for `<target>`:
 >
@@ -78,7 +89,9 @@ Insert a new subsection after the Seed Values subsection, titled **Value resolut
 > ```
 > If you want enriched values (e.g., Brand has Founded year, Country, Specialty):
 >   → declare subcats.<target> with field_defs AND values
->   → omit data.values.<target> (subcats.values keys ARE the namespace)
+>   → data.values.<target> is optional; include it (as a subset) only
+>     if you want pre-declared namespace visibility for L1 runtimes
+>     that ignore subcats
 >
 > If you want bare-name values only (e.g., Condition is ["Mint", "Good", …]):
 >   → declare data.values.<target> with a name array
@@ -117,12 +130,18 @@ Add after the Value resolution subsection:
 >
 > Note the absence of `data.values.Material` — it would be redundant with the keys of `subcats.Material.values`.
 
+### Amend CATDEF_SPEC.md §Conformance Levels §Level 1
+
+Append a paragraph clarifying the L1 runtime's Enumerated-namespace resolution:
+
+> An L1 runtime that ignores subcats MUST be able to resolve an Enumerated field's value namespace from item references at render time when `data.values.<target>` is not present. The pre-declared namespace (from `subcats.<target>.values` or `data.values.<target>`) is an optimization; the item-reference fallback is the L1-mandatory path. This guarantees that a catdef using subcat-only Enumerated namespaces remains L1-renderable without requiring the L1 runtime to implement subcat resolution.
+
 ## Backward compatibility
 
 **Existing catdefs:**
 
 - The watches sample (`samples/watches.opencatalog`): currently declares `data.values` without subcats. Unchanged — the spec's new rules explicitly preserve the no-subcat case as bare-list authoritative.
-- The canonical (`canonical/catalog.opencatalog`): currently declares BOTH `subcats.<name>.values` AND `data.values.<name>` with matching names. Under the new rules: still valid (the `data.values` entries are a subset of subcat keys), but the `data.values` block is redundant and SHOULD be removed. A follow-on canonical PR will do this cleanup.
+- The canonical (`canonical/catalog.opencatalog`): currently declares BOTH `subcats.<name>.values` AND `data.values.<name>` with matching names. Under the new rules: valid (the `data.values` entries are a subset of subcat keys). The canonical deliberately retains both forms as a reference for the L1-friendly authoring pattern — `data.values.<target>` gives L1 runtimes that ignore subcats a pre-declared namespace without additional work.
 - Any catdef in the wild that declares *both* with matching names: still valid.
 - Any catdef that declares *both* with mismatched names (extra names in `data.values`): newly invalid. Migration: remove the extras, or add them to `subcats.<target>.values` with appropriate field data.
 
@@ -152,9 +171,9 @@ New tests in `conformance/test_subcat_values.py` (new file):
 - **ft-subcat-values-01**: `valid_subcat_values_only.opencatalog` — importer resolves Item.Brand field values from `subcats.Brand.values` keys; items referencing "Omega" and "Rolex" resolve correctly.
 - **ft-subcat-values-02**: `valid_subcat_plus_matching_data_values.opencatalog` — same resolution as ft-subcat-values-01; the redundant `data.values.Brand` entry does not produce different state.
 - **ft-subcat-values-03**: `valid_data_values_only.opencatalog` — Enumerated field without subcat resolves values from `data.values.<target>`.
-- **ft-subcat-values-04**: `invalid_data_values_superset.opencatalog` — importer rejects or warns; a non-conformant importer silently drops "Rolex"; a conformant importer raises a validation error.
+- **ft-subcat-values-04a (writer side)**: A writer-side validator MUST reject `invalid_data_values_superset.opencatalog`.
+- **ft-subcat-values-04b (reader side)**: A reader MUST parse and render `invalid_data_values_superset.opencatalog` without refusal; it MAY emit a warning; the resolved namespace is the `subcats.<target>.values` keys only.
 - **ft-subcat-values-05**: `valid_empty_subcat_plus_data_values.opencatalog` — value names come from `data.values`, subcat `field_defs` populate empty per-value fields.
-- **ft-subcat-values-06**: Round-trip export — an importer that reads `valid_subcat_plus_matching_data_values.opencatalog` and re-exports SHOULD omit the redundant `data.values.<target>` block on the re-export.
 
 ## Alternatives considered
 
@@ -180,18 +199,16 @@ Counter-rejected but nuanced: this is a real concern. The proposed rule's resolu
 
 ## Open questions
 
-1. **L1-runtime guidance.** An L1 runtime encountering a catdef where Enumerated values are only in `subcats.<target>.values`: the runtime ignores subcats (allowed) and therefore sees no pre-declared namespace. Does it infer values from item references, or fail? Recommendation: infer from items, per existing behavior when `data.values` is omitted for un-subcat'd Enumerated fields. Add explicit guidance to CATDEF_SPEC.md §Conformance Levels §Level 1.
+None remaining after CA-003 revisions. Prior open questions were resolved into normative text:
 
-2. **Validation strictness.** When `data.values.<target>` has names not in `subcats.<target>.values` (the "superset" case): reject outright, or warn-and-merge? Recommendation: reject outright at write time (writer-side validation); warn-and-merge at read time (reader-side leniency, mirroring CA-002's asymmetry). But this is more complex than the current draft; simplify to "validation error at import" and let writers decide what to do with the error.
-
-3. **Seed-value attribution for shared namespaces.** The canonical's `Location` subcat is referenced by both the Artifact template's `Origin` field AND the Maker subcat's `Workshop Location` field. Both use the same Location values. Under the new rule, `subcats.Location.values` is authoritative. Confirm no ambiguity arises when multiple subcats / templates share a target namespace. *(The canonical works today with this pattern; expected answer: no change needed.)*
-
-4. **Round-trip normalization.** Should round-trip (read → export) automatically strip redundant `data.values` entries? This is a should-it-happen (behavioral) and a would-it-break-anyone (interop risk) question. Recommendation: ft-subcat-values-06 makes this a SHOULD for conformant importers; writers that preserve legacy input remain permitted.
+- L1-runtime guidance → promoted to §Conformance Levels §Level 1 amendment (item-inference is L1-mandatory).
+- Validation strictness → resolved by the writer-strict / reader-lenient asymmetry in §Value resolution.
+- Shared namespaces → resolved affirmatively in §Value resolution (shared by target name, no per-reference scoping).
+- Round-trip normalization → declined (preserves importers that re-export byte-for-byte; ft-subcat-values-06 removed).
 
 ## Requested maintainer actions
 
 - Sign off on `subcats.<target>.values` as authoritative-when-declared, with `data.values.<target>` as optional-subset.
-- Confirm the validation-error disposition for the superset case (vs. merge-with-warning).
+- Sign off on the writer-strict / reader-lenient asymmetry for the superset case (mirror of the `catdef` version-stamping pattern).
 - Sign off on adding the new `valid_*.opencatalog` and `invalid_*.opencatalog` fixtures, plus `test_subcat_values.py`.
-- Approve the CATDEF_SPEC.md §Subcats edit as drafted above (to be applied in a follow-on editorial PR once this proposal is accepted).
-- Acknowledge the follow-on canonical simplification — after this proposal lands, a small PR drops the redundant `data.values.<name>` entries from `canonical/catalog.opencatalog` for names already seeded in `subcats.<name>.values`.
+- Approve the CATDEF_SPEC.md §Subcats edit and the §Conformance Levels §Level 1 item-inference amendment as drafted above (to be applied in a follow-on editorial PR once this proposal is accepted).
