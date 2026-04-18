@@ -289,5 +289,5 @@ This document is non-normative. Specifically:
 
 1. **Gather implementer signal.** Publish this draft; invite comments from Thingalog, PXMemo, dangerstorm, and any third-party catdef runtime team. The design should not land in stone without multi-implementer review.
 2. **Spec the filter grammar.** This is blocking concrete tool shapes.
-3. **Prototype a reference server.** Local stdio, L1 read-only, targeting Thingalog's file format. Publish as `catdef/catdef-mcp`.
+3. **Prototype a reference server.** Local stdio, L1 read-only, targeting the `.opencatalog` file format. Publish as `catdef/catdef-mcp`.
 4. **Iterate.** Treat v0.1 of this document as a discussion draft. Version it separately from the catdef spec.
