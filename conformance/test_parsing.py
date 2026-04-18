@@ -91,7 +91,7 @@ class TestValidFiles:
 
     def test_watches_sample(self):
         """The flagship sample file must be valid."""
-        path = FIXTURES.parent.parent / "samples" / "watches.thingalog"
+        path = FIXTURES.parent.parent / "samples" / "watches.opencatalog"
         with open(path) as f:
             data = json.load(f)
         errors = validate_catdef(data)
