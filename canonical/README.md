@@ -188,15 +188,17 @@ The authoritative, machine-readable source is [`photos_manifest.json`](photos_ma
 
 Building this canonical flushed out a handful of spec-prose questions. Per [CLAUDE.md](../CLAUDE.md)'s "every implementation files feedback like any other consumer" rule, the catdef-maintainer role does not fix these editorially in the flow of canonical authorship — it logs them as reports. The full log is in [AUTHORING_FEEDBACK.md](AUTHORING_FEEDBACK.md) in this directory.
 
-Summary of items raised:
+Summary of items raised, with triage state:
 
-1. **CA-001 — Outer archive extension for ZIP-bundled CATIO.** The spec diagram says `.zip`; the MCP proposal names it `.opencatalog`. Needs reconciliation.
-2. **CA-002 — `primaryLocale` in a v1.3-stamped document.** Forward-compatibility question.
-3. **CA-003 — `data.values` bare list vs. `subcats.<name>.values` enriched object.** Redundancy with unclear authority.
-4. **CA-004 — Pexels API requires `User-Agent` header.** Tooling note, not spec feedback.
-5. **CA-005 — Subcat Photo field deliberately empty for real-brand entry.** Health-score edge case.
+| CA | Topic | Disposition |
+|-----|------|-------------|
+| CA-001 | Outer archive extension for ZIP-bundled CATIO | **Accept w/ mods** — [decisions/CA-001.md](../decisions/CA-001.md) · [proposal](../proposals/catio-bundle-extension.md) · target v1.4 · canonical compliant |
+| CA-002 | `primaryLocale` / version-stamp semantics | **Accept w/ mods** — [decisions/CA-002.md](../decisions/CA-002.md) · [proposal](../proposals/version-stamp-semantics.md) · target v1.4 · canonical sanctioned under reference-document exception |
+| CA-003 | `data.values` vs `subcats.<name>.values` authority | **Accept w/ mods** — [decisions/CA-003.md](../decisions/CA-003.md) · [proposal](../proposals/subcat-value-resolution.md) · target v1.4 · canonical compliant (permissive MAY-include pattern) |
+| CA-004 | Pexels API requires `User-Agent` | Tooling note — not spec feedback |
+| CA-005 | Subcat Photo field empty for real-brand entry | Resolved by implementation ([PR #14](https://github.com/catdef/catdef-spec/pull/14) — Stanley placeholder image) |
 
-These items will be filed publicly through `catdef.org/feedback` once that endpoint is live.
+All three spec-bearing items (CA-001, CA-002, CA-003) have been triaged and target v1.4. Spec-text edits are held under the strategist's v1.4 release-management constraint until the full bundle is coherent — these three plus the i18n / `primaryLocale` proposal and the MCP conformance work land together or not at all. This canonical is already compliant with the three revised proposals as written; no content changes are needed when the spec-text eventually lands. The report format in AUTHORING_FEEDBACK.md will migrate to `catdef.org/feedback` once that endpoint is live; until then the file serves as the audit trail.
 
 ---
 
