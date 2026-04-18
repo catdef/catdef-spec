@@ -112,19 +112,19 @@ def validate_item_field_values(data: dict) -> list[str]:
 
 class TestValidValues:
     def test_minimal_fixture_clean(self):
-        data = _load("valid_minimal.thingalog")
+        data = _load("valid_minimal.opencatalog")
         errors = validate_item_field_values(data)
         assert errors == [], f"Unexpected errors: {errors}"
 
     def test_all_field_types_fixture_clean(self):
-        data = _load("valid_all_field_types.thingalog")
+        data = _load("valid_all_field_types.opencatalog")
         errors = validate_item_field_values(data)
         assert errors == [], f"Unexpected errors: {errors}"
 
 
 class TestIntegerField:
     def test_fixture_catches_string_in_integer(self):
-        data = _load("invalid_integer_field_value.thingalog")
+        data = _load("invalid_integer_field_value.opencatalog")
         errors = validate_item_field_values(data)
         assert any("Integer" in e and "Year" in e for e in errors)
 
@@ -137,7 +137,7 @@ class TestIntegerField:
 
 class TestEnumeratedField:
     def test_fixture_catches_unknown_value(self):
-        data = _load("invalid_enumerated_value.thingalog")
+        data = _load("invalid_enumerated_value.opencatalog")
         errors = validate_item_field_values(data)
         assert any("Casio" in e and "Brand" in e for e in errors)
 
