@@ -4,7 +4,7 @@
 
 **catio** (catalog I/O) is the transport contract for OpenThing and OpenCatalog objects. It defines how things and catalogs move between systems — import, export, sync, stream, and API exchange.
 
-A catio document is a JSON envelope that carries one or more OpenThing or OpenCatalog payloads. The `.thingalog` file format is a catio document. An MCP tool call that creates an item is a catio operation. A ZIP export is a catio bundle. A browser plugin that captures a webpage is producing a catio message.
+A catio document is a JSON envelope that carries one or more OpenThing or OpenCatalog payloads. The `.opencatalog` file format is a catio document. An MCP tool call that creates an item is a catio operation. A ZIP export is a catio bundle. A browser plugin that captures a webpage is producing a catio message.
 
 catio does not define what a thing *is* (that's OpenThing) or how a catalog *behaves* (that's OpenCatalog). catio defines how they travel.
 
@@ -94,14 +94,14 @@ When `schema` is present, it declares the shared template and value set. When ab
 
 ### Full Catalog
 
-A complete OpenCatalog with OpenThing data — the `.thingalog` file.
+A complete OpenCatalog with OpenThing data — the `.opencatalog` file.
 
 ```json
 {
   "catio": "1.0",
   "type": "catalog",
 
-  "catdef": "1.1",
+  "catdef": "1.3",
   "product": { ... },
   "requires": { ... },
   "hints": { ... },
@@ -116,18 +116,18 @@ A complete OpenCatalog with OpenThing data — the `.thingalog` file.
 }
 ```
 
-This is the existing `.thingalog` format, now formally identified as a catio document of type `catalog`. Backward-compatible: existing `.thingalog` files that lack the `catio` envelope are treated as `type: "catalog"` with `catio: "1.0"` implied.
+This is the canonical catdef catalog format, identified as a catio document of type `catalog`. Backward-compatible: existing catdef catalog files that lack the `catio` envelope are treated as `type: "catalog"` with `catio: "1.0"` implied.
 
 ### Catalog Schema (Starter Kit)
 
-Template definitions only, no data. The `.catdef.json` format.
+Template definitions only, no data. The `.catdef` format.
 
 ```json
 {
   "catio": "1.0",
   "type": "schema",
 
-  "catdef": "1.1",
+  "catdef": "1.3",
   "templates": [ ... ]
 }
 ```
