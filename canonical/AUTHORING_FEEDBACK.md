@@ -47,7 +47,7 @@ The catdef maintainers may triage these at their discretion.
 
 The canonical deliberately tests a v1.4-aware document (`"catdef": "1.4"` — aspirational since v1.4 isn't released yet); this question is about the converse edge case — mixed-version documents.
 
-**Why it matters:** Tooling that auto-updates catdef versions during import (e.g., Thingalog's import pipeline) needs to know whether to silently upgrade the `catdef` stamp, warn, or refuse.
+**Why it matters:** Tooling that auto-updates catdef versions during import needs to know whether to silently upgrade the `catdef` stamp, warn, or refuse.
 
 ### CA-003 — `data.values` bare-name list vs. `subcats.<name>.values` enriched object
 
