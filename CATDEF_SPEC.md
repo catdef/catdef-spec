@@ -451,7 +451,7 @@ One or more item templates. Each template defines a kind of thing in the catalog
 
 **Support requirements:**
 - Runtimes MUST support: `String`, `Integer`, `RichText`, `Enumerated`, `Photo`.
-- Runtimes SHOULD support: `Number`, `Table`, `URL`, `Date`, `Money`, `Boolean`, `GeoLocation`.
+- Runtimes at L2 and above SHOULD support: `Number`, `Table`, `URL`, `Date`, `Money`, `Boolean`, `GeoLocation`. At L1, these types are optional; see the L1 definition in "Conformance Levels" below.
 - Runtimes MAY support: `CloudFile`.
 
 ### Subcats (Enriched Enumerated Values)
@@ -1509,7 +1509,8 @@ On a venue's lobby kiosk, this renders as a date-forward calendar with tonight's
 
 ### Level 1: Minimal (browser-only)
 - Reads catdef and renders item list + item detail
-- Supports field types: String, Integer, RichText, Enumerated, Photo
+- MUST support field types: String, Integer, RichText, Enumerated, Photo
+- MAY support additional field types (the SHOULD list in "Support requirements" applies at L2 and above; L1 implementations that support more than the required set are still conformant-at-L1)
 - In-memory or LocalStorage persistence
 - No server required
 - MAY ignore: subcats, views declaration, inherits_from, embed config, themes
@@ -1587,5 +1588,5 @@ These extensions belong to the catdef standard, not to any runtime. Any conforma
 
 ---
 
-*Specification version 1.1. April 2026.*
+*Specification version 1.3. April 2026.*
 *An open standard. Licensed under MIT.*
