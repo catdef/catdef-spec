@@ -15,6 +15,7 @@ The catdef maintainers may triage these at their discretion.
 | CA-003 | below | [proposals/subcat-value-resolution.md](../proposals/subcat-value-resolution.md) [PR #18](https://github.com/catdef/catdef-spec/pull/18) | **Accept w/ mods** — [decisions/CA-003.md](../decisions/CA-003.md) | revision pending bundle merge | Compliant — both forms present, `data.values` is strict subset of `subcats.<name>.values` keys (permissive MAY-include pattern) |
 | CA-004 | below | n/a (tooling note, not spec feedback) | n/a | n/a | n/a |
 | CA-005 | below | n/a (authoring decision, not spec gap) | resolved by PR #14 (Stanley placeholder image) | n/a | Maker subcat `Logo` field populated |
+| CA-006 | below | pending (proposal drafting in progress) | pending triage | — | No change to bundle JSON; the canonical exposes the gap in `validate_item_field_values` by using spec-sanctioned value shapes the validator doesn't yet recognize |
 
 **Spec-text integration.** All three triaged proposals target v1.4 (minor). Under the strategist's v1.4 release-management constraint, spec-text edits (CATDEF_SPEC.md, CATIO_SPEC.md) do not merge to main until the v1.4 bundle is coherent — CA-001, CA-002, CA-003, the i18n / `primaryLocale` proposal, and the MCP conformance work all land together. The revised proposals are on their branches accumulating review.
 
@@ -108,6 +109,54 @@ This is documented here so a future implementer of the reference or of any CATIO
 **Question for the maintainer:** Is leaving a declared Photo field empty on a subcat value a conformance concern for health-score evaluation? The subcat field isn't marked `importance: "required"`, so the health score should accept it — but the canonical serves as a reference for what-is-acceptable patterns, and this particular choice should be sanctioned explicitly.
 
 **Disposition (2026-04-18):** **Resolved by implementation** — [PR #14](https://github.com/catdef/catdef-spec/pull/14) (Stanley placeholder image). Per maintainer direction ("please fake a trademark, I'd like a placeholder image"), the Maker.Logo slot for Stanley Rule & Level Co. is now populated with a generated typeset placeholder clearly labelled `PLACEHOLDER`. The open question about empty-Photo-on-subcat conformance remains a general spec question (applicable beyond this canonical), but is no longer blocking for this bundle. No separate proposal opened; the pattern established — populate the field, make the placeholder-nature visible in the image itself — is available as a reference for other real-brand entries in future canonicals.
+
+### CA-006 — Conformance validator gaps against v1.3 value shapes (and v1.4-draft polymorphic fields)
+
+**Severity:** suite gap
+
+**What the spec says:**
+
+- [CATDEF_SPEC.md §Date Type Extensions](../CATDEF_SPEC.md) defines value shapes for `Date`:
+  - Exact: `"2024-06-15"`
+  - Year only: `"1850"`
+  - Approximate (circa): `{"date": "1850", "circa": true}`
+  - Range: `{"start": "1845", "end": "1855"}`
+- [§Range Modifier](../CATDEF_SPEC.md) defines range shapes for `Number`, `Money`, `Date`:
+  - `Number` with `range: true` → `{"min": 42, "max": 45}`
+  - `Money` with `range: true` → `{"low": {"amount": 500, "currency": "USD"}, "high": {"amount": 1500, "currency": "USD"}}`
+- [§Field Types — URL](../CATDEF_SPEC.md) describes: "A web URL with optional auto-extracted title, description, og:image" — strongly implying an object-shaped value with those keys, but the spec does not formally define the object schema.
+- The v1.4-draft [i18n proposal](../proposals/i18n-polymorphic-fields.md) introduces polymorphic translatable fields whose value becomes an object (`{".en": "...", ".fr": "...", ".context": "...", ".machine-translate": "..."}`).
+
+**What the conformance suite does:**
+
+The reference validator `validate_item_field_values()` in [`conformance/test_field_values.py`](../conformance/test_field_values.py) checks that each field value matches its declared field type. For `Date`, `RichText`, `String`, and `URL`, the check is "is it a string?"; for `Money`, the check expects `{"amount": N, "currency": "XXX"}`; for `Number`, the check expects a number primitive.
+
+**The observed failure:**
+
+Running `validate_item_field_values(canonical_data)` produces 22 errors, all against spec-compliant value shapes:
+
+- **Date circa** (items 1, 2, 3, 7, 10 — 5 fields): `"expected Date string, got dict"`
+- **Date range** (item 2 Exhibition Dates, item 5 Date Made — 2 fields): same
+- **Money range** (items 5 Purchase Price Range, 7 Purchase Price Range — 2 fields): `"Money.amount must be a number"` (validator unpacks `{"low": ..., "high": ...}` as if it were a flat Money object)
+- **Number range** (item 7 Case Diameter Range — 1 field): `"expected Number, got dict"`
+- **URL object shape** (items 3, 4, 9, 12 — 4 fields): `"expected URL string, got dict"`
+- **Polymorphic translatable fields** with `.en`/`.fr`/`.context`/`.machine-translate` (items 2, 6, 11 — several fields): `"expected RichText/String string, got dict"`
+
+`validate_catdef` (structure/required/types) passes; `validate_all_photos` (photo transforms) passes. Only the value-shape validator fails, and only on shapes the validator predates.
+
+**Why it matters:**
+
+The canonical is the worked example every implementer tests against. If the spec's own reference validator flags the canonical as invalid, implementers who build against that validator will conclude the canonical is broken (and work around it) rather than conclude the validator is behind. This inverts the four-artifact self-correcting loop — the conformance suite is supposed to *validate* the canonical, not *invalidate* it due to its own coverage gaps.
+
+**Scope:**
+
+This report bundles three kinds of gap:
+
+1. **v1.3 shape-coverage gaps** (Date circa/range, Money range, Number range) — these are shapes the spec formally defined but the validator never implemented. Should be addressed by extending `validate_field_value()` to recognize the dict-shaped cases.
+2. **URL object-shape specification gap** (dual concern) — the spec implies an object but doesn't formally define the schema. The validator rejects objects outright. Resolution requires a small spec-prose addition plus a validator extension.
+3. **v1.4-draft polymorphic translatable fields** — these are part of the i18n proposal's conformance work and should be addressed inside that proposal's conformance test additions, not in a separate track. Flagged here only for completeness; out of scope for this CA's proposal.
+
+**Proposal scope recommendation:** A single proposal covering (1) and (2) above — extend `validate_field_value()` to recognize Date circa/range, Money range, Number range, and URL object shapes. Formalize the URL object schema in CATDEF_SPEC.md §Field Types in the same proposal. Leave polymorphic translatable-field validation to the i18n proposal.
 
 ---
 
