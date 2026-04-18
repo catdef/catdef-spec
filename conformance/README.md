@@ -1,6 +1,6 @@
-# Thingalog Conformance Test Suite
+# catdef Conformance Test Suite
 
-This directory contains the official conformance tests for Thingalog renderers.
+This directory contains the official conformance tests for catdef renderers.
 
 ## Structure
 
