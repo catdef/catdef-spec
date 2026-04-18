@@ -136,6 +136,9 @@ As of the constitutional-document phase of catdef maintenance, the following ite
 - **Permissions model.** Referenced but not defined. Needed for L3+ and for MCP auth scoping.
 - **I18n.** Subcat values, field labels, and product copy may need translated variants in a future minor version.
 - **API surface doc.** The HTTP API that L2+ runtimes expose and the MCP tool surface should be designed together to avoid drift.
+- **Strategist AI-maintainer bot identity.** The catdef-maintainer role has a defined bot identity (`catdef-maintainer <catdef-maintainer@catdef.org>`); the Chief Strategist role does not. Strategist-authored artifacts in `decisions/` are provisionally attributed to `catdef-strategist <catdef-strategist@catdef.org>` pending ratification. See [decisions/CA-001.md](decisions/CA-001.md) for first use.
+- **`decisions/` integration with maintainer session startup.** The §Session startup procedure above does not yet instruct maintainer sessions to check `decisions/` for pending build directives. Until it does, the strategist-to-maintainer handoff depends on human prompting rather than artifact-driven flow.
+- **MIME-type registration for `.opencatalog` and `.openthing`.** Required to realize the double-click-to-viewer benefit cited in the CATIO bundle extension proposal. Out of scope for the spec-text change itself; separate IANA-registration track.
 
 ## Interaction with reference implementations
 
