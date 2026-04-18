@@ -7,7 +7,7 @@ catdef defines two complementary concepts:
 - **OpenThing** — a schema for describing any real-world object: its properties, measurements, classifications, provenance, and media.
 - **OpenCatalog** — a schema for organizing collections of things: identity, branding, search, social features, and presentation.
 
-A single `.thingalog` file contains everything: the schema (templates, field definitions), the data (items, values), and the presentation (theme, settings). An AI that can see a photograph can write a catdef. A human with a spreadsheet can write a catdef.
+A single `.opencatalog` file contains everything: the schema (templates, field definitions), the data (items, values), and the presentation (theme, settings). An AI that can see a photograph can write a catdef. A human with a spreadsheet can write a catdef.
 
 ## What's in this repo
 
@@ -15,7 +15,7 @@ A single `.thingalog` file contains everything: the schema (templates, field def
 |------|-------------|
 | [CATDEF_SPEC.md](CATDEF_SPEC.md) | The catdef v1.3 specification — field types, subcats, views, inheritance, conformance levels |
 | [CATIO_SPEC.md](CATIO_SPEC.md) | The CATIO bundled-transport specification — `.opencatalog` ZIP format |
-| [samples/](samples/) | Sample `.thingalog` files you can open in any conformant renderer |
+| [samples/](samples/) | Sample catdef files you can open in any conformant renderer |
 | [conformance/](conformance/) | The catdef Conformance Test Suite — 98 tests |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to propose changes to the standard |
 | [MCP_REFERENCE.md](MCP_REFERENCE.md) | Non-normative reference design for a Model Context Protocol server exposing catdef catalogs |
@@ -60,7 +60,7 @@ Plus field-def attributes: `unique`, `default`, `format` (isbn, vin, sku, etc.),
 
 | Level | Name | Description |
 |-------|------|-------------|
-| L1 | Static | Browser-only, reads `.thingalog` files directly. No server. |
+| L1 | Static | Browser-only, reads catdef files directly. No server. |
 | L2 | Lightweight | API-backed with SQLite/D1. Read-write. |
 | L3 | Full | Graph database. Full CRUD, audit log, photos. |
 | L4 | Platform | Multi-tenant, auth, billing, social, AI onboarding. |
