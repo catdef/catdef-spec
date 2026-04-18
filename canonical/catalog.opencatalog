@@ -1,0 +1,870 @@
+{
+  "catio": "1.0",
+  "type": "catalog",
+
+  "catdef": "1.4",
+  "primaryLocale": "en",
+
+  "product": {
+    "name": "Riverside Heritage Society",
+    "slug": "riverside-heritage",
+    "domain": "riverside-heritage.example.org",
+    "tagline": "Objects of a river town, 1880–1960",
+    "description": "<p>A fictional local-history archive used as the <strong>catdef canonical reference</strong>. Every item, donor, maker, and location in this catalog is invented. The Society itself does not exist. Photos are real, licensed under Unsplash and Pexels terms, and credited in the bundle's README.</p><p>This file is the worked example every catdef implementer tests against.</p>",
+    "contact_email": "hello@riverside-heritage.example.org",
+    "phone": "+1-555-0139",
+    "website": "https://riverside-heritage.example.org",
+    "address": "12 Bridge Street, Riverside, Adair County",
+    "hours": "Wed–Sat, 11am–4pm; closed January",
+    "owner": "Riverside Heritage Society (fictional)",
+    "logo_url": "",
+    "social": {
+      "instagram": "@riverside_heritage",
+      "facebook": "riversideheritage",
+      "bluesky": "riverside-heritage.example.org"
+    },
+    "sections": [
+      {"title": "About", "content": "<p>The Riverside Heritage Society is a <em>fictional</em> local-history archive built as the canonical reference for the <a href=\"https://catdef.org\">catdef</a> open standard. Every accession in this catalog is an invention used to exercise a specific feature of the spec. Donors, makers, and locations are likewise fictional.</p><p>The Society's imagined mission — documenting the everyday material culture of a small river town between 1880 and 1960 — was chosen because it spans enough object types, materials, and provenance stories to demonstrate catdef's full expressive range without impersonating any real institution.</p>"},
+      {"title": "Using this catalog", "content": "<p>Implementers testing a catdef renderer against this file should expect: one Artifact template with seventeen fields, five subcats (Donor, Material, Location, Region, Maker), twelve items, roughly twenty-five photos, and at least one instance of every v1.3 field type plus v1.4-draft polymorphic translatable fields with the <code>.machine-translate</code> and <code>.context</code> policies.</p><p>If your renderer chokes on this file, file feedback at <a href=\"https://catdef.org/feedback\">catdef.org/feedback</a>. If the spec is unclear about how any part of this file should render, that is also feedback.</p>"},
+      {"title": "Credits", "content": "<p>Photos are sourced from Unsplash and Pexels under their respective licenses. Full per-photo attribution is in the bundle's README.md. All catalog content (item descriptions, fictional donors, etc.) is authored by catdef-maintainer and licensed MIT with the rest of the spec repo.</p>"}
+    ],
+    "theme": "riverside_vintage"
+  },
+
+  "requires": {
+    "renderer": ">=1.3",
+    "features": ["photos", "social", "embed", "export", "health_score", "history"],
+    "field_types": ["String", "Integer", "Number", "RichText", "Enumerated", "Photo", "Table", "CloudFile", "URL", "Date", "Money", "Boolean", "GeoLocation"],
+    "widgets": ["autocomplete", "dropdown", "checkbox_table", "rating", "table", "photo", "url", "date", "toggle", "map"]
+  },
+
+  "hints": {
+    "expected_items": 12,
+    "expected_photos": 25,
+    "avg_photo_size_mb": 0.3,
+    "expected_values": 40,
+    "primary_media": "photo",
+    "update_frequency": "rarely",
+    "audience": "public"
+  },
+
+  "views": {
+    "primary_axis": "thing",
+    "modes": ["grid", "table", "map", "kiosk"],
+    "default": "grid",
+    "default_icon": "🏛️",
+    "kiosk_layout": "card",
+    "mode_config": {
+      "map": {
+        "primary_field": "Origin"
+      },
+      "kiosk": {
+        "rotate": 12,
+        "layout": "split"
+      }
+    }
+  },
+
+  "templates": [
+    {
+      "name": "Artifact",
+      "description": "A donated object in the Society's collection, with provenance.",
+      "icon": "🏛️",
+      "field_defs": [
+        {"label": "Title", "type": "String", "sort_order": 10, "required": true, "importance": "required", "placeholder": "e.g. Tinplate toy locomotive"},
+        {"label": "Accession Number", "type": "String", "sort_order": 15, "format": "accession", "unique": true, "required": true, "importance": "required", "placeholder": "e.g. RHS.2024.001"},
+        {"label": "Photos", "type": "Photo", "sort_order": 20, "multi": true, "importance": "required", "photo_labels": ["Overview", "Detail", "Maker's Mark", "Reverse", "Context"], "max_items": 8},
+        {"label": "Object Type", "type": "Enumerated", "sort_order": 30, "target": "ObjectType", "filterable": true, "importance": "required", "widget": "dropdown"},
+        {"label": "Date Made", "type": "Date", "sort_order": 40, "circa": true, "filterable": true, "importance": "preferred", "primary": true, "scorable": "recency", "help_text": "Approximate creation date of the object (not the donation date)."},
+        {"label": "Maker", "type": "Enumerated", "sort_order": 50, "target": "Maker", "filterable": true},
+        {"label": "Materials", "type": "Enumerated", "sort_order": 60, "target": "Material", "multi": true, "filterable": true, "widget": "checkbox_table"},
+        {"label": "Origin", "type": "Enumerated", "sort_order": 70, "target": "Location", "filterable": true, "help_text": "Place of origin — a Riverside workshop, field, or out-of-town source."},
+        {"label": "Height", "type": "Number", "sort_order": 80, "unit": "cm", "precision": 1, "min": 0, "max": 500},
+        {"label": "Width", "type": "Number", "sort_order": 85, "unit": "cm", "precision": 1, "min": 0, "max": 500},
+        {"label": "Depth", "type": "Number", "sort_order": 87, "unit": "cm", "precision": 1, "min": 0, "max": 500},
+        {"label": "Weight", "type": "Number", "sort_order": 88, "unit": "g", "precision": 0, "min": 0},
+        {"label": "Case Diameter Range", "type": "Number", "sort_order": 89, "unit": "mm", "precision": 1, "range": true, "help_text": "Used only for round objects (buttons, bottles). Left blank otherwise."},
+        {"label": "Inscriptions", "type": "Table", "sort_order": 90, "multi": true, "widget": "table", "columns": [
+          {"label": "Text", "type": "String"},
+          {"label": "Position", "type": "String"},
+          {"label": "Script", "type": "String"},
+          {"label": "Legibility", "type": "String"}
+        ]},
+        {"label": "Functional", "type": "Boolean", "sort_order": 100, "default": false, "help_text": "Is the object still operable? (N/A for ephemera; set to false for unknown.)"},
+        {"label": "Popularity", "type": "Integer", "sort_order": 105, "min": 0, "max": 100, "scorable": "popularity", "default": 0, "widget": "rating", "help_text": "Visitor-engagement score, used for kiosk rotation weighting."},
+        {"label": "Donor", "type": "Enumerated", "sort_order": 110, "target": "Donor", "filterable": true},
+        {"label": "Accession Date", "type": "Date", "sort_order": 115, "min": "1980-01-01", "max": "2030-12-31"},
+        {"label": "Purchase Price Range", "type": "Money", "sort_order": 120, "currency": "USD", "range": true, "help_text": "Appraised value range. Only present when an appraisal was done."},
+        {"label": "Exhibition Dates", "type": "Date", "sort_order": 125, "range": true, "help_text": "Period during which the object has been on display."},
+        {"label": "Provenance", "type": "RichText", "sort_order": 130, "importance": "preferred", "help_text": "Narrative history of ownership and chain of custody. Personal-memoir content — do not machine-translate."},
+        {"label": "Reference Scan", "type": "CloudFile", "sort_order": 140, "max_items": 1, "help_text": "High-resolution PDF scan, when available."},
+        {"label": "External Record", "type": "URL", "sort_order": 150, "help_text": "Link to a related entry in an outside archive."},
+        {"label": "Display Location", "type": "GeoLocation", "sort_order": 160, "help_text": "Physical coordinates within the Society building where the object is currently displayed."},
+        {"label": "Notes", "type": "RichText", "sort_order": 170}
+      ]
+    }
+  ],
+
+  "subcats": {
+    "ObjectType": {
+      "field_defs": [
+        {"label": "Category", "type": "String", "sort_order": 10, "help_text": "Broad grouping — toy, document, furniture, etc."},
+        {"label": "Preservation Priority", "type": "String", "sort_order": 20}
+      ],
+      "values": {
+        "Toy": {"Category": "Object", "Preservation Priority": "Medium"},
+        "Document": {"Category": "Paper", "Preservation Priority": "High"},
+        "Album": {"Category": "Paper", "Preservation Priority": "High"},
+        "Tool": {"Category": "Object", "Preservation Priority": "Low"},
+        "Map": {"Category": "Paper", "Preservation Priority": "High"},
+        "Communications": {"Category": "Object", "Preservation Priority": "Medium"},
+        "Sheet Music": {"Category": "Paper", "Preservation Priority": "High"},
+        "Container": {"Category": "Object", "Preservation Priority": "Low"},
+        "Textile": {"Category": "Object", "Preservation Priority": "Medium"},
+        "Ephemera": {"Category": "Paper", "Preservation Priority": "High"},
+        "Playbill": {"Category": "Paper", "Preservation Priority": "Medium"}
+      }
+    },
+
+    "Donor": {
+      "field_defs": [
+        {"label": "Family Name", "type": "String", "sort_order": 10, "required": true},
+        {"label": "Given Name", "type": "String", "sort_order": 20},
+        {"label": "Relationship", "type": "String", "sort_order": 30, "help_text": "Relationship to the Society or to the original owner."},
+        {"label": "Date Contributed", "type": "Date", "sort_order": 40},
+        {"label": "Portrait", "type": "Photo", "sort_order": 50, "max_items": 1},
+        {"label": "Notes", "type": "RichText", "sort_order": 60}
+      ],
+      "values": {
+        "Helen Cartwright": {
+          "Family Name": "Cartwright",
+          "Given Name": "Helen",
+          "Relationship": "Granddaughter of original owners",
+          "Date Contributed": "2019-05-12",
+          "Notes": "<p>Donated the Cartwright family papers, flower album, and wartime correspondence across three separate gifts (2019–2023). Retired teacher.</p>"
+        },
+        "Thomas Osgood Jr.": {
+          "Family Name": "Osgood",
+          "Given Name": "Thomas Jr.",
+          "Relationship": "Estate executor",
+          "Date Contributed": "2021-03-02",
+          "Notes": "<p>Executor for the estate of Thomas Osgood Sr., former owner of Osgood's Dry Goods on Bridge Street.</p>"
+        },
+        "Riverside Public School": {
+          "Family Name": "(institutional)",
+          "Given Name": "Riverside Public School",
+          "Relationship": "Institutional donor",
+          "Date Contributed": "2015-08-20",
+          "Notes": "<p>Transferred recovered classroom materials following the 2014 school renovation.</p>"
+        },
+        "Eloise Van Bergen": {
+          "Family Name": "Van Bergen",
+          "Given Name": "Eloise",
+          "Relationship": "Lifelong resident",
+          "Date Contributed": "2017-11-14",
+          "Notes": "<p>Donated household items from the Van Bergen home on River Road, including the rotary telephone.</p>"
+        },
+        "Hiram Davies": {
+          "Family Name": "Davies",
+          "Given Name": "Hiram",
+          "Relationship": "Retired carpenter",
+          "Date Contributed": "2022-06-01",
+          "Notes": "<p>Donated a working set of hand tools inherited from his grandfather, Ellis Davies, who ran the Riverside Millworks.</p>"
+        },
+        "Margaret Olivares": {
+          "Family Name": "Olivares",
+          "Given Name": "Margaret",
+          "Relationship": "Local historian",
+          "Date Contributed": "2020-09-08",
+          "Notes": "<p>Local historian; donated a collection of Opera House playbills and handbills from her grandmother's attic.</p>"
+        },
+        "Riverside Heritage Society Trust": {
+          "Family Name": "(institutional)",
+          "Given Name": "Riverside Heritage Society Trust",
+          "Relationship": "Society acquisition",
+          "Date Contributed": "2018-04-10",
+          "Notes": "<p>Purchased at an estate sale; accessioned to the Society's general collection.</p>"
+        }
+      }
+    },
+
+    "Material": {
+      "field_defs": [
+        {"label": "Category", "type": "String", "sort_order": 10, "required": true, "help_text": "Broad material family."},
+        {"label": "Common Examples", "type": "String", "sort_order": 20},
+        {"label": "Preservation Notes", "type": "RichText", "sort_order": 30}
+      ],
+      "values": {
+        "Tin": {"Category": "Metal", "Common Examples": "Tinplate toys, canisters", "Preservation Notes": "<p>Susceptible to rust where paint has chipped. Keep below 50% humidity.</p>"},
+        "Iron": {"Category": "Metal", "Common Examples": "Tool heads, hardware", "Preservation Notes": "<p>Rusts readily. Wax coating recommended.</p>"},
+        "Steel": {"Category": "Metal", "Common Examples": "Blades, springs", "Preservation Notes": "<p>Generally stable. Oil lightly.</p>"},
+        "Brass": {"Category": "Metal", "Common Examples": "Fittings, bell domes", "Preservation Notes": "<p>Tarnishes. Do not over-polish historical objects.</p>"},
+        "Celluloid": {"Category": "Synthetic", "Common Examples": "Campaign buttons, combs", "Preservation Notes": "<p><strong>Unstable</strong>. Off-gasses as it degrades. Store separately.</p>"},
+        "Bakelite": {"Category": "Synthetic", "Common Examples": "Phone bodies, radios", "Preservation Notes": "<p>Stable if unbroken. Avoid solvents.</p>"},
+        "Wood": {"Category": "Organic", "Common Examples": "Tool handles, furniture", "Preservation Notes": "<p>Control humidity. Inspect for insect activity.</p>"},
+        "Paper": {"Category": "Organic", "Common Examples": "Letters, playbills, maps", "Preservation Notes": "<p>Store flat, acid-free folders, low light.</p>"},
+        "Ink": {"Category": "Organic", "Common Examples": "Manuscript inscriptions", "Preservation Notes": "<p>Iron-gall inks corrode paper over decades.</p>"},
+        "Pressed Plants": {"Category": "Organic", "Common Examples": "Flower albums, herbaria", "Preservation Notes": "<p>Extremely fragile. Do not handle without support."},
+        "Cotton": {"Category": "Textile", "Common Examples": "Quilts, linings", "Preservation Notes": "<p>Vulnerable to light damage. Store in acid-free boxes.</p>"},
+        "Wool": {"Category": "Textile", "Common Examples": "Blankets, quilt batting", "Preservation Notes": "<p>Vulnerable to moths. Inspect regularly.</p>"},
+        "Silk": {"Category": "Textile", "Common Examples": "Embroidery thread, ribbons", "Preservation Notes": "<p>Shatters with age. Do not stretch.</p>"},
+        "Glass": {"Category": "Mineral", "Common Examples": "Bottles, plate negatives", "Preservation Notes": "<p>Stable but breakable. Cushion in storage.</p>"},
+        "Paint": {"Category": "Applied finish", "Common Examples": "Tinplate decoration, sign-painted letters", "Preservation Notes": "<p>Lead-based pigments common pre-1950.</p>"}
+      }
+    },
+
+    "Region": {
+      "field_defs": [
+        {"label": "Township", "type": "String", "sort_order": 10},
+        {"label": "County", "type": "String", "sort_order": 20},
+        {"label": "State", "type": "String", "sort_order": 30}
+      ],
+      "values": {
+        "Adair County": {"Township": "Riverside Township", "County": "Adair County", "State": "Fictional State"},
+        "Parkhurst County": {"Township": "Parkhurst Township", "County": "Parkhurst County", "State": "Fictional State"}
+      }
+    },
+
+    "Location": {
+      "field_defs": [
+        {"label": "Address", "type": "String", "sort_order": 10},
+        {"label": "Coordinates", "type": "GeoLocation", "sort_order": 20},
+        {"label": "Operating Years", "type": "Date", "sort_order": 30, "range": true},
+        {"label": "Region", "type": "Enumerated", "sort_order": 40, "target": "Region", "help_text": "Recursive-subcat demo: Locations link to Regions."},
+        {"label": "Photo", "type": "Photo", "sort_order": 50, "max_items": 1},
+        {"label": "Notes", "type": "RichText", "sort_order": 60}
+      ],
+      "values": {
+        "Riverside Opera House": {
+          "Address": "4 Theatre Square, Riverside",
+          "Coordinates": {"lat": 42.3340, "lng": -74.0170, "address": "Theatre Square, Riverside", "label": "Riverside Opera House (former)"},
+          "Operating Years": {"start": "1887", "end": "1934"},
+          "Region": "Adair County",
+          "Photo": {"filename": "loc_opera_house.jpg"},
+          "Notes": "<p>Former vaudeville and early-cinema venue. Demolished 1961.</p>"
+        },
+        "Riverside Dairy": {
+          "Address": "88 River Road, Riverside",
+          "Coordinates": {"lat": 42.3300, "lng": -74.0105, "address": "River Road, Riverside", "label": "Riverside Dairy (former)"},
+          "Operating Years": {"start": "1902", "end": "1967"},
+          "Region": "Adair County",
+          "Notes": "<p>Independent dairy. Bottled on-site until 1958.</p>"
+        },
+        "Riverside Lake": {
+          "Coordinates": {"lat": 42.3415, "lng": -74.0450, "address": "Riverside Lake", "label": "Riverside Lake"},
+          "Region": "Adair County",
+          "Notes": "<p>Small glacial lake that supported a commercial ice-harvesting industry 1895–1930.</p>"
+        },
+        "Riverside Millworks": {
+          "Address": "2 Mill Street, Riverside",
+          "Coordinates": {"lat": 42.3320, "lng": -74.0190, "address": "Mill Street, Riverside", "label": "Riverside Millworks (former)"},
+          "Operating Years": {"start": "1878", "end": "1949"},
+          "Region": "Adair County",
+          "Notes": "<p>Water-powered woodworking shop run by the Davies family for three generations.</p>"
+        },
+        "Cartwright Family Home": {
+          "Address": "17 Elm Avenue, Riverside",
+          "Coordinates": {"lat": 42.3312, "lng": -74.0210, "address": "Elm Avenue, Riverside", "label": "Cartwright Residence"},
+          "Region": "Adair County",
+          "Notes": "<p>Private residence of the Cartwright family, 1882–present.</p>"
+        },
+        "Van Bergen Schoolhouse": {
+          "Address": "North Township Road, Parkhurst County",
+          "Coordinates": {"lat": 42.3780, "lng": -74.1205, "address": "North Township Road, Parkhurst", "label": "Van Bergen Schoolhouse (closed)"},
+          "Operating Years": {"start": "1899", "end": "1942"},
+          "Region": "Parkhurst County",
+          "Photo": {"filename": "loc_van_bergen_schoolhouse.jpg"},
+          "Notes": "<p>One-room schoolhouse depicted in the 1903 town-plan map. Closed and converted to a barn after district consolidation.</p>"
+        },
+        "New Britain, CT": {
+          "Address": "New Britain, Connecticut",
+          "Coordinates": {"lat": 41.6612, "lng": -72.7795, "address": "New Britain, CT, USA", "label": "New Britain"},
+          "Notes": "<p>Headquarters of the Stanley Rule & Level Co., the real historical manufacturer referenced by one item in this catalog.</p>"
+        }
+      }
+    },
+
+    "Maker": {
+      "field_defs": [
+        {"label": "Trade", "type": "String", "sort_order": 10},
+        {"label": "Active Years", "type": "Date", "sort_order": 20, "range": true},
+        {"label": "Workshop Location", "type": "Enumerated", "sort_order": 30, "target": "Location", "help_text": "Demonstrates that subcats share the Location namespace with the Artifact template."},
+        {"label": "Logo", "type": "Photo", "sort_order": 40, "max_items": 1},
+        {"label": "Notes", "type": "RichText", "sort_order": 50}
+      ],
+      "values": {
+        "Stanley Rule & Level Co.": {
+          "Trade": "Toolmaker",
+          "Active Years": {"start": "1857", "end": "1920"},
+          "Workshop Location": "New Britain, CT",
+          "Notes": "<p>Real historical manufacturer, founded 1857 in New Britain, Connecticut. Acquired by Stanley Works in 1920 and merged into the modern Stanley Black & Decker. Referenced here in its historical form as the Bailey-pattern plane maker. The Maker subcat defines a <em>Logo</em> Photo field but this entry leaves it empty — the <em>Logo</em> slot is declared to demonstrate that subcat Photo fields are supported, but using a generic stock image to stand in for a real company's trademark would misrepresent the historical record. Subcat Photo fields are exercised with real imagery by the Location subcat (Opera House, Van Bergen Schoolhouse).</p>"
+        },
+        "Osgood Manufacturing Co.": {
+          "Trade": "Tinplate-toy manufacturer",
+          "Active Years": {"start": "1892", "end": "1927"},
+          "Workshop Location": "Riverside Millworks",
+          "Notes": "<p>Fictional small-scale manufacturer.</p>"
+        },
+        "Riverside Telephone & Signal Co.": {
+          "Trade": "Telephone equipment",
+          "Active Years": {"start": "1922", "end": "1958"},
+          "Notes": "<p>Fictional regional telephone equipment maker.</p>"
+        },
+        "Riverside Dairy Bottling": {
+          "Trade": "Glass bottling",
+          "Active Years": {"start": "1902", "end": "1958"},
+          "Workshop Location": "Riverside Dairy",
+          "Notes": "<p>Fictional on-site bottler for the Riverside Dairy.</p>"
+        },
+        "Victor Campaign Supply": {
+          "Trade": "Political ephemera",
+          "Active Years": {"start": "1908", "end": "1948"},
+          "Notes": "<p>Fictional producer of campaign buttons and handbills.</p>"
+        },
+        "Quigley Tool Works": {
+          "Trade": "Hand tools",
+          "Active Years": {"start": "1890", "end": "1932"},
+          "Notes": "<p>Fictional regional toolmaker.</p>"
+        },
+        "Riverside Millworks": {
+          "Trade": "Water-powered woodshop",
+          "Active Years": {"start": "1878", "end": "1949"},
+          "Workshop Location": "Riverside Millworks",
+          "Notes": "<p>Generalist woodshop that built doors, sashes, furniture, and ice-harvesting tackle.</p>"
+        }
+      }
+    }
+  },
+
+  "themes": {
+    "riverside_vintage": {
+      "accent": "#8b6f47",
+      "accent_dim": "#b89c72",
+      "bg": "#f5efe2",
+      "panel": "#fdf9ef",
+      "ink": "#2a1f12",
+      "muted": "#7a6a52",
+      "border": "#d9cdb3",
+      "font_heading": "'Playfair Display', Georgia, serif",
+      "font_body": "'Source Sans 3', system-ui, sans-serif",
+      "card_radius": "4px",
+      "mode": "light"
+    }
+  },
+
+  "embed": {
+    "enabled": true,
+    "allowed_domains": ["*"],
+    "default_view": "grid",
+    "default_size": {"width": "100%", "height": "720"},
+    "attribution": "required",
+    "hide_header": false,
+    "hide_sign_in": true
+  },
+
+  "settings": {
+    "public": true,
+    "embed": {"enabled": true, "powered_by": true, "max_items": null},
+    "social": {"likes": true, "favourites": true, "comments": false, "view_tracking": true},
+    "inquire": {"enabled": true, "recipient_email": "hello@riverside-heritage.example.org", "ai_assistant": true},
+    "export": {"pdf": true, "excel": true, "zip": true},
+    "health_score": {"enabled": true, "grading": "letter"},
+    "history": true,
+    "trash": true
+  },
+
+  "data": {
+    "values": {
+      "ObjectType": ["Toy", "Document", "Album", "Tool", "Map", "Communications", "Sheet Music", "Container", "Textile", "Ephemera", "Playbill"],
+      "Material": ["Tin", "Iron", "Steel", "Brass", "Celluloid", "Bakelite", "Wood", "Paper", "Ink", "Pressed Plants", "Cotton", "Wool", "Silk", "Glass", "Paint"],
+      "Region": ["Adair County", "Parkhurst County"],
+      "Location": ["Riverside Opera House", "Riverside Dairy", "Riverside Lake", "Riverside Millworks", "Cartwright Family Home", "Van Bergen Schoolhouse", "New Britain, CT"],
+      "Maker": ["Stanley Rule & Level Co.", "Osgood Manufacturing Co.", "Riverside Telephone & Signal Co.", "Riverside Dairy Bottling", "Victor Campaign Supply", "Quigley Tool Works", "Riverside Millworks"],
+      "Donor": ["Helen Cartwright", "Thomas Osgood Jr.", "Riverside Public School", "Eloise Van Bergen", "Hiram Davies", "Margaret Olivares", "Riverside Heritage Society Trust"]
+    },
+
+    "items": [
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Tinplate toy locomotive",
+          "Accession Number": "RHS.2019.001",
+          "Photos": [
+            {"filename": "item01_tin_locomotive_front.jpg", "slot": 1, "caption": "Overview", "is_primary": true, "rotation": 0},
+            {"filename": "item01_tin_locomotive_side.jpg", "slot": 2, "caption": "Detail", "rotation": 0, "crop_mode": "freeform", "crop_x1": 0.10, "crop_y1": 0.15, "crop_x2": 0.90, "crop_y2": 0.80},
+            {"filename": "item01_tin_locomotive_mark.jpg", "slot": 3, "caption": "Maker's Mark", "rotation": 90}
+          ],
+          "Object Type": "Toy",
+          "Date Made": {"date": "1905", "circa": true},
+          "Maker": "Osgood Manufacturing Co.",
+          "Materials": ["Tin", "Paint", "Steel"],
+          "Origin": "Riverside Millworks",
+          "Height": 8.5,
+          "Width": 22.0,
+          "Depth": 4.0,
+          "Weight": 240,
+          "Inscriptions": [
+            {
+              "Text": "OSGOOD MFG / RIVERSIDE",
+              "Position": "Under-body stamp",
+              "Script": "Block capitals",
+              "Legibility": "Clear",
+              "bbox": {"x": 0.32, "y": 0.60, "w": 0.18, "h": 0.06, "photo_slot": 3}
+            },
+            {
+              "Text": "No. 14",
+              "Position": "Cab panel",
+              "Script": "Painted numerals",
+              "Legibility": "Worn",
+              "bbox": {"x": 0.62, "y": 0.38, "w": 0.08, "h": 0.10, "photo_slot": 1}
+            }
+          ],
+          "Functional": false,
+          "Popularity": 74,
+          "Donor": "Thomas Osgood Jr.",
+          "Accession Date": "2021-03-02",
+          "Provenance": "<p>Made at the Osgood Manufacturing Co. in Riverside around 1905. Belonged to three generations of the Osgood family before being donated by the estate executor. Clockwork mechanism seized circa 1935 and was never repaired.</p>",
+          "Notes": "<p>Paint loss on the roof consistent with sustained handling. Two wheels are non-original replacements. The <em>No. 14</em> numerals on the cab were probably applied after manufacture by a child owner.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Cartwright family pressed-flower album",
+          "Accession Number": "RHS.2019.002",
+          "Photos": [
+            {"filename": "item02_flower_album_cover.jpg", "slot": 1, "caption": "Overview", "is_primary": true},
+            {"filename": "item02_flower_album_page.jpg", "slot": 2, "caption": "Page spread — four species"}
+          ],
+          "Object Type": "Album",
+          "Date Made": {"start": "1887", "end": "1894"},
+          "Materials": ["Paper", "Ink", "Pressed Plants"],
+          "Origin": "Cartwright Family Home",
+          "Height": 28.0,
+          "Width": 22.5,
+          "Depth": 5.0,
+          "Inscriptions": [
+            {
+              "Text": "Anna Cartwright, her book, 1887",
+              "Position": "Flyleaf, top-left",
+              "Script": "Copperplate",
+              "Legibility": "Clear",
+              "bbox": {"x": 0.18, "y": 0.12, "w": 0.40, "h": 0.08, "photo_slot": 1}
+            },
+            {
+              "Text": "Viola tricolor — kitchen garden",
+              "Position": "Beneath upper-left specimen",
+              "Script": "Cursive, pencil",
+              "Legibility": "Faded",
+              "bbox": {"x": 0.15, "y": 0.52, "w": 0.30, "h": 0.05, "photo_slot": 2}
+            },
+            {
+              "Text": "Trillium — woodlot, May 1889",
+              "Position": "Beneath upper-right specimen",
+              "Script": "Cursive, pencil",
+              "Legibility": "Faded",
+              "bbox": {"x": 0.55, "y": 0.52, "w": 0.35, "h": 0.05, "photo_slot": 2}
+            }
+          ],
+          "Functional": false,
+          "Popularity": 88,
+          "Donor": "Helen Cartwright",
+          "Accession Date": "2019-05-12",
+          "Exhibition Dates": {"start": "2022-04-01", "end": "2022-06-30"},
+          "Provenance": {
+            ".machine-translate": "Never",
+            ".en": "<p>Kept by Anna Cartwright (1871–1952) from age sixteen until her marriage. Passed to her daughter Evelyn, then to Helen Cartwright, her granddaughter. Helen noted in her 2019 donation letter that her grandmother \"pressed one flower from each garden she ever kept,\" and that several species in the album no longer grow in the county.</p>"
+          },
+          "Reference Scan": {
+            "url": "https://example.org/scans/cartwright-album-1887.pdf",
+            "provider": "example.org",
+            "filename": "cartwright-album-1887.pdf"
+          },
+          "Notes": "<p>Binding cracked but stable. Recommend support cradle for display. The <em>Provenance</em> field carries a <code>.machine-translate: \"Never\"</code> policy — the grandmother's phrasing is a historical quotation that must not be auto-translated.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Bailey-pattern smoothing plane",
+          "Accession Number": "RHS.2022.003",
+          "Photos": [
+            {"filename": "item03_plane_overview.jpg", "slot": 1, "caption": "Overview", "is_primary": true},
+            {"filename": "item03_plane_mark.jpg", "slot": 2, "caption": "Maker's Mark", "crop_mode": "freeform", "crop_x1": 0.25, "crop_y1": 0.30, "crop_x2": 0.80, "crop_y2": 0.70}
+          ],
+          "Object Type": "Tool",
+          "Date Made": {"date": "1920", "circa": true},
+          "Maker": "Stanley Rule & Level Co.",
+          "Materials": ["Wood", "Steel", "Iron"],
+          "Origin": "New Britain, CT",
+          "Height": 6.0,
+          "Width": 24.0,
+          "Depth": 6.5,
+          "Weight": 1800,
+          "Inscriptions": [
+            {
+              "Text": "STANLEY / NO. 4 / MADE IN U.S.A.",
+              "Position": "Cast into the body, behind the frog",
+              "Script": "Foundry cast",
+              "Legibility": "Clear"
+            }
+          ],
+          "Functional": true,
+          "Popularity": 42,
+          "Donor": "Hiram Davies",
+          "Accession Date": "2022-06-01",
+          "Provenance": "<p>Owned by Ellis Davies at the Riverside Millworks from approximately 1920, passed to his son Walter, then to Walter's grandson Hiram. Blade sharpened and oiled regularly through 2020.</p>",
+          "External Record": {
+            "url": "https://en.wikipedia.org/wiki/Stanley_Works",
+            "title": "Stanley Works — Wikipedia",
+            "description": "Background on the historical manufacturer."
+          },
+          "Notes": "<p>The <em>Maker</em> field points to a real historical manufacturer (Stanley Rule & Level Co.); the Maker subcat entry carries the logo photo. The Maker's <em>Workshop Location</em> field links to the <em>Location</em> subcat (New Britain, CT) — the same namespace used by Artifact's <em>Origin</em> field, demonstrating subcat-namespace sharing.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Hand-drawn Riverside town plan",
+          "Accession Number": "RHS.2015.004",
+          "Photos": [
+            {"filename": "item04_map_scan.jpg", "slot": 1, "caption": "Overview", "is_primary": true, "rotation": 90, "crop_mode": "deskew", "deskew": {"tl": {"x": 0.08, "y": 0.06}, "tr": {"x": 0.93, "y": 0.09}, "br": {"x": 0.91, "y": 0.94}, "bl": {"x": 0.10, "y": 0.92}}}
+          ],
+          "Object Type": "Map",
+          "Date Made": "1903",
+          "Materials": ["Paper", "Ink"],
+          "Origin": "Van Bergen Schoolhouse",
+          "Height": 52.0,
+          "Width": 72.0,
+          "Inscriptions": [
+            {
+              "Text": "Plan of Riverside Village, drawn by A. Van Bergen, 1903",
+              "Position": "Cartouche, lower-right",
+              "Script": "Drafting hand",
+              "Legibility": "Clear"
+            }
+          ],
+          "Functional": false,
+          "Popularity": 65,
+          "Donor": "Riverside Public School",
+          "Accession Date": "2015-08-20",
+          "Provenance": "<p>Drawn by Arthur Van Bergen, district surveyor and schoolmaster, for use as a teaching aid at the Van Bergen Schoolhouse. Recovered during the 2014 Riverside Public School renovation, folded into a geography textbook.</p>",
+          "Reference Scan": {
+            "url": "https://example.org/scans/riverside-town-plan-1903.pdf",
+            "provider": "example.org",
+            "filename": "riverside-town-plan-1903.pdf"
+          },
+          "External Record": {
+            "url": "https://example.org/archives/van-bergen/maps/1903",
+            "title": "Van Bergen Cartographic Papers — 1903 series",
+            "description": "External archive of related survey sketches."
+          },
+          "Display Location": {"lat": 42.3311, "lng": -74.0168, "label": "Gallery 2, Case 4"},
+          "Notes": "<p>This item demonstrates the <code>deskew</code> crop mode — the photograph of the map was taken at an angle and the bundle declares four corner points for perspective correction. A conformant L2+ renderer generates a rectified thumbnail server-side; an L1 renderer displays the uncorrected image with a visual indicator.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Van Bergen family rotary telephone",
+          "Accession Number": "RHS.2017.005",
+          "Photos": [
+            {"filename": "item05_phone_front.jpg", "slot": 1, "caption": "Overview", "is_primary": true},
+            {"filename": "item05_phone_base.jpg", "slot": 2, "caption": "Detail"},
+            {"filename": "item05_phone_handset.jpg", "slot": 3, "caption": "Reverse"}
+          ],
+          "Object Type": "Communications",
+          "Date Made": {"start": "1955", "end": "1960"},
+          "Maker": "Riverside Telephone & Signal Co.",
+          "Materials": ["Bakelite", "Steel", "Brass"],
+          "Origin": "Riverside Dairy",
+          "Height": 14.5,
+          "Width": 21.0,
+          "Depth": 21.0,
+          "Weight": 2400,
+          "Inscriptions": [
+            {
+              "Text": "RTSCo. 55-RD",
+              "Position": "Base plate, underside",
+              "Script": "Ink stamp",
+              "Legibility": "Clear"
+            }
+          ],
+          "Functional": true,
+          "Popularity": 58,
+          "Donor": "Eloise Van Bergen",
+          "Accession Date": "2017-11-14",
+          "Purchase Price Range": {
+            "low": {"amount": 40, "currency": "USD"},
+            "high": {"amount": 120, "currency": "USD"}
+          },
+          "Provenance": "<p>Used in the Van Bergen kitchen from approximately 1956 until the line was discontinued in 1983. Eloise Van Bergen kept it on a shelf as a decoration thereafter. Functional when tested on donation — dial tone produced, rotary dial returns correctly.</p>",
+          "Notes": "<p>This item exercises <code>range</code> on both <em>Date Made</em> and <em>Purchase Price Range</em>.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": {
+            ".context": "heritage-catalog",
+            ".machine-translate": "Never",
+            ".en": "Field-recorded lullaby sheet music",
+            ".fr": "Partition d'une berceuse transcrite sur le terrain"
+          },
+          "Accession Number": "RHS.2015.006",
+          "Photos": [
+            {"filename": "item06_lullaby_sheet.jpg", "slot": 1, "caption": "Overview", "is_primary": true}
+          ],
+          "Object Type": "Sheet Music",
+          "Date Made": "1898",
+          "Materials": ["Paper", "Ink"],
+          "Origin": "Van Bergen Schoolhouse",
+          "Height": 30.5,
+          "Width": 23.0,
+          "Inscriptions": [
+            {
+              "Text": "Transcribed from the singing of Mrs. M. Davies, 11 March 1898",
+              "Position": "Top margin",
+              "Script": "Schoolmaster's hand",
+              "Legibility": "Clear"
+            }
+          ],
+          "Functional": false,
+          "Popularity": 30,
+          "Donor": "Riverside Public School",
+          "Accession Date": "2015-08-20",
+          "Provenance": {
+            ".machine-translate": "Never",
+            ".en": "<p>One of three lullabies Arthur Van Bergen transcribed from Mrs. Martha Davies, a parent of one of his students, in March 1898. The manuscript is the only written record of the tune. The words — a mixture of English and nonsense syllables — should be preserved as written.</p>"
+          },
+          "Notes": "<p>This item demonstrates v1.4-draft polymorphic translatable fields: the <em>Title</em> carries an English and French variant, plus <code>.context</code> (<em>heritage-catalog</em>) to guide human translators, plus a <code>.machine-translate: \"Never\"</code> policy. A conformant implementation must not auto-translate the title or the provenance narrative.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Riverside Dairy milk bottle",
+          "Accession Number": "RHS.2018.007",
+          "Photos": [
+            {"filename": "item07_milk_bottle.jpg", "slot": 1, "caption": "Overview", "is_primary": true, "crop_mode": "freeform", "crop_x1": 0.20, "crop_y1": 0.05, "crop_x2": 0.80, "crop_y2": 0.95}
+          ],
+          "Object Type": "Container",
+          "Date Made": {"date": "1940", "circa": true},
+          "Maker": "Riverside Dairy Bottling",
+          "Materials": ["Glass"],
+          "Origin": "Riverside Dairy",
+          "Height": 24.0,
+          "Case Diameter Range": {"min": 7.5, "max": 7.8},
+          "Weight": 520,
+          "Inscriptions": [
+            {
+              "Text": "RIVERSIDE DAIRY / ADAIR CO.",
+              "Position": "Embossed on shoulder",
+              "Script": "Raised glass lettering",
+              "Legibility": "Clear"
+            }
+          ],
+          "Functional": true,
+          "Popularity": 18,
+          "Donor": "Riverside Heritage Society Trust",
+          "Accession Date": "2018-04-10",
+          "Purchase Price Range": {
+            "low": {"amount": 5, "currency": "USD"},
+            "high": {"amount": 15, "currency": "USD"}
+          },
+          "Provenance": "<p>Purchased at a 2018 estate sale near the former dairy site. No direct documentation of prior ownership. The <em>Origin</em> field links through the <em>Location</em> subcat to <em>Adair County</em> (Region), demonstrating recursive-subcat Enumerated relationships.</p>",
+          "Notes": "<p>Exercises <code>range</code> on <code>Number</code> via <em>Case Diameter Range</em>.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Cartwright wedding-quilt panel",
+          "Accession Number": "RHS.2019.008",
+          "Photos": [
+            {"filename": "item08_quilt_overview.jpg", "slot": 1, "caption": "Overview", "is_primary": true},
+            {"filename": "item08_quilt_detail.jpg", "slot": 2, "caption": "Detail"}
+          ],
+          "Object Type": "Textile",
+          "Date Made": "1922",
+          "Materials": ["Cotton", "Wool", "Silk"],
+          "Origin": "Cartwright Family Home",
+          "Height": 88.0,
+          "Width": 74.0,
+          "Inscriptions": [
+            {
+              "Text": "A.C. + J.R. / 14 June 1922",
+              "Position": "Centre medallion, embroidered",
+              "Script": "Chain-stitch",
+              "Legibility": "Clear",
+              "bbox": {"x": 0.42, "y": 0.45, "w": 0.18, "h": 0.12, "photo_slot": 1}
+            },
+            {
+              "Text": "Tree of life",
+              "Position": "Lower-left motif",
+              "Script": "Appliqué",
+              "Legibility": "Intact",
+              "bbox": {"x": 0.12, "y": 0.62, "w": 0.24, "h": 0.30, "photo_slot": 1}
+            },
+            {
+              "Text": "Pair of doves",
+              "Position": "Upper-right motif",
+              "Script": "Appliqué",
+              "Legibility": "Intact",
+              "bbox": {"x": 0.60, "y": 0.18, "w": 0.28, "h": 0.22, "photo_slot": 1}
+            }
+          ],
+          "Functional": false,
+          "Popularity": 92,
+          "Donor": "Helen Cartwright",
+          "Accession Date": "2023-02-04",
+          "Exhibition Dates": {"start": "2024-03-15", "end": "2024-10-31"},
+          "Provenance": "<p>Made by Anna Cartwright (née Osgood) and two sisters to mark her June 1922 marriage to James Cartwright. Displayed at the family home until Helen Cartwright's 2023 donation.</p>",
+          "Notes": "<p>The <em>Popularity</em> field carries <code>scorable: \"popularity\"</code> — on a kiosk deployment, high-popularity items rotate to the top of the display cycle. The quilt is the most-requested item in visitor surveys.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "1928 presidential campaign button",
+          "Accession Number": "RHS.2020.009",
+          "Photos": [
+            {"filename": "item09_campaign_button.jpg", "slot": 1, "caption": "Overview", "is_primary": true}
+          ],
+          "Object Type": "Ephemera",
+          "Date Made": "1928",
+          "Maker": "Victor Campaign Supply",
+          "Materials": ["Celluloid", "Steel", "Paper"],
+          "Height": 3.2,
+          "Width": 3.2,
+          "Depth": 0.4,
+          "Case Diameter Range": {"min": 31.8, "max": 32.0},
+          "Weight": 4,
+          "Inscriptions": [
+            {
+              "Text": "PROGRESS / 1928",
+              "Position": "Front, over central image",
+              "Script": "Lithographed",
+              "Legibility": "Clear"
+            }
+          ],
+          "Functional": false,
+          "Popularity": 22,
+          "Donor": "Margaret Olivares",
+          "Accession Date": "2020-09-08",
+          "Provenance": "<p>One of a set of twelve buttons from the Olivares family attic. The design is generic — no candidate name appears — suggesting it was produced as a reusable template stock item.</p>",
+          "External Record": {
+            "url": "https://example.org/archives/campaign-ephemera/1928",
+            "title": "1928 Campaign Ephemera Index — example.org",
+            "description": "Cross-reference index of 1928 US political buttons."
+          },
+          "Notes": "<p>Celluloid housing shows early-stage crazing — separation from other celluloid items is recommended (see <em>Material: Celluloid</em> preservation notes).</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Ice harvest pick",
+          "Accession Number": "RHS.2022.010",
+          "Photos": [
+            {"filename": "item10_ice_pick.jpg", "slot": 1, "caption": "Overview", "is_primary": true, "rotation": 270}
+          ],
+          "Object Type": "Tool",
+          "Date Made": {"date": "1915", "circa": true},
+          "Maker": "Quigley Tool Works",
+          "Materials": ["Wood", "Iron"],
+          "Origin": "Riverside Lake",
+          "Height": 120.0,
+          "Width": 18.0,
+          "Weight": 2200,
+          "Inscriptions": [],
+          "Functional": true,
+          "Popularity": 48,
+          "Donor": "Hiram Davies",
+          "Accession Date": "2022-06-01",
+          "Provenance": "<p>Used on Riverside Lake during the commercial ice-harvesting seasons of 1915–1928. Acquired by Ellis Davies from a retired ice-cutter named Pomeroy, then passed through the family.</p>",
+          "Display Location": {"lat": 42.3311, "lng": -74.0168, "label": "Gallery 3, Wall A"},
+          "Notes": "<p>The photograph was taken horizontally but the object is most legible vertical; the bundle declares <code>rotation: 270</code> on the photo-item edge. <em>Date Made</em> is marked <code>primary: true</code> on the Artifact template, telling date-forward renderers which field to treat as the primary axis.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Letter from Private Cartwright to his sister",
+          "Accession Number": "RHS.2023.011",
+          "Photos": [
+            {"filename": "item11_letter.jpg", "slot": 1, "caption": "Overview", "is_primary": true}
+          ],
+          "Object Type": "Document",
+          "Date Made": "1917-09-18",
+          "Materials": ["Paper", "Ink"],
+          "Origin": "Cartwright Family Home",
+          "Height": 25.5,
+          "Width": 20.0,
+          "Functional": false,
+          "Popularity": 70,
+          "Donor": "Helen Cartwright",
+          "Accession Date": "2023-06-20",
+          "Provenance": {
+            ".machine-translate": "Never",
+            ".en": "<p>Written by Private James Cartwright from a training camp in September 1917, three weeks before his regiment shipped overseas. Addressed to his younger sister Evelyn. Kept by Evelyn until her death in 1991, then held by her daughter Helen, who donated the letter with a transcription.</p><p>Helen's accompanying note: \"Jim never came home. Evvie kept this letter in the drawer next to her bed for seventy-four years. I want it somewhere safe now.\"</p>"
+          },
+          "Reference Scan": {
+            "url": "https://example.org/scans/cartwright-letter-1917.pdf",
+            "provider": "example.org",
+            "filename": "cartwright-letter-1917.pdf"
+          },
+          "Notes": "<p>The <em>Provenance</em> field is marked <code>.machine-translate: \"Never\"</code>. The family's phrasing (\"Jim never came home\") is a historical quotation in the donor's own words; auto-translation would produce plausible-looking but false paraphrases. Conformant renderers display the primary-locale variant even when the viewer's locale is absent.</p>"
+        }
+      },
+
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": "Riverside Opera House playbill, 1931",
+          "Accession Number": "RHS.2020.012",
+          "Photos": [
+            {"filename": "item12_playbill_front.jpg", "slot": 1, "caption": "Overview", "is_primary": true},
+            {"filename": "item12_playbill_back.jpg", "slot": 2, "caption": "Reverse"}
+          ],
+          "Object Type": "Playbill",
+          "Date Made": "1931-10-03",
+          "Maker": "Victor Campaign Supply",
+          "Materials": ["Paper", "Ink"],
+          "Origin": "Riverside Opera House",
+          "Height": 28.0,
+          "Width": 20.0,
+          "Inscriptions": [
+            {
+              "Text": "THE RIVERSIDE PLAYERS present / A NIGHT AT THE CROSSROADS / Saturday Oct. 3rd, 1931 — 8pm",
+              "Position": "Front, centre",
+              "Script": "Lithographed display type",
+              "Legibility": "Clear"
+            }
+          ],
+          "Functional": false,
+          "Popularity": 54,
+          "Donor": "Margaret Olivares",
+          "Accession Date": "2020-09-08",
+          "Provenance": "<p>One of seventeen playbills recovered from the Olivares family attic, spanning 1922–1934. The Riverside Opera House closed in 1934 (the last three years of its life are thinly documented); this playbill dates from the venue's final active season.</p>",
+          "External Record": {
+            "url": "https://example.org/archives/riverside-opera/1931-season",
+            "title": "Riverside Opera House — 1931 Season",
+            "description": "External archive listing for the 1931 season."
+          },
+          "Notes": "<p>The <em>Origin</em> field exercises the <em>Location</em> subcat fully: Riverside Opera House carries an address, GeoLocation, Operating Years range, a Region link (Adair County), a Photo of the building, and narrative notes.</p>"
+        }
+      }
+    ]
+  }
+}
