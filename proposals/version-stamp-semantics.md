@@ -1,15 +1,26 @@
 # Proposal: Version-stamp semantics — the `catdef` stamp is a strict feature-set declaration
 
 **Status:** Draft
-**Target version:** 1.3.1 (patch — clarifies writer obligation; reader behavior under forward-compat is already defined)
+**Target version:** 1.4 (minor — introduces new writer-MUST, reader-MAY, and reader-MUST-NOT behaviors around version stamping)
 **Origin:** [canonical/AUTHORING_FEEDBACK.md CA-002](../canonical/AUTHORING_FEEDBACK.md) (first-implementor feedback during canonical authoring)
-**Conformance level affected:** Writer-side conformance at all levels; reader-side unchanged.
+**Strategist decision:** [decisions/CA-002.md](../decisions/CA-002.md) — accept with modifications; this revision applies them.
+**Conformance level affected:** Writer-side conformance at all levels; reader-side unchanged (graceful-ignore on unknown fields, MAY warn, MUST NOT reject).
 
 ## Summary
 
 Clarify the semantics of the top-level `catdef` version stamp. Today the spec defines what version stamps *are* (semver string) and how runtimes should handle version *comparison* (major bump triggers refuse-to-render), but is silent on what a writer *commits to* by declaring a particular stamp. This leads to ambiguity when a document mixes versions — e.g., declares `"catdef": "1.3"` while using a v1.4-only feature like `primaryLocale`.
 
-This proposal establishes the rule: **the `catdef` stamp MUST declare the minimum version that defines every feature used in the document.** Writers auto-select or explicitly choose the correct stamp; a tool that emits `"catdef": "1.3"` for a document using `primaryLocale` is non-conformant. Reader behavior is unchanged — readers continue to gracefully ignore unknown fields per value #5.
+This proposal establishes three new normative rules:
+
+1. **Writer-MUST (strict).** The `catdef` stamp MUST declare the minimum version that defines every feature used in the document. A tool that emits `"catdef": "1.3"` for a document using `primaryLocale` is non-conformant.
+2. **Reader-MAY (lenient warn).** A reader MAY warn on stamp/feature mismatch but MUST continue to render.
+3. **Reader-MUST-NOT (no rejection).** A reader MUST NOT reject a document solely because its stamp doesn't match its features.
+
+Writer-strict / reader-lenient is Postel's Law applied to version stamping: writers must be disciplined so the stamp is a reliable ecosystem signal; readers must be robust so users are never blocked by another author's tooling bug.
+
+These are **new normative obligations**, not clarifications of existing behavior — which is why this proposal targets v1.4 rather than a 1.3.x patch. A writer that correctly passed conformance at v1.3 can become non-conformant at v1.4 without changing a line of code, solely because the stamping rule is new. Per value #5 (forward compatibility), a new conformance requirement is minor-level.
+
+This proposal is coordinated with CA-001, CA-003, and the i18n / `primaryLocale` work as part of the v1.4 release bundle.
 
 ## Motivation
 
@@ -61,6 +72,10 @@ Append to the existing §Versioning section:
 > - A reader MUST NOT reject a mis-stamped document purely because of the stamp mismatch. Reader-side robustness protects users whose authoring tools are bug-stamped.
 >
 > The asymmetry is deliberate: writers must be strict so the ecosystem has reliable stamps to rely on; readers must be lenient so users are never blocked by another author's tooling bug.
+>
+> ### Canonical and reference-document exception
+>
+> During active development of an unreleased minor version, the canonical reference file(s) and normative reference documentation MAY declare the target version stamp (e.g., `"catdef": "1.4"`) before that version is released. This exception applies only to the canonical and to documents explicitly identified as reference documentation by the catdef maintainers. All other writers MUST NOT emit unreleased-version stamps. On release of the target minor, the exception terminates for that version — the canonical and references become subject to the standard writer-obligation rule.
 
 ### Add a non-normative feature-version index
 
@@ -68,13 +83,15 @@ Add a new section or appendix to CATDEF_SPEC.md, `### Feature-Version Index`, li
 
 | Version | Features introduced |
 |---------|---------------------|
-| 1.0 | Core structure: `catdef`, `product`, `requires`, `hints`, `templates`, `settings`, `data`. Field types: String, Integer, RichText, Enumerated, Photo. |
-| 1.1 | *(To be backfilled by maintainers during the editorial pass. This table is a seed, not authoritative.)* |
-| 1.2 | *(To be backfilled.)* |
-| 1.3 | Subcats (including Photo fields and recursive Enumerated edges), `inherits_from`, `views` (primary_axis, modes, default_icon, kiosk_layout, mode_config), `themes`, `embed`, About-page sections, extended `product` fields, scorable, Number/Money/Date range modifier, deskew photo transform, Table bbox spatial linking, String formats, Money, Boolean, GeoLocation, CloudFile, URL, Date types. |
-| 1.4 (proposed) | `primaryLocale`, polymorphic translatable fields, `.context` and `.machine-translate` policies, MCP conformance levels (M1/M2/M3), canonical file artifact, reference implementation intent. |
+| 1.0 | Core structure: `catdef`, `product`, `requires`, `hints`, `templates`, `settings`, `data`. Field types: `String`, `Integer`, `RichText`, `Enumerated`, `Photo`. Inline and named `theme` on `product`. Conformance test suite scaffolding. |
+| 1.1 | Field types added: `Number`, `GeoLocation`, `Date`, `Money`, `Boolean`, `CloudFile`, `URL`, `Table`. String `format` attribute (e.g. `isbn`, `vin`, `sku`). Field-def attributes (`unique`, `min`/`max`, `format`, `unit`, `precision`, `required`, `importance`, `widget`, `multi`, `placeholder`, `sort_order`). Canonical file extensions formalized: `.openthing`, `.opencatalog`, `.catdef`. OpenThing + OpenCatalog conceptual framing. Kiosk mode (view modifier). Table `bbox` spatial linking between rows and photo regions. Photo labels (suggested tags on photo galleries). `max_items` attribute on `Photo` and `CloudFile`. Photo transforms: `crop`, `rotate`, `deskew`. |
+| 1.2 | Subcats (`subcats.<name>` with `field_defs` and seeded `values`) — enriched Enumerated values carrying their own per-value field data. |
+| 1.3 | `inherits_from` (catalog inheritance from partner/model catalogs). `views` declaration (`primary_axis`, `modes`, `default_icon`, `kiosk_layout`, `mode_config`). `embed` declaration for iframe embedding. Extended `product` fields (`phone`, `website`, `address`, `hours`, `social`, `sections`) — About page. `scorable` field attribute (geo/time-weighted sorting). `range: true` modifier on `Number`, `Money`, `Date`. Subcat enrichments: `Photo` fields inside subcats; recursive Enumerated edges (a subcat field referencing another subcat by target name). |
+| 1.4 (proposed) | `primaryLocale` (i18n root). Polymorphic translatable fields. Closed-vocabulary policies: `.context`, `.machine-translate`. MCP conformance levels (M1 / M2 / M3) and reference-server design (non-normative). CATIO outer-archive extension rule — ZIP bundles SHOULD use `.opencatalog` / `.openthing` outer extension with content-sniffing (CA-001). Subcat value resolution — `subcats.<target>.values` authoritative when declared (CA-003). Writer-strict / reader-lenient version-stamping rule (this proposal, CA-002). Canonical reference file artifact. |
 
-This index is non-normative in the sense that the authoritative definition of when a feature was introduced is its merge into the spec text at a tagged version — but the index is the fast-path lookup for writers and validators.
+This index is non-normative in the sense that the authoritative definition of when a feature was introduced is its merge into the spec text at a tagged version — but the index is the fast-path lookup for writers and validators, and is complete enough to enforce the writer-obligation rule.
+
+Methodology note: the v1.1 and v1.2 columns were backfilled by archaeology against `git log -p -- CATDEF_SPEC.md`, using the three version-bump commits (`521c7a0` "v1.1: Number, GeoLocation, String formats, field-def attributes", `f599254` "v1.2: Add Subcats", `3eaa477` "v1.3: inheritance, views, range, scorable, embed, About") as version-boundary markers. Every commit between two boundary markers ships in the later of the two versions. Sub-feature refinements that pre-date the boundary but are documented at later versions (e.g., photo-label suggestions, kiosk view modifier) are attributed to the version at which the boundary was crossed.
 
 ## Backward compatibility
 
@@ -128,18 +145,20 @@ Not applicable. Version stamping is a core mechanism, not an extension.
 
 ## Open questions
 
-1. **Which version introduced which feature — backfill.** The feature-version index above is a seed. The v1.1 and v1.2 columns are left for maintainer backfill during the editorial pass. Does that backfill exist in any historical document, or does it need archaeology against git history? Recommendation: spend a day with `git log -p -- CATDEF_SPEC.md` to reconstruct; once built, the index becomes self-maintaining at each minor release.
+1. **Sub-feature granularity.** A feature like "Table with bbox" is technically two things: Table type (v1.1) and `bbox` sub-feature (also v1.1 in the current archaeology, but a hypothetical future sub-feature might cross a version boundary). Does the index need sub-rows? Recommendation: no — spell out sub-features as their own rows when they're independently version-gated. Typical v1.4 additions are flat enough not to need this.
 
-2. **Sub-feature granularity.** A feature like "Table with bbox" is technically two things: Table type (pre-1.3) and bbox sub-feature (1.3). Does the index need sub-rows? Recommendation: no — spell out sub-features as their own rows when they're independently version-gated. Typical v1.4 additions will be simpler.
+2. **Writer-side enforcement teeth.** "A writer is non-conformant if it emits a mis-stamped document" — but there's no central writer-conformance registry. Who enforces? Recommendation: this is enforceable at the document level via conformance tests the writer runs before release; institutional enforcement is the same as any other catdef writer-conformance claim (they self-assert, and their output is inspectable by anyone).
 
-3. **Prerelease/draft stamps.** A document stamped `"catdef": "1.4-draft"` or `"catdef": "1.4-rc1"`: permitted or not? Semver allows prerelease suffixes, but a catdef ecosystem that speaks only released versions is simpler. Recommendation: disallow prerelease stamps in conformant writers; readers tolerate them as if the base version were declared. *(The current canonical declares `"catdef": "1.4"` directly, so this is not yet an acute issue.)*
+Resolved during CA-002 revision:
 
-4. **Writer-side enforcement teeth.** "A writer is non-conformant if it emits a mis-stamped document" — but there's no central writer-conformance registry. Who enforces? Recommendation: this is enforceable at the document level via conformance tests the writer runs before release; institutional enforcement is the same as any other catdef writer-conformance claim (they self-assert, and their output is inspectable by anyone).
+- Feature-version index backfill (prior Open Question 1) → backfilled in the Feature-Version Index above; archaeology methodology noted.
+- Prerelease/draft stamps (prior Open Question 3) → resolved via the Canonical and reference-document exception in §Writer obligation on version stamping. Canonical MAY declare target version pre-release; all other writers MUST NOT.
 
 ## Requested maintainer actions
 
 - Sign off on strict writer-side stamp correctness as the rule, and reader-side leniency unchanged.
-- Sign off on the asymmetric framing (writers MUST; readers SHOULD-warn-MAY-ignore).
-- Decide the feature-version index's home: inline in CATDEF_SPEC.md as an appendix, or a separate `FEATURE_INDEX.md`.
-- Agree a date to backfill the v1.1 / v1.2 columns of the feature-version index (not blocking for this proposal's acceptance).
+- Sign off on the asymmetric framing (writers MUST; readers MAY-warn, MUST-NOT-reject).
+- Sign off on the Canonical and reference-document exception scoped to documents explicitly identified as reference documentation by the catdef maintainers; exception terminates on release of the target minor.
+- Confirm the feature-version index's home: inline in CATDEF_SPEC.md as an appendix (per the strategist decision).
+- Review the backfilled v1.1 / v1.2 / v1.3 columns of the feature-version index. Methodology is noted below the table; corrections welcome during editorial pass.
 - Approve the CATDEF_SPEC.md §Versioning edits as drafted above (to be applied in a follow-on editorial PR once this proposal is accepted).
