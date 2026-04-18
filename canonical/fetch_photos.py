@@ -131,12 +131,83 @@ def fetch_unsplash(query, orientation):
     }
 
 
+def generate_stanley_placeholder(dest_path):
+    """Generate the Stanley trademark placeholder image.
+
+    The Stanley Rule & Level Co. entry in the Maker subcat is the one real-brand
+    reference in the canonical. Rather than fetch a random photo to stand in for
+    the trademark (which would misrepresent a real company's brand), this
+    function renders a neutral typeset card clearly labelled PLACEHOLDER.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    W, H = 480, 240
+    img = Image.new("RGB", (W, H), color=(245, 239, 226))
+    draw = ImageDraw.Draw(img)
+
+    font_lg = font_sm = font_tiny = None
+    for candidate in ("C:/Windows/Fonts/georgiab.ttf", "C:/Windows/Fonts/georgia.ttf",
+                      "C:/Windows/Fonts/timesbd.ttf", "C:/Windows/Fonts/times.ttf"):
+        if os.path.exists(candidate):
+            font_lg = ImageFont.truetype(candidate, 30)
+            break
+    for candidate in ("C:/Windows/Fonts/georgia.ttf", "C:/Windows/Fonts/times.ttf"):
+        if os.path.exists(candidate):
+            font_sm = ImageFont.truetype(candidate, 14)
+            font_tiny = ImageFont.truetype(candidate, 10)
+            break
+    if not font_lg:
+        font_lg = ImageFont.load_default()
+    if not font_sm:
+        font_sm = ImageFont.load_default()
+    if not font_tiny:
+        font_tiny = ImageFont.load_default()
+
+    ink = (42, 31, 18)
+    muted = (122, 106, 82)
+
+    def centered(y, text, font, fill):
+        bbox = draw.textbbox((0, 0), text, font=font)
+        draw.text(((W - (bbox[2] - bbox[0])) // 2, y), text, font=font, fill=fill)
+
+    draw.rectangle([(12, 12), (W - 12, H - 12)], outline=ink, width=2)
+    draw.rectangle([(20, 20), (W - 20, H - 20)], outline=ink, width=1)
+    centered(38, "STANLEY", font_lg, ink)
+    centered(76, "RULE & LEVEL CO.", font_lg, ink)
+    draw.line([(W // 2 - 90, 124), (W // 2 + 90, 124)], fill=muted, width=1)
+    centered(132, "NEW BRITAIN, CONN.", font_sm, muted)
+    centered(154, "EST. 1857", font_sm, muted)
+    centered(205, "PLACEHOLDER — catdef canonical reference bundle", font_tiny, muted)
+
+    img.save(dest_path, quality=88, optimize=True)
+    return {
+        "provider": "generated",
+        "provider_id": "placeholder-stanley-v1",
+        "photographer": "catdef-maintainer (generated placeholder)",
+        "photographer_url": "https://catdef.org",
+        "source_url": "canonical/fetch_photos.py (generate_stanley_placeholder)",
+        "image_url": "",
+        "width": W,
+        "height": H,
+        "query": None,
+        "license": "MIT (part of the canonical bundle authored by catdef-maintainer)",
+        "note": "Generated via PIL. Typeset reproduction of STANLEY RULE & LEVEL CO. on the bundle theme background; clearly labelled PLACEHOLDER so it cannot be mistaken for an authentic Stanley trademark.",
+    }
+
+
 def main():
     PHOTOS.mkdir(parents=True, exist_ok=True)
 
     manifest = {}
     if MANIFEST.exists():
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+
+    # Generated placeholder (no API needed).
+    placeholder_dest = PHOTOS / "maker_stanley_logo.jpg"
+    if not placeholder_dest.exists() or "maker_stanley_logo.jpg" not in manifest:
+        print("  generate maker_stanley_logo.jpg [placeholder]")
+        manifest["maker_stanley_logo.jpg"] = generate_stanley_placeholder(placeholder_dest)
+        MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
 
     errors = []
     for filename, provider, query, orientation in TARGETS:

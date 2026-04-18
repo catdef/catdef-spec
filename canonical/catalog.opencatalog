@@ -297,7 +297,8 @@
           "Trade": "Toolmaker",
           "Active Years": {"start": "1857", "end": "1920"},
           "Workshop Location": "New Britain, CT",
-          "Notes": "<p>Real historical manufacturer, founded 1857 in New Britain, Connecticut. Acquired by Stanley Works in 1920 and merged into the modern Stanley Black & Decker. Referenced here in its historical form as the Bailey-pattern plane maker. The Maker subcat defines a <em>Logo</em> Photo field but this entry leaves it empty — the <em>Logo</em> slot is declared to demonstrate that subcat Photo fields are supported, but using a generic stock image to stand in for a real company's trademark would misrepresent the historical record. Subcat Photo fields are exercised with real imagery by the Location subcat (Opera House, Van Bergen Schoolhouse).</p>"
+          "Logo": {"filename": "maker_stanley_logo.jpg"},
+          "Notes": "<p>Real historical manufacturer, founded 1857 in New Britain, Connecticut. Acquired by Stanley Works in 1920 and merged into the modern Stanley Black & Decker. Referenced here in its historical form as the Bailey-pattern plane maker. The <em>Logo</em> image is a generated placeholder — a simple typeset reproduction of the company name on the bundle's theme background, clearly labelled <em>PLACEHOLDER</em> so no reader mistakes it for an authentic trademark. See <code>photos_manifest.json</code> for placeholder provenance.</p>"
         },
         "Osgood Manufacturing Co.": {
           "Trade": "Tinplate-toy manufacturer",

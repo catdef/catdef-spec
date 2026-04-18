@@ -262,5 +262,18 @@
     "height": 4000,
     "query": "vintage handbill paper print",
     "license": "Pexels License (https://www.pexels.com/license/)"
+  },
+  "maker_stanley_logo.jpg": {
+    "provider": "generated",
+    "provider_id": "placeholder-stanley-v1",
+    "photographer": "catdef-maintainer (generated placeholder)",
+    "photographer_url": "https://catdef.org",
+    "source_url": "canonical/fetch_photos.py (generate_stanley_placeholder)",
+    "image_url": "",
+    "width": 480,
+    "height": 240,
+    "query": null,
+    "license": "MIT (part of the canonical bundle authored by catdef-maintainer)",
+    "note": "Generated via PIL. Typeset reproduction of STANLEY RULE & LEVEL CO. on the bundle theme background; clearly labelled PLACEHOLDER so it cannot be mistaken for an authentic Stanley trademark."
   }
 }
