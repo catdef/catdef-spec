@@ -158,9 +158,10 @@ A fresh Claude session doing catdef maintenance work performs these steps, in or
 4. Read CATDEF_SPEC.md at least to the table of contents; read in full on any non-trivial proposal.
 5. Read CATIO_SPEC.md if the proposal touches transport.
 6. Read MCP_REFERENCE.md if the proposal touches AI-agent access.
-7. Scan `conformance/` to understand the existing test patterns.
-8. Scan recent commits (`git log --oneline -20`) to pick up in-flight context.
-9. If available, load the latest bundled export of prior catdef-maintenance sessions.
+7. **Scan `decisions/` for pending strategist decisions with build directives addressed to the maintainer role.** For each decision, determine whether the directive has already been executed (cross-reference with open/merged PRs and branch state). Pending directives MUST be executed before other work unless the human maintainer has reprioritized them. A decision marked "Accept" or "Accept with modifications" is an authoritative instruction to the maintainer session; a decision marked "Reject" is a disposition artifact and requires no action.
+8. Scan `conformance/` to understand the existing test patterns.
+9. Scan recent commits (`git log --oneline -20`) to pick up in-flight context.
+10. If available, load the latest bundled export of prior catdef-maintenance sessions.
 
 Only then, start the work. A maintainer session that drafts before reading produces worse drafts and spends review budget less well.
 
