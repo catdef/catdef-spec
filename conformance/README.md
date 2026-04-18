@@ -6,7 +6,7 @@ This directory contains the official conformance tests for catdef renderers. The
 
 ```
 conformance/
-  fixtures/          .thingalog files: valid, invalid, and edge-case
+  fixtures/          catdef files: valid, invalid, and edge-case
   test_parsing.py    catdef file parsing + validation
   test_fields.py     field type rendering (all field types)
   test_search.py     search, sort, filter behavior
@@ -25,7 +25,7 @@ pytest conformance/ -v
 
 Your renderer must:
 
-1. Accept a `.thingalog` file (or URL to one)
+1. Accept a catdef file (`.opencatalog`, `.openthing`, or `.catdef`) or URL to one
 2. Parse the catdef JSON according to [CATDEF_SPEC.md](../CATDEF_SPEC.md)
 3. Render items in a grid/list with search, sort, and filter
 4. Declare its conformance level (L1-L4)
@@ -33,14 +33,12 @@ Your renderer must:
 
 ## Fixture files
 
-The `fixtures/` directory contains `.thingalog` files designed to exercise every corner of the spec:
+The `fixtures/` directory contains catdef files designed to exercise every corner of the spec:
 
-- `valid_minimal.thingalog` — smallest possible valid file
-- `valid_all_field_types.thingalog` — one field of every type
-- `valid_watches.thingalog` — real-world collection (12 items)
-- `invalid_no_catdef.thingalog` — missing catdef version
-- `invalid_bad_field_type.thingalog` — unrecognized field type
-- `invalid_circular_table.thingalog` — recursive Table field
+- `valid_minimal.opencatalog` — smallest possible valid file
+- `valid_all_field_types.opencatalog` — one field of every type
+- `invalid_no_catdef.catdef` — missing catdef version
+- `invalid_bad_field_type.catdef` — unrecognized field type
 
 ## Status
 

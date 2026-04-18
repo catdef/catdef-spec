@@ -40,13 +40,13 @@ A catdef MCP server is a process that:
 4. Optionally exposes MCP prompts for common AI-assisted workflows.
 5. Optionally uses MCP sampling to delegate AI inference back to the client.
 
-The server is a consumer of catdef, not a definer. When asked to return catalog state, it reads from whatever backing store it has (raw `.thingalog` file, SQLite, D1, graph DB); when asked to mutate, it applies the change to the backing store and re-validates.
+The server is a consumer of catdef, not a definer. When asked to return catalog state, it reads from whatever backing store it has (raw `.opencatalog` file, SQLite, D1, graph DB); when asked to mutate, it applies the change to the backing store and re-validates.
 
 ### 3.2 Transport
 
 Two transports are recommended:
 
-**Local stdio** — The server runs as a subprocess of the AI client, reads catdef files from the local filesystem, and communicates over stdin/stdout using JSON-RPC per the MCP wire protocol. This is the simplest deployment and the natural fit for a desktop user with `.thingalog` files on disk.
+**Local stdio** — The server runs as a subprocess of the AI client, reads catdef files from the local filesystem, and communicates over stdin/stdout using JSON-RPC per the MCP wire protocol. This is the simplest deployment and the natural fit for a desktop user with catdef files on disk.
 
 **HTTP (SSE or streamable HTTP)** — The server runs as a hosted service, accepts multiple concurrent clients, and authenticates each connection. This aligns with catdef conformance levels L2 and above, where a real backend exists.
 
@@ -56,8 +56,8 @@ A single reference implementation SHOULD support both transports behind the same
 
 The server accepts one or more *mounts* at startup. Each mount is a reference to a catdef source:
 
-- `file:///path/to/catalog.thingalog` — single file, read directly
-- `file:///path/to/dir/` — directory of `.thingalog` files, each mounted as a separate catalog
+- `file:///path/to/catalog.opencatalog` — single file, read directly
+- `file:///path/to/dir/` — directory of catdef files, each mounted as a separate catalog
 - `catio:///path/to/bundle.opencatalog` — CATIO bundled transport (ZIP), unpacked on mount
 - `https://host/api/catalog/{slug}` — live catalog served by an L2+ runtime
 - `db:runtime-specific-uri` — direct connection to a backing store (L3+)
@@ -225,7 +225,7 @@ A server that allows unauthenticated access to mutating tools is a security bug,
 
 ### 10.1 Local desktop: AI-assisted item creation
 
-User launches Claude Desktop with a local catdef MCP server configured to mount `~/collections/watches.thingalog`. User says: *"Add a 1965 Rolex Submariner reference 5513 to my watch catalog. It's in steel, 40mm case, I paid $3,200 and it's now worth about $15,000."*
+User launches Claude Desktop with a local catdef MCP server configured to mount `~/collections/watches.opencatalog`. User says: *"Add a 1965 Rolex Submariner reference 5513 to my watch catalog. It's in steel, 40mm case, I paid $3,200 and it's now worth about $15,000."*
 
 The client model:
 
@@ -253,7 +253,7 @@ User on a web client connects to an HTTP catdef MCP server for a public gallery 
 
 ### 10.3 Authoring validation
 
-A catalog author edits their `.thingalog` file by hand. Their IDE is connected to a stdio catdef MCP server.
+A catalog author edits their `.opencatalog` file by hand. Their IDE is connected to a stdio catdef MCP server.
 
 1. On save, the IDE calls `catdef_validate_catalog({catalog})` — server runs the conformance tests.
 2. Server reports: *"2 tests failed: unique constraint violated on SerialNumber; Photo transform rotation must be 0/90/180/270."*
@@ -289,5 +289,5 @@ This document is non-normative. Specifically:
 
 1. **Gather implementer signal.** Publish this draft; invite comments from Thingalog, PXMemo, dangerstorm, and any third-party catdef runtime team. The design should not land in stone without multi-implementer review.
 2. **Spec the filter grammar.** This is blocking concrete tool shapes.
-3. **Prototype a reference server.** Local stdio, L1 read-only, targeting Thingalog's file format. Publish as `catdef/catdef-mcp`.
+3. **Prototype a reference server.** Local stdio, L1 read-only, targeting the `.opencatalog` file format. Publish as `catdef/catdef-mcp`.
 4. **Iterate.** Treat v0.1 of this document as a discussion draft. Version it separately from the catdef spec.

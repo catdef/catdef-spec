@@ -108,7 +108,7 @@ def _load(name: str) -> dict:
 
 class TestValidPhotoTransforms:
     def test_valid_fixture_has_no_errors(self):
-        data = _load("valid_photo_transforms.thingalog")
+        data = _load("valid_photo_transforms.opencatalog")
         errors = validate_all_photos(data)
         assert errors == [], f"Unexpected errors: {errors}"
 
@@ -137,7 +137,7 @@ class TestValidPhotoTransforms:
 
 class TestInvalidRotation:
     def test_fixture_catches_45_degrees(self):
-        data = _load("invalid_photo_rotation.thingalog")
+        data = _load("invalid_photo_rotation.opencatalog")
         errors = validate_all_photos(data)
         assert any("rotation" in e for e in errors)
 
@@ -158,7 +158,7 @@ class TestInvalidCropMode:
 
 class TestFreeformCropBounds:
     def test_fixture_catches_inverted_bounds(self):
-        data = _load("invalid_photo_crop_bounds.thingalog")
+        data = _load("invalid_photo_crop_bounds.opencatalog")
         errors = validate_all_photos(data)
         assert any("crop_x1" in e and "crop_x2" in e for e in errors)
 
@@ -182,7 +182,7 @@ class TestFreeformCropBounds:
 
 class TestDeskew:
     def test_fixture_catches_missing_corner(self):
-        data = _load("invalid_deskew_missing_corner.thingalog")
+        data = _load("invalid_deskew_missing_corner.opencatalog")
         errors = validate_all_photos(data)
         assert any("bl" in e for e in errors)
 

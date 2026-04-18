@@ -1,8 +1,8 @@
 """
-Thingalog Conformance: catdef parsing tests.
+catdef Conformance: catdef parsing tests.
 
 A conformant renderer/parser must:
-- Accept valid .thingalog files
+- Accept valid catdef files
 - Reject files missing required fields
 - Handle all 13 field types
 - Validate the catdef version
@@ -22,7 +22,7 @@ VALID_FIELD_TYPES = {
 
 
 def load_fixture(name: str) -> dict:
-    """Load a .thingalog fixture file."""
+    """Load a catdef fixture file."""
     path = FIXTURES / name
     with open(path) as f:
         return json.load(f)
@@ -77,47 +77,47 @@ def validate_catdef(data: dict) -> list[str]:
 
 
 class TestValidFiles:
-    """Valid .thingalog files must parse without errors."""
+    """Valid catdef files must parse without errors."""
 
     def test_minimal(self):
-        data = load_fixture("valid_minimal.thingalog")
+        data = load_fixture("valid_minimal.opencatalog")
         errors = validate_catdef(data)
         assert errors == [], f"Unexpected errors: {errors}"
 
     def test_all_field_types(self):
-        data = load_fixture("valid_all_field_types.thingalog")
+        data = load_fixture("valid_all_field_types.opencatalog")
         errors = validate_catdef(data)
         assert errors == [], f"Unexpected errors: {errors}"
 
     def test_watches_sample(self):
         """The flagship sample file must be valid."""
-        path = FIXTURES.parent.parent / "samples" / "watches.thingalog"
+        path = FIXTURES.parent.parent / "samples" / "watches.opencatalog"
         with open(path) as f:
             data = json.load(f)
         errors = validate_catdef(data)
         assert errors == [], f"Unexpected errors: {errors}"
 
     def test_catdef_version_is_string(self):
-        data = load_fixture("valid_minimal.thingalog")
+        data = load_fixture("valid_minimal.opencatalog")
         assert isinstance(data["catdef"], str)
 
     def test_catdef_version_is_semver_ish(self):
-        data = load_fixture("valid_minimal.thingalog")
+        data = load_fixture("valid_minimal.opencatalog")
         parts = data["catdef"].split(".")
         assert len(parts) >= 1
         assert all(p.isdigit() for p in parts)
 
 
 class TestInvalidFiles:
-    """Invalid .thingalog files must produce errors."""
+    """Invalid catdef files must produce errors."""
 
     def test_missing_catdef(self):
-        data = load_fixture("invalid_no_catdef.thingalog")
+        data = load_fixture("invalid_no_catdef.catdef")
         errors = validate_catdef(data)
         assert any("catdef" in e for e in errors)
 
     def test_bad_field_type(self):
-        data = load_fixture("invalid_bad_field_type.thingalog")
+        data = load_fixture("invalid_bad_field_type.catdef")
         errors = validate_catdef(data)
         assert any("SpreadsheetFormula" in e for e in errors)
 
@@ -162,13 +162,13 @@ class TestRequiresBlock:
     """The requires block declares renderer expectations."""
 
     def test_requires_field_types_are_valid(self):
-        data = load_fixture("valid_all_field_types.thingalog")
+        data = load_fixture("valid_all_field_types.opencatalog")
         required_types = data.get("requires", {}).get("field_types", [])
         for ft in required_types:
             assert ft in VALID_FIELD_TYPES, f"Required field type '{ft}' is not valid"
 
     def test_requires_renderer_version(self):
-        data = load_fixture("valid_all_field_types.thingalog")
+        data = load_fixture("valid_all_field_types.opencatalog")
         renderer = data.get("requires", {}).get("renderer", "")
         assert renderer, "requires.renderer should be specified"
 
@@ -177,7 +177,7 @@ class TestDataBlock:
     """The data block must reference valid templates and fields."""
 
     def test_items_reference_existing_templates(self):
-        data = load_fixture("valid_minimal.thingalog")
+        data = load_fixture("valid_minimal.opencatalog")
         template_names = {t["name"] for t in data.get("templates", [])}
         for item in data.get("data", {}).get("items", []):
             assert item["template"] in template_names, (
@@ -186,7 +186,7 @@ class TestDataBlock:
 
     def test_item_fields_match_template(self):
         """Item fields should correspond to field_defs in their template."""
-        data = load_fixture("valid_all_field_types.thingalog")
+        data = load_fixture("valid_all_field_types.opencatalog")
         templates = {t["name"]: t for t in data.get("templates", [])}
         for item in data.get("data", {}).get("items", []):
             tmpl = templates.get(item["template"])
@@ -199,7 +199,7 @@ class TestDataBlock:
 
     def test_enumerated_values_reference_existing_targets(self):
         """Values in data.values should match Enumerated field targets."""
-        data = load_fixture("valid_all_field_types.thingalog")
+        data = load_fixture("valid_all_field_types.opencatalog")
         targets = set()
         for tmpl in data.get("templates", []):
             for fd in tmpl.get("field_defs", []):

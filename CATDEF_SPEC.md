@@ -104,7 +104,7 @@ The identity and branding of the catalog application.
 | `sections` | array | no | Free-form content blocks for the About page. Each is `{title, content}` with RichText content |
 | `theme` | string or object | no | Either a theme name (resolved by the runtime) or an inline theme object |
 
-The extended product fields (`phone`, `website`, `address`, `hours`, `social`, `sections`) power an **About page** — for many catalog owners, their Thingalog catalog is their only online presence. Level 2+ runtimes SHOULD render an "About" link that opens these fields as a page or drawer.
+The extended product fields (`phone`, `website`, `address`, `hours`, `social`, `sections`) power an **About page** — for many catalog owners, their catdef catalog is their only online presence. Level 2+ runtimes SHOULD render an "About" link that opens these fields as a page or drawer.
 
 ### Inline Theme Object
 
@@ -239,8 +239,8 @@ The parent reference is either:
 - **Organizational standards:** A museum consortium publishes a canonical accession template; member institutions inherit it.
 
 **URL invocation:**
-Partners typically send customers to the Thingalog builder with:
-`https://builder.thingalog.com/?inherits_from=watchomatic_model`
+Partners typically send customers to the builder with:
+`https://builder.catdef.org/?inherits_from=watchomatic_model`
 
 The builder skips the "Describe It" step and creates a catalog pre-populated with the inherited schema.
 
@@ -1093,7 +1093,7 @@ Runtimes invoke embed mode via `?embed=true` and MAY accept additional parameter
 
 **Copy-paste snippet** produced by a conforming runtime's "Get embed code" feature:
 ```html
-<iframe src="https://scotts-tools.thingalog.app/?embed=true&view=grid"
+<iframe src="https://scotts-tools.catdef.org/?embed=true&view=grid"
         width="100%" height="600" frameborder="0"
         style="border:0;border-radius:12px;"
         loading="lazy"
