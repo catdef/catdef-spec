@@ -19,6 +19,8 @@ A single `.opencatalog` file contains everything: the schema (templates, field d
 | [conformance/](conformance/) | The catdef Conformance Test Suite — 98 tests |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to propose changes to the standard |
 | [MCP_REFERENCE.md](MCP_REFERENCE.md) | Non-normative reference design for a Model Context Protocol server exposing catdef catalogs |
+| [proposals/](proposals/) | In-flight proposals for spec changes (v1.4 and beyond) |
+| [CLAUDE.md](CLAUDE.md) | Maintainer operating manual (AI-assisted review) — see CONTRIBUTING.md |
 
 ## File format
 
