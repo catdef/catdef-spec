@@ -1,6 +1,6 @@
 # catdef Conformance Test Suite
 
-This directory contains the official conformance tests for catdef renderers.
+This directory contains the official conformance tests for catdef renderers. The suite contains 98 tests organized by subject area.
 
 ## Structure
 
@@ -8,7 +8,7 @@ This directory contains the official conformance tests for catdef renderers.
 conformance/
   fixtures/          .thingalog files: valid, invalid, and edge-case
   test_parsing.py    catdef file parsing + validation
-  test_fields.py     field type rendering (all 11 types)
+  test_fields.py     field type rendering (all field types)
   test_search.py     search, sort, filter behavior
   test_themes.py     theme application
   test_levels.py     conformance level feature gates
