@@ -1587,5 +1587,5 @@ These extensions belong to the catdef standard, not to any runtime. Any conforma
 
 ---
 
-*Specification version 1.1. April 2026.*
+*Specification version 1.3. April 2026.*
 *An open standard. Licensed under MIT.*
