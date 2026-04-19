@@ -1,0 +1,23 @@
+{
+  "catdef": "1.3",
+
+  "product": {
+    "name": "Stamp newer than features (over-stamp permitted)",
+    "slug": "over-stamp"
+  },
+
+  "templates": [
+    {
+      "name": "Simple",
+      "field_defs": [
+        {"label": "Title", "type": "String", "sort_order": 10, "required": true}
+      ]
+    }
+  ],
+
+  "data": {
+    "items": [
+      {"template": "Simple", "fields": {"Title": "Item one"}}
+    ]
+  }
+}
