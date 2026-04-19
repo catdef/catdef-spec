@@ -1,0 +1,62 @@
+{
+  "catdef": "1.4",
+  "primaryLocale": "en",
+
+  "product": {
+    "name": {
+      ".context": "heritage-catalog",
+      ".en": "Family Archive"
+    },
+    "slug": "mt-never-content"
+  },
+
+  "templates": [
+    {
+      "name": "Artifact",
+      "field_defs": [
+        {
+          "label": {".en": "Title", ".fr": "Titre"},
+          "type": "String",
+          "sort_order": 10,
+          "required": true
+        },
+        {
+          "label": {".en": "Provenance", ".fr": "Provenance"},
+          "type": "RichText",
+          "sort_order": 20
+        }
+      ]
+    }
+  ],
+
+  "data": {
+    "items": [
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": {
+            ".machine-translate": "Never",
+            ".en": "Rolling Stones 45 rpm single"
+          },
+          "Provenance": {
+            ".context": "personal-memoir",
+            ".machine-translate": "Never",
+            ".en": "My grandmother brought this from England in 1948."
+          }
+        }
+      },
+      {
+        "template": "Artifact",
+        "fields": {
+          "Title": {
+            ".en": "Translatable title",
+            ".fr": "Titre traduisible"
+          },
+          "Provenance": {
+            ".en": "Acquired at estate sale."
+          }
+        }
+      }
+    ]
+  }
+}
