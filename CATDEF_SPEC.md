@@ -1556,6 +1556,50 @@ The catdef version follows semver:
 
 A catdef MUST specify its version. A runtime MUST refuse to render a catdef with a higher major version than it supports.
 
+### Writer obligation on version stamping
+
+The `catdef` stamp MUST declare the minimum version that defines every feature used in the document. A writer MUST NOT emit a stamp that post-dates any feature (a stamp newer than needed is permitted but SHOULD be avoided — the minimum-version rule is preferred for forward-compatible rendering).
+
+Concretely:
+
+- A document that uses only v1.0 features MUST declare `"catdef": "1.0"` (or later).
+- A document that uses any v1.1-or-later feature MUST declare a stamp that includes that feature's introducing version.
+- A document using any v1.4 feature (`primaryLocale`, polymorphic translatable fields, `.context`, `.machine-translate`, URL object schema, CATIO outer-archive extension rule, subcat value resolution rule, or this writer-obligation rule itself) MUST declare `"catdef": "1.4"`.
+
+The catdef maintainers publish a [Feature-Version Index](#feature-version-index) (non-normative) to assist writers and static analyzers.
+
+A writer that emits a mis-stamped document is non-conformant, regardless of whether the document happens to render correctly on any given reader.
+
+### Reader behavior on mis-stamped documents
+
+Reader behavior is unchanged from existing forward-compat rules (value #5):
+
+- A reader MUST gracefully ignore fields it does not recognize. Unknown fields do not cause render failure.
+- A reader MAY warn when a document uses a feature newer than its stamp suggests (e.g., a `"catdef": "1.3"` document that declares `primaryLocale`). The warning is advisory — the reader continues to render.
+- A reader MUST NOT reject a mis-stamped document purely because of the stamp mismatch. Reader-side robustness protects users whose authoring tools are bug-stamped.
+
+The asymmetry is deliberate: writers must be strict so the ecosystem has reliable stamps to rely on; readers must be lenient so users are never blocked by another author's tooling bug. This is Postel's Law applied to version stamping, and the same writer-strict / reader-lenient pattern governs other v1.4 additions — subcat value resolution superset validation (§Subcats §Value resolution) and polymorphic-field unknown-key handling (§Unknown dot-prefixed members).
+
+### Canonical and reference-document exception
+
+During active development of an unreleased minor version, the canonical reference file(s) and normative reference documentation MAY declare the target version stamp (e.g., `"catdef": "1.4"`) before that version is released. This exception applies only to the canonical and to documents explicitly identified as reference documentation by the catdef maintainers. All other writers MUST NOT emit unreleased-version stamps. On release of the target minor, the exception terminates for that version — the canonical and references become subject to the standard writer-obligation rule.
+
+### Feature-Version Index
+
+This non-normative index maps each feature to the version that introduced it. Authoritative definition of "when a feature was introduced" is the spec text at the tagged version; this index is a fast-path lookup for writers and validators.
+
+| Version | Features introduced |
+|---------|---------------------|
+| 1.0 | Core structure: `catdef`, `product`, `requires`, `hints`, `templates`, `settings`, `data`. Field types: `String`, `Integer`, `RichText`, `Enumerated`, `Photo`. Inline and named `theme` on `product`. Conformance test suite scaffolding. |
+| 1.1 | Field types added: `Number`, `GeoLocation`, `Date`, `Money`, `Boolean`, `CloudFile`, `URL`, `Table`. String `format` attribute (e.g. `isbn`, `vin`, `sku`). Field-def attributes (`unique`, `min`/`max`, `format`, `unit`, `precision`, `required`, `importance`, `widget`, `multi`, `placeholder`, `sort_order`). Canonical file extensions formalized: `.openthing`, `.opencatalog`, `.catdef`. OpenThing + OpenCatalog conceptual framing. Kiosk mode (view modifier). Table `bbox` spatial linking between rows and photo regions. Photo labels (suggested tags on photo galleries). `max_items` attribute on `Photo` and `CloudFile`. Photo transforms: `crop`, `rotate`, `deskew`. |
+| 1.2 | Subcats (`subcats.<name>` with `field_defs` and seeded `values`) — enriched Enumerated values carrying their own per-value field data. |
+| 1.3 | `inherits_from` (catalog inheritance from partner/model catalogs). `views` declaration (`primary_axis`, `modes`, `default_icon`, `kiosk_layout`, `mode_config`). `embed` declaration for iframe embedding. Extended `product` fields (`phone`, `website`, `address`, `hours`, `social`, `sections`) — About page. `scorable` field attribute (geo/time-weighted sorting). `range: true` modifier on `Number`, `Money`, `Date`. Subcat enrichments: `Photo` fields inside subcats; recursive Enumerated edges (a subcat field referencing another subcat by target name). |
+| 1.4 | `primaryLocale` (i18n root). Polymorphic translatable fields. Closed-vocabulary policies — Policy Registry v1.4 entries: `.context`, `.machine-translate`. Value #9 (policy compliance as conformance requirement) adopted as governance. `URL` object schema formalized (CA-006). Conformance validator extended for `Date` circa/range, `Money` range, `Number` range, `URL` object, and range/shape-mismatch rejection (CA-006). CATIO outer-archive extension rule — ZIP bundles use `.opencatalog` / `.openthing` outer extension with content-sniffing (CA-001). Subcat value resolution — `subcats.<target>.values` authoritative when declared (CA-003). Writer-strict / reader-lenient version-stamping rule (this section, CA-002). Canonical reference file artifact. |
+
+Methodology note: the v1.1 and v1.2 columns were backfilled by archaeology against `git log -p -- CATDEF_SPEC.md`, using the version-bump commits (`521c7a0` "v1.1: Number, GeoLocation, String formats, field-def attributes", `f599254` "v1.2: Add Subcats", `3eaa477` "v1.3: inheritance, views, range, scorable, embed, About") as boundary markers. Every commit between two boundary markers ships in the later of the two versions.
+
+MCP conformance levels (M1/M2/M3) and the reference-server design have been deferred to v1.5 and are not part of v1.4 — see [decisions/mcp-conformance-levels-and-reference.md](decisions/mcp-conformance-levels-and-reference.md).
+
 ---
 
 ## Security Considerations
@@ -1588,5 +1632,5 @@ These extensions belong to the catdef standard, not to any runtime. Any conforma
 
 ---
 
-*Specification version 1.3. April 2026.*
+*Specification version 1.4. April 2026.*
 *An open standard. Licensed under MIT.*
