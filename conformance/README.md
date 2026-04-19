@@ -1,6 +1,6 @@
 # catdef Conformance Test Suite
 
-This directory contains the official conformance tests for catdef renderers. The suite contains 164 tests organized by subject area, plus 1 `xfail` tracking a known canonical drift (see §"The ft-shape-07 canonical regression" below).
+This directory contains the official conformance tests for catdef renderers. The suite contains 165 tests organized by subject area, all currently passing (see §"The ft-shape-07 canonical regression" below for the protocol governing canonical/validator-drift xfails).
 
 ## Structure
 
@@ -23,13 +23,15 @@ conformance/
 
 **ft-shape-07** is a load-bearing regression test: it runs the extended value-shape validator against `canonical/catalog.opencatalog` and expects zero errors. If either the canonical or the validator drifts, the test fails, making validator-vs-canonical drift structurally detectable rather than discoverable only by manual review.
 
-The test currently ships with an `xfail` marker covering one known canonical drift:
+**Current status:** passing as a regular regression test (no xfail). The previous xfail covered the Date Made circa-vs-range field_def drift; canonical-builder cleared it by adding `range: true` to the Artifact template's `Date Made` field_def, allowing circa and range values to coexist on the same field.
 
-> Canonical Artifact template `Date Made` field uses range-shape values on items[1] and items[4] but field_def declares `circa: true` and not `range: true`. Per CA-006 writer-strict validation, that is a canonical-side bug.
+**Protocol for future xfails on this test.** A future canonical drift may temporarily warrant an `xfail` marker — for example, when a spec change lands ahead of the corresponding canonical update, or when a canonical edit deliberately introduces a known-bad shape to be fixed in a follow-on PR. When that happens:
 
-The fix is canonical-builder's call — either add `range: true` to the field_def (allowing circa and range values on the same field) or rewrite those items' values to circa-shape.
+1. The `xfail` marker MUST carry a `reason=` string describing the specific drift and the planned fix path.
+2. The marker MUST use `strict=False` so XPASS auto-promotes to pass — the unexpected-pass event is itself the validation signal that the fix landed.
+3. The marker MUST be removed in the same PR that lands the fix, so ft-shape-07 resumes its regular regression-guarding behavior.
 
-**If `ft-shape-07` unexpectedly passes** (pytest reports `XPASS`), it means canonical-builder has fixed the drift. The `@pytest.mark.xfail` marker MUST be removed in the same PR that lands the canonical fix, so the test resumes its regular regression-guarding behavior. The xfail is a temporary signpost, not a permanent exemption.
+The xfail is a temporary signpost, not a permanent exemption. If you find yourself wanting to xfail ft-shape-07 indefinitely, the right move is to fix the canonical or open a CA against the validator instead.
 
 ## Test dimensions
 

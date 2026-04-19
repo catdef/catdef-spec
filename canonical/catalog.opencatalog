@@ -75,7 +75,7 @@
         {"label": "Accession Number", "type": "String", "sort_order": 15, "format": "accession", "unique": true, "required": true, "importance": "required", "placeholder": "e.g. RHS.2024.001"},
         {"label": "Photos", "type": "Photo", "sort_order": 20, "multi": true, "importance": "required", "photo_labels": ["Overview", "Detail", "Maker's Mark", "Reverse", "Context"], "max_items": 8},
         {"label": "Object Type", "type": "Enumerated", "sort_order": 30, "target": "ObjectType", "filterable": true, "importance": "required", "widget": "dropdown"},
-        {"label": "Date Made", "type": "Date", "sort_order": 40, "circa": true, "filterable": true, "importance": "preferred", "primary": true, "scorable": "recency", "help_text": "Approximate creation date of the object (not the donation date)."},
+        {"label": "Date Made", "type": "Date", "sort_order": 40, "circa": true, "range": true, "filterable": true, "importance": "preferred", "primary": true, "scorable": "recency", "help_text": "Approximate creation date of the object (not the donation date). Accepts circa (e.g., {\"date\": \"1905\", \"circa\": true}), range ({\"start\": \"1887\", \"end\": \"1894\"}), or plain ISO date string."},
         {"label": "Maker", "type": "Enumerated", "sort_order": 50, "target": "Maker", "filterable": true},
         {"label": "Materials", "type": "Enumerated", "sort_order": 60, "target": "Material", "multi": true, "filterable": true, "widget": "checkbox_table"},
         {"label": "Origin", "type": "Enumerated", "sort_order": 70, "target": "Location", "filterable": true, "help_text": "Place of origin — a Riverside workshop, field, or out-of-town source."},

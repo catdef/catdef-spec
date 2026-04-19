@@ -476,29 +476,15 @@ class TestCanonicalRegression:
     self-checking artifact of the conformance suite. If either the
     canonical or this validator drifts, the test fails.
 
-    **Maintenance note.** This test currently runs as xfail because the
-    canonical has a known drift (see xfail reason). When canonical-builder
-    lands the fix, the test will unexpectedly pass — that is the
-    confirmation signal that the canonical has been brought back into
-    alignment. When that happens, the ``@pytest.mark.xfail`` marker
-    MUST be removed in the same PR that lands the canonical fix, so
-    ft-shape-07 resumes its regular regression-guarding behavior.
+    The previous xfail covering the Date Made circa/range drift was
+    cleared by canonical-builder's v1.4 release-followup PR, which
+    added ``range: true`` to the Artifact template's Date Made field_def.
+    The field now legitimately accepts circa, range, and plain string
+    Date values — exercising all three shapes across the 12 items.
     See also ``conformance/README.md`` §"The ft-shape-07 canonical
-    regression".
+    regression" for the protocol that governs future xfail use here.
     """
 
-    @pytest.mark.xfail(
-        strict=False,
-        reason=(
-            "Canonical Artifact template Date Made field uses range-shape "
-            "values on items[1] and items[4] but field_def declares circa: "
-            "true and not range: true. Per CA-006 writer-strict validation. "
-            "Canonical-builder fix required: either add range: true to the "
-            "Artifact template's Date Made field_def, or rewrite items[1]/[4] "
-            "Date Made values to circa-shape. xfail auto-promotes to pass "
-            "when canonical is fixed."
-        ),
-    )
     def test_ft_shape_07_canonical_validates_clean(self):
         repo_root = Path(__file__).parent.parent
         canonical_path = repo_root / "canonical" / "catalog.opencatalog"
