@@ -143,7 +143,7 @@ Append a paragraph clarifying the L1 runtime's Enumerated-namespace resolution:
 - The watches sample (`samples/watches.opencatalog`): currently declares `data.values` without subcats. Unchanged — the spec's new rules explicitly preserve the no-subcat case as bare-list authoritative.
 - The canonical (`canonical/catalog.opencatalog`): currently declares BOTH `subcats.<name>.values` AND `data.values.<name>` with matching names. Under the new rules: valid (the `data.values` entries are a subset of subcat keys). The canonical deliberately retains both forms as a reference for the L1-friendly authoring pattern — `data.values.<target>` gives L1 runtimes that ignore subcats a pre-declared namespace without additional work.
 - Any catdef in the wild that declares *both* with matching names: still valid.
-- Any catdef that declares *both* with mismatched names (extra names in `data.values`): newly invalid. Migration: remove the extras, or add them to `subcats.<target>.values` with appropriate field data.
+- Any catdef that declares *both* with mismatched names (extra names in `data.values`): **newly writer-invalid** (writer-side validators MUST reject); **readers continue to parse with a warning and resolve from `subcats.<target>.values` only**, per the writer-strict / reader-lenient asymmetry in §Value resolution. Migration: remove the extras, or add them to `subcats.<target>.values` with appropriate field data.
 
 **Existing runtimes:**
 
@@ -152,8 +152,8 @@ Append a paragraph clarifying the L1 runtime's Enumerated-namespace resolution:
 
 **Migration utility:** a one-shot lint (non-normative) that checks every catdef file for the three validity cases:
 
-1. Match (subcats-subset-of-data, or equal): valid; recommend simplification by removing redundant `data.values` entries.
-2. Extra names in `data.values` beyond subcats keys: invalid; fix by either adding to subcats or removing from `data.values`.
+1. Match (subcats-subset-of-data, or equal): valid; simplification is optional (the canonical retains both forms deliberately for L1-friendly authoring).
+2. Extra names in `data.values` beyond subcats keys: **writer-invalid** (writer-side validators reject); readers continue to parse with warnings. Fix by either adding to subcats or removing from `data.values`.
 3. No overlap problem: no change.
 
 ## Conformance tests
@@ -195,7 +195,7 @@ Argument: L1 runtimes are allowed to ignore subcats per CATDEF_SPEC.md §Conform
 
 Counter-rejected but nuanced: this is a real concern. The proposed rule's resolution: an L1 runtime that ignores subcats resolves Enumerated names from the items' field values themselves (at attach time) rather than from a pre-declared namespace. Items that reference "Omega" create an Omega value node on-the-fly. This is already the L1 fallback behavior for any Enumerated field whose value namespace isn't pre-declared. So the L1 case is covered by existing behavior, not by `data.values` redundancy.
 
-**Adjustment noted:** the proposal's text should explicitly mention that L1 runtimes ignoring subcats can still use items as the value-name source. This is not a change to existing L1 conformance — it's a clarification that the `data.values` block is *not* required for L1-only rendering. Added to Open questions.
+**Adjustment noted:** the proposal's text explicitly mentions that L1 runtimes ignoring subcats can still use items as the value-name source. This is not a change to existing L1 conformance — it's a clarification that the `data.values` block is *not* required for L1-only rendering. Promoted to normative text in §Amend CATDEF_SPEC.md §Conformance Levels §Level 1 (item-inference as L1-mandatory) during CA-003 revisions.
 
 ## Open questions
 
