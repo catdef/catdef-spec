@@ -751,6 +751,38 @@ When `unit` is present, the runtime SHOULD display it as a suffix (e.g. "42 mm",
 
 At minimum, `lat` and `lng` must be present. `address` and `label` are optional display strings.
 
+### URL Type
+
+`URL` stores a web address. The value may be either a plain string (the URL itself) or an object carrying the URL plus optional auto-extracted metadata.
+
+**Value shapes:**
+
+- String form: `"https://example.org/page"` — the minimal representation.
+- Object form:
+  ```json
+  {
+    "url": "https://example.org/page",
+    "title": "Page title",
+    "description": "Short description or og:description",
+    "og_image": "https://example.org/page/og.jpg"
+  }
+  ```
+
+**Keys (object form):**
+
+| Key | Type | Required | Description |
+|-----|------|----------|-------------|
+| `url` | string | yes | The actual URL. MUST start with `http://` or `https://`. Validators perform this lightweight prefix check; deeper validation (DNS resolution, reachability, TLS) is a runtime concern and is not part of static conformance. |
+| `title` | string | no | Page title, typically the `<title>` element or `og:title`. |
+| `description` | string | no | Short description, typically `<meta name="description">` or `og:description`. |
+| `og_image` | string | no | URL of a representative image. The JSON key is `og_image` (underscore form) for JSON-interop ergonomics; the source Open Graph property is `og:image` (colon form). Keys containing colons require escaping at every consumer, so catdef uses the underscore form in interchange. |
+
+Renderers MAY display the object form as a link preview card (favicon + title + description + image). When a URL field is presented for editing, the runtime MAY fetch and populate metadata on paste. Metadata fields are advisory — a runtime that cannot fetch them simply displays the URL string.
+
+**Round-trip behavior:** A catdef producer that receives the object form MUST preserve all keys on re-export. A catdef producer that has only a URL string SHOULD NOT fabricate metadata; the object form is used only when metadata is actually known.
+
+**Range/shape-mismatch handling.** A `URL` field defined without `range: true` that receives a range-shaped value is a writer-side error and MUST be rejected by writer-side validators. Readers follow the standard reader-lenient pattern (see §Versioning §Reader behavior on mis-stamped documents) — parse and render with a warning; do not reject. The same writer-strict / reader-lenient asymmetry applies uniformly to `Number`, `Money`, and `Date` range shapes per CA-006.
+
 ### Date Type Extensions
 
 `Date` stores an ISO 8601 date string. When `circa` is `true` on the field definition, the runtime SHOULD accept and display approximate dates:
