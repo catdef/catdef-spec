@@ -1,0 +1,32 @@
+{
+  "catdef": "1.4",
+  "primaryLocale": "en",
+
+  "product": {
+    "name": {
+      ".en": "Quebec Heritage Catalog",
+      ".fr-CA": "Catalogue du patrimoine quebecois"
+    },
+    "slug": "fr-ca-variant"
+  },
+
+  "templates": [
+    {
+      "name": "Artifact",
+      "field_defs": [
+        {
+          "label": {".en": "Name", ".fr-CA": "Nom"},
+          "type": "String",
+          "sort_order": 10,
+          "required": true
+        }
+      ]
+    }
+  ],
+
+  "data": {
+    "items": [
+      {"template": "Artifact", "fields": {"Name": "Pine chest"}}
+    ]
+  }
+}

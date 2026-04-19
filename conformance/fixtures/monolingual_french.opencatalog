@@ -1,0 +1,25 @@
+{
+  "catdef": "1.4",
+  "primaryLocale": "fr",
+
+  "product": {
+    "name": "Catalogue de montres",
+    "slug": "monolingual-french"
+  },
+
+  "templates": [
+    {
+      "name": "Montre",
+      "field_defs": [
+        {"label": "Marque", "type": "String", "sort_order": 10, "required": true},
+        {"label": "Annee",  "type": "Integer", "sort_order": 20}
+      ]
+    }
+  ],
+
+  "data": {
+    "items": [
+      {"template": "Montre", "fields": {"Marque": "Omega", "Annee": 1969}}
+    ]
+  }
+}
