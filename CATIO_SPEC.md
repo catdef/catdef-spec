@@ -218,8 +218,8 @@ Any catio document can be bundled as a ZIP archive alongside its referenced medi
 ### Structure
 
 ```
-catalog-export.zip
-├── catalog.opencatalog          # The catio JSON document
+my-catalog.opencatalog           # ZIP archive with .opencatalog extension
+├── catalog.opencatalog          # The catio JSON document (same extension as outer)
 ├── photos/                      # Referenced photos
 │   ├── watch_001.jpg
 │   ├── watch_002.jpg
@@ -229,9 +229,19 @@ catalog-export.zip
     └── certificate.pdf
 ```
 
+### Outer-archive extension
+
+A ZIP-packaged catio bundle SHOULD use the catdef content-extension on the outer archive — `.opencatalog` for a full catalog, `.openthing` for a single thing. The extension describes the document's role, matching the pattern established by `.docx`, `.jar`, `.epub`, and similar format families where the outer filename wears the format's content-extension rather than `.zip`.
+
+Importers MUST accept ZIP-packaged files with either of these two catdef extensions. Importers SHOULD also accept `.zip` outer files whose root contains a single catdef JSON document, for compatibility with filesystem and email paths that may have re-named the archive. The importer identifies packaging by content-sniffing the first bytes: a PK ZIP signature indicates a ZIP bundle to unpack; any other prefix indicates raw JSON.
+
+Raw-JSON (un-bundled) catdef files continue to use the canonical extensions (`.opencatalog`, `.openthing`, or `.catdef`) per their document role — packaging is an implementation detail invisible to the extension. A consumer reading a `.opencatalog` file does not know and does not need to know whether the bytes are raw JSON or a ZIP wrapping JSON plus photos. `.catdef` (schema-only) is intentionally out of scope for ZIP-packaging in this release; schema-only documents have no media to bundle.
+
 ### Rules
 
 1. **The JSON document MUST be at the root of the ZIP**, with the appropriate extension (`.openthing`, `.opencatalog`, or `.catdef`). If multiple JSON documents exist at the root, the importer SHOULD use the first `.opencatalog` file, then `.openthing`, then `.catdef`.
+
+   **The outer archive SHOULD share the catdef content-extension of the root JSON document.** A bundle whose root is a `.opencatalog` JSON SHOULD be named `something.opencatalog`; a bundle whose root is `.openthing` JSON SHOULD be named `something.openthing`. Importers that reject outer-extension mismatches are non-conformant; content-sniffing is the authoritative discriminator.
 
 2. **Photos MUST be in a `photos/` directory** at the ZIP root. Photo references in the JSON use the filename only (no path prefix): `"filename": "watch_001.jpg"`. The importer resolves `photos/{filename}`.
 
@@ -277,9 +287,10 @@ When exporting a catalog as a ZIP bundle:
 
 | Format | MIME |
 |--------|------|
-| ZIP bundle | `application/zip` |
+| ZIP-packaged catio bundle (preferred) | `application/vnd.opencatalog+zip` or `application/vnd.openthing+zip` — depending on inner document role |
+| ZIP bundle (compatibility) | `application/zip` |
 
-The ZIP bundle is identified by its `.zip` extension and the presence of a catio JSON document at the root. There is no special MIME type — it's a standard ZIP file.
+The preferred MIME types pair each content-extension with the `+zip` structured-syntax suffix. Content-sniffing remains the authoritative discriminator; the outer extension and MIME type are signals, not gates. MIME-type registration details are out of scope for the spec itself; the table is informational.
 
 ## MIME Types
 
