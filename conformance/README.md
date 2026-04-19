@@ -15,6 +15,18 @@ conformance/
   test_levels.py     conformance level feature gates
 ```
 
+## The ft-shape-07 canonical regression
+
+**ft-shape-07** is a load-bearing regression test: it runs the extended value-shape validator against `canonical/catalog.opencatalog` and expects zero errors. If either the canonical or the validator drifts, the test fails, making validator-vs-canonical drift structurally detectable rather than discoverable only by manual review.
+
+The test currently ships with an `xfail` marker covering one known canonical drift:
+
+> Canonical Artifact template `Date Made` field uses range-shape values on items[1] and items[4] but field_def declares `circa: true` and not `range: true`. Per CA-006 writer-strict validation, that is a canonical-side bug.
+
+The fix is canonical-builder's call — either add `range: true` to the field_def (allowing circa and range values on the same field) or rewrite those items' values to circa-shape.
+
+**If `ft-shape-07` unexpectedly passes** (pytest reports `XPASS`), it means canonical-builder has fixed the drift. The `@pytest.mark.xfail` marker MUST be removed in the same PR that lands the canonical fix, so the test resumes its regular regression-guarding behavior. The xfail is a temporary signpost, not a permanent exemption.
+
 ## Test dimensions
 
 The suite tests catdef conformance across three first-class dimensions, each weighted equally:

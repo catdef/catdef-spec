@@ -1,0 +1,28 @@
+{
+  "catdef": "1.4",
+
+  "product": {
+    "name": "Raw opencatalog (no ZIP bundle)",
+    "slug": "raw-opencatalog"
+  },
+
+  "templates": [
+    {
+      "name": "Watch",
+      "field_defs": [
+        {"label": "Title", "type": "String", "sort_order": 10, "required": true},
+        {"label": "Photo", "type": "Photo",  "sort_order": 20}
+      ]
+    }
+  ],
+
+  "data": {
+    "items": [
+      {
+        "template": "Watch",
+        "fields": {"Title": "Speedmaster Professional"},
+        "photos": [{"filename": "watch.jpg", "slot": 1}]
+      }
+    ]
+  }
+}

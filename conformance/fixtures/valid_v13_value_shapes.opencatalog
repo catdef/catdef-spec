@@ -1,0 +1,48 @@
+{
+  "catdef": "1.4",
+
+  "product": {
+    "name": "Value Shape Gallery",
+    "slug": "value-shapes"
+  },
+
+  "templates": [
+    {
+      "name": "Shape Sampler",
+      "field_defs": [
+        {"label": "Title",        "type": "String",  "sort_order": 10, "required": true},
+        {"label": "Approx Year",  "type": "Date",    "sort_order": 20, "circa": true},
+        {"label": "Active Era",   "type": "Date",    "sort_order": 30, "range": true},
+        {"label": "Price Range",  "type": "Money",   "sort_order": 40, "range": true},
+        {"label": "Weight Range", "type": "Number",  "sort_order": 50, "range": true, "unit": "kg"},
+        {"label": "Source Page",  "type": "URL",     "sort_order": 60},
+        {"label": "Reference",    "type": "URL",     "sort_order": 70}
+      ]
+    }
+  ],
+
+  "data": {
+    "items": [
+      {
+        "template": "Shape Sampler",
+        "fields": {
+          "Title": "All shapes exercised",
+          "Approx Year": {"date": "1905", "circa": true},
+          "Active Era": {"start": "1900-01-01", "end": "1950-12-31"},
+          "Price Range": {
+            "low":  {"amount": 100.00, "currency": "USD"},
+            "high": {"amount": 500.00, "currency": "USD"}
+          },
+          "Weight Range": {"min": 1.5, "max": 4.2},
+          "Source Page": {
+            "url": "https://example.org/source",
+            "title": "Source Page Title",
+            "description": "A short description of the source.",
+            "og_image": "https://example.org/source/og.jpg"
+          },
+          "Reference": "https://example.org/simple-ref"
+        }
+      }
+    ]
+  }
+}

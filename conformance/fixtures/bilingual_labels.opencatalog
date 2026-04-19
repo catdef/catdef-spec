@@ -1,0 +1,38 @@
+{
+  "catdef": "1.4",
+  "primaryLocale": "en",
+
+  "product": {
+    "name": {
+      ".context": "music-catalog",
+      ".en": "Record Collection",
+      ".fr": "Collection de disques"
+    },
+    "slug": "bilingual-labels"
+  },
+
+  "templates": [
+    {
+      "name": "Track",
+      "field_defs": [
+        {
+          "label": {".en": "Artist", ".fr": "Artiste"},
+          "type": "String",
+          "sort_order": 10,
+          "required": true
+        },
+        {
+          "label": {".en": "Album",  ".fr": "Album"},
+          "type": "String",
+          "sort_order": 20
+        }
+      ]
+    }
+  ],
+
+  "data": {
+    "items": [
+      {"template": "Track", "fields": {"Artist": "Rolling Stones", "Album": "Exile on Main St."}}
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "catdef": "1.3",
+
+  "product": {
+    "name": "Valid stamp matches features",
+    "slug": "stamp-matches"
+  },
+
+  "subcats": {
+    "Brand": {
+      "field_defs": [
+        {"label": "Country", "type": "String", "sort_order": 10}
+      ],
+      "values": {
+        "Omega": {"Country": "Switzerland"},
+        "Rolex": {"Country": "Switzerland"}
+      }
+    }
+  },
+
+  "templates": [
+    {
+      "name": "Watch",
+      "field_defs": [
+        {"label": "Title", "type": "String", "sort_order": 10, "required": true},
+        {"label": "Brand", "type": "Enumerated", "sort_order": 20, "target": "Brand"},
+        {"label": "Production Years", "type": "Date", "sort_order": 30, "range": true}
+      ]
+    }
+  ],
+
+  "data": {
+    "items": [
+      {
+        "template": "Watch",
+        "fields": {
+          "Title": "Speedmaster Professional",
+          "Brand": "Omega",
+          "Production Years": {"start": "1957", "end": "2026"}
+        }
+      }
+    ]
+  }
+}

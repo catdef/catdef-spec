@@ -1,0 +1,23 @@
+{
+  "catdef": "1.4",
+
+  "product": {
+    "name": {".fr": "Catalogue sans langue principale declaree"},
+    "slug": "no-primary-locale"
+  },
+
+  "templates": [
+    {
+      "name": "Item",
+      "field_defs": [
+        {"label": {".fr": "Titre"}, "type": "String", "sort_order": 10, "required": true}
+      ]
+    }
+  ],
+
+  "data": {
+    "items": [
+      {"template": "Item", "fields": {"Titre": "Something"}}
+    ]
+  }
+}
