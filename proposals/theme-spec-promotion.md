@@ -2,8 +2,8 @@
 
 **Status:** Draft
 **Target version:** Theme Spec 1.1 (independent versioning, aligned with catdef v1.3+)
-**Origin:** Thingalog implementation (scottconfusedgorilla/thingalog). An existing document, `THEME_SPEC.md` v1.0, shipped alongside the Thingalog renderer in April 2026. It was written to be renderer-agnostic in content but renderer-specific in tone and governance. This proposal moves the work into catdef stewardship.
-**Conformance level affected:** New standalone specification, coupled to catdef via the existing `themes` top-level section (CATDEF_SPEC.md §`themes`). All conformance levels L1–L4 gain optional theme-consumption capabilities.
+**Origin:** Thingalog implementation (repository currently private). An existing document, `THEME_SPEC.md` v1.0, shipped alongside the Thingalog renderer in April 2026. It was written to be renderer-agnostic in content but renderer-specific in tone and governance. This proposal moves the work into catdef stewardship; the attached verbatim source is included in this proposal directory so the content is readable even while the upstream repo remains private.
+**Conformance level affected:** New standalone specification, coupled to catdef via the existing `themes` top-level section (CATDEF_SPEC.md §`themes`). Theme-consumption is primarily an L2+ concern (renderers that style beyond browser defaults); L1 readers treat themes as graceful-ignore metadata.
 
 ## Summary
 
@@ -97,7 +97,7 @@ catdef value #9 (policy compliance as conformance requirement, per CA-005) estab
 
 ## Requested maintainer actions
 
-1. **Triage this proposal.** If accepted, assign a CA number (this would be CA-006 at time of writing if i18n-polymorphic-fields lands as CA-005 and the MCP proposal lands as CA-007) and open the decision file.
+1. **Triage this proposal.** If accepted, assign a CA number (the next free slot after in-flight decisions — maintainer to determine) and open the decision file.
 2. **Pick destination.** Option A (single repo) or Option B (sibling repo).
 3. **Draft the v1.1 restructure.** Use `theme-spec-promotion-v1.0-source.md` in this directory as the starting content. Walk the 15-point gap list top-to-bottom, producing one commit per gap (or grouped where gaps are tightly coupled) so review can proceed incrementally.
 4. **Propose conformance tests.** Each declarative claim in the restructured spec gets a fixture in `conformance/theme/`. Specifically: variable-presence tests, contrast-ratio validation tests, resolver-output tests (given a theme input, produce expected computed values).
@@ -106,7 +106,7 @@ catdef value #9 (policy compliance as conformance requirement, per CA-005) estab
 
 ## Attached starting content
 
-`theme-spec-promotion-v1.0-source.md` in this directory is a verbatim copy of the Thingalog THEME_SPEC.md v1.0 as of 2026-04-19. It is the input to the restructure. The content is licensed permissively — Thingalog's explicit intent in moving this work to catdef is that the standard belongs to the catdef org, not to Thingalog.
+`theme-spec-promotion-v1.0-source.md` in this directory is a verbatim copy of the Thingalog THEME_SPEC.md v1.0 as of 2026-04-19. It is the input to the restructure. The upstream document carries no explicit license header today; Thingalog's stated intent in moving this work to catdef is that on adoption the theme specification is licensed under catdef's terms (MIT at time of writing) and belongs to the catdef org, not to Thingalog. The maintainer should capture that explicitly in the decision file and in the license header of the restructured v1.1 document.
 
 ## Notes for the reviewer
 
