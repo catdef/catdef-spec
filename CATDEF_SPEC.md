@@ -577,6 +577,54 @@ On import:
 
 Seed values carry in CATIO bundles, enabling partners to ship curated subcat libraries (common brands, common conditions, common materials) that customers get automatically when they inherit from a model catalog.
 
+### Value resolution
+
+The Enumerated namespace `<target>` (e.g., `"Brand"`, `"Material"`, `"Donor"`) can have its values declared in two places:
+
+1. **`subcats.<target>.values`** — the enriched form: each value is an object with field data matching the subcat's `field_defs`.
+2. **`data.values.<target>`** — the bare form: an array of value names only, without enrichment.
+
+When a subcat named `<target>` is declared:
+
+- `subcats.<target>.values` is **authoritative**. The set of value names in that object is the complete namespace.
+- `data.values.<target>` is **optional**.
+- A writer MAY omit `data.values.<target>` when `subcats.<target>.values` is declared; the `subcats.<target>.values` keys are the authoritative namespace. A writer MAY also include `data.values.<target>` as a subset — this is useful when the catdef is targeted at L1 runtimes that ignore subcats and benefit from a pre-declared namespace.
+- An importer encountering both MUST resolve from `subcats.<target>.values`.
+
+**Superset validation (writer-strict / reader-lenient asymmetry).**
+
+A writer MUST NOT emit a catdef in which `data.values.<target>` contains names that are not keys of `subcats.<target>.values`. Writer-side validation tools MUST reject such documents.
+
+A reader encountering such a document MUST NOT reject it on this basis. The reader MAY warn that `data.values.<target>` contains names not seeded in `subcats.<target>.values`. The reader resolves the value namespace from `subcats.<target>.values` only; extra names in `data.values.<target>` are ignored.
+
+This asymmetry — writer strict, reader lenient — matches the pattern established by the `catdef` version-stamping rule (§Versioning) and the polymorphic-field unknown-key handling (§Unknown dot-prefixed members).
+
+**Shared namespaces.** A subcat's value namespace is shared across all templates, fields, and subcats that reference it by target name. Multiple references resolve to the same value set; there is no per-reference scoping.
+
+When no subcat is declared for `<target>`:
+
+- `data.values.<target>` is the authoritative bare-name list. Used for Enumerated fields that don't need enrichment (simple option lists like `["Mint", "Excellent", "Very Good", "Good"]`).
+- Declaring values via an un-seeded subcat (i.e., `subcats.<target>` exists with `field_defs` but no `values` object) is permitted; in that case `data.values.<target>` supplies the names and the `field_defs` apply once any enrichment is attached after import.
+
+**Writer decision tree:**
+
+```
+If you want enriched values (e.g., Brand has Founded year, Country, Specialty):
+  → declare subcats.<target> with field_defs AND values
+  → data.values.<target> is optional; include it (as a subset) only
+    if you want pre-declared namespace visibility for L1 runtimes
+    that ignore subcats
+
+If you want bare-name values only (e.g., Condition is ["Mint", "Good", …]):
+  → declare data.values.<target> with a name array
+  → no subcats entry needed
+
+If you want a subcat to exist for future enrichment but have no seed data yet:
+  → declare subcats.<target> with field_defs only (no values)
+  → declare data.values.<target> with the name array
+  → each value will get empty subcat fields on import, fillable later
+```
+
 **Renderer behavior:**
 - A "Sub-Catalogs" tab (alongside Items, Photos) lists all Enumerated value namespaces
 - Clicking a namespace shows all values in a table with subcat columns
@@ -593,6 +641,8 @@ Seed values carry in CATIO bundles, enabling partners to ship curated subcat lib
 - **Table** = per-item structured rows (Complications on *this specific watch*)
 - **Subcat** = shared value enrichment (what "Omega" means across *all* watches)
 - Both use child Field nodes with the same schema; the difference is scope
+
+**Translating enum value displays:** enum values are identifiers; they stay stable across locales. When a catalog needs translated displays for enum values, the polymorphism lives on a subcat field (e.g., `DisplayName`), not on the enum value itself. See [§Internationalization §Translating enum value displays](#translating-enum-value-displays) for the canonical pattern.
 
 **Conformance:**
 - Level 1 runtimes MAY ignore subcats (values still work as plain strings)
@@ -702,6 +752,38 @@ When `unit` is present, the runtime SHOULD display it as a suffix (e.g. "42 mm",
 ```
 
 At minimum, `lat` and `lng` must be present. `address` and `label` are optional display strings.
+
+### URL Type
+
+`URL` stores a web address. The value may be either a plain string (the URL itself) or an object carrying the URL plus optional auto-extracted metadata.
+
+**Value shapes:**
+
+- String form: `"https://example.org/page"` — the minimal representation.
+- Object form:
+  ```json
+  {
+    "url": "https://example.org/page",
+    "title": "Page title",
+    "description": "Short description or og:description",
+    "og_image": "https://example.org/page/og.jpg"
+  }
+  ```
+
+**Keys (object form):**
+
+| Key | Type | Required | Description |
+|-----|------|----------|-------------|
+| `url` | string | yes | The actual URL. MUST start with `http://` or `https://`. Validators perform this lightweight prefix check; deeper validation (DNS resolution, reachability, TLS) is a runtime concern and is not part of static conformance. |
+| `title` | string | no | Page title, typically the `<title>` element or `og:title`. |
+| `description` | string | no | Short description, typically `<meta name="description">` or `og:description`. |
+| `og_image` | string | no | URL of a representative image. The JSON key is `og_image` (underscore form) for JSON-interop ergonomics; the source Open Graph property is `og:image` (colon form). Keys containing colons require escaping at every consumer, so catdef uses the underscore form in interchange. |
+
+Renderers MAY display the object form as a link preview card (favicon + title + description + image). When a URL field is presented for editing, the runtime MAY fetch and populate metadata on paste. Metadata fields are advisory — a runtime that cannot fetch them simply displays the URL string.
+
+**Round-trip behavior:** A catdef producer that receives the object form MUST preserve all keys on re-export. A catdef producer that has only a URL string SHOULD NOT fabricate metadata; the object form is used only when metadata is actually known.
+
+**Range/shape-mismatch handling.** A `URL` field defined without `range: true` that receives a range-shaped value is a writer-side error and MUST be rejected by writer-side validators. Readers follow the standard reader-lenient pattern (see §Versioning §Reader behavior on mis-stamped documents) — parse and render with a warning; do not reject. The same writer-strict / reader-lenient asymmetry applies uniformly to `Number`, `Money`, and `Date` range shapes per CA-006.
 
 ### Date Type Extensions
 
@@ -1145,6 +1227,186 @@ All settings are optional. Omitted settings use the runtime's defaults (which SH
 
 ---
 
+## Internationalization
+
+catdef supports internationalization through **polymorphic translatable fields** — selected user-facing string fields may be authored either as a plain string (the simple form, unchanged from v1.3) or as an object whose members are locale-keyed string variants plus author-declared policies. Monolingual catdefs remain trivial; multilingual catdefs are expressed without a parallel schema.
+
+### Authoring pattern
+
+**Simple form (unchanged, current behavior):**
+
+```json
+{
+  "label": "Artist"
+}
+```
+
+**Translated form (new, optional):**
+
+```json
+{
+  "label": {
+    ".context": "music-catalog",
+    ".en": "Artist",
+    ".fr": "Artiste",
+    ".ja": "アーティスト"
+  }
+}
+```
+
+### Dot-prefix convention for translatable-field members
+
+All reserved members inside a translatable-field object are **dot-prefixed** to mark them as translation metadata rather than data. Dot-prefixed members divide into two categories with distinct semantics:
+
+**Locale variants.** One translated string per locale, keyed by a BCP-47 tag. Examples: `.en` (English), `.fr` (French), `.en-GB` (British English), `.zh-Hant` (Traditional Chinese). Strict BCP-47 recommended but not validated at L1. Runtimes resolve locale variants using RFC 4647 §3.4 (Lookup) against the available variants; see §Fallback semantics below.
+
+**Policies.** Statements of author intent about how the field's content must be handled by any tool or runtime that processes it. Policies travel with the data. A downstream tool that reads the catdef inherits the policies and **MUST** respect them. Policy vocabulary is closed and spec-defined — see [§Policy Registry](#policy-registry) for the full registered list.
+
+Policy compliance is a conformance requirement (value #9). An implementation that renders structure and content correctly but ignores declared policies — for instance, by silently auto-translating a field marked `.machine-translate: "Never"` — is **not conformant**. Policy compliance is gated by the conformance suite's `conformance/policies/` category, alongside field-type support and forward-compatibility behavior.
+
+The dot prefix serves three functions: it marks the member as translation metadata rather than a locale code or field name, it namespaces the reserved vocabulary away from author-chosen field names, and it gives parsers a classification rule — **registered policies first** (from [§Policy Registry](#policy-registry)), then **locale variants** (any remaining dot-prefixed key; BCP-47 shape recommended), then **unknown policies** (warn but do not error). Registry-first classification is normative; the BCP-47-shape check is a secondary heuristic for forward compatibility.
+
+### Unknown dot-prefixed members
+
+A runtime encountering a dot-prefixed key it does not recognize applies the following rules, consistent with value #5 (forward compatibility) and the writer-strict / reader-lenient pattern established by §Versioning and §Subcats §Value resolution:
+
+- **Unknown locale variant** (dot-prefixed key matching BCP-47 shape that the runtime does not need) — ignore silently. The viewer's locale will not be served by this variant, but nothing is broken.
+- **Unknown policy** (dot-prefixed key not in the Policy Registry and not BCP-47-shaped) — warn but tolerate. Never error on a forward-compatible extension. A future policy the runtime doesn't yet know about is strictly safer to preserve than to strip.
+- **Writer obligation** — writers MUST NOT emit a dot-prefixed key that is neither in the Policy Registry nor a valid BCP-47 locale tag. Writer-side validators reject unknown dot-prefixed keys explicitly.
+
+### Primary locale declaration
+
+A catdef using translatable fields SHOULD declare its primary locale at the top level:
+
+```json
+{
+  "catdef": "1.4",
+  "primaryLocale": "en",
+  ...
+}
+```
+
+If `primaryLocale` is omitted, the first locale encountered in any translatable field is treated as primary (undefined order; authors should declare explicitly).
+
+### Fallback semantics
+
+Runtimes resolve locale variants using **RFC 4647 §3.4 (Lookup)** against the available locale variants. The catdef's `primaryLocale` is the default if no variant matches via Lookup. Last-resort fallback to any defined variant, with implementation-defined order, MUST emit a warning.
+
+RFC 4647 §3.4 is the standard algorithm for progressively shortening a BCP-47 language tag (e.g., `fr-CA` → `fr` → default). Using it directly avoids edge-case bugs in hand-rolled fallback implementations and gives implementers an off-the-shelf reference.
+
+At no point does the runtime invent a translation it doesn't have. It selects from what's present.
+
+### Which fields are translatable
+
+All user-facing string fields in the core spec are candidates. Conservative v1.4 list:
+
+- `label` (on fields, subcats, enums, collections)
+- `description` / `prompt` (on fields)
+- `title` (on the catdef itself, on collections)
+
+**Explicitly not translatable (at least in v1.4):**
+
+- Field `id`, `name`, `type` — identifiers, not text
+- Numeric / Date / Money values — formatting is the runtime's job (see §Locale-aware formatting below)
+- URLs — may become translatable later; out of scope at v1.4
+- **Enumerated field values at item level** — identifiers, not text. Translated displays are achieved via the subcat-label pattern described below; item-level enum-value shape polymorphism is deferred to v1.5.
+
+### Translating enum value displays
+
+Enum values in catdef are **identifiers** — stable keys that reference subcat records (see [§Subcats](#subcats-enriched-enumerated-values)). Making them shape-polymorphic per-locale would hurt portability (a French and an English catdef would key the same logical entity differently) and conflate identifier with display. The canonical pattern for translated enum displays in v1.4 keeps the identifier stable and moves the polymorphism one level down, onto a subcat field.
+
+**Pattern:**
+
+```json
+{
+  "subcats": {
+    "Manufacturer": {
+      "field_defs": [
+        {"label": "DisplayName", "type": "String"}
+      ],
+      "values": {
+        "Stanley": {
+          "DisplayName": {".en": "Stanley", ".ja": "スタンレー"}
+        },
+        "Omega": {
+          "DisplayName": {".en": "Omega", ".ja": "オメガ"}
+        }
+      }
+    }
+  }
+}
+```
+
+The identifier (`"Stanley"`, `"Omega"`) stays stable. The display value uses the polymorphic-translatable-field pattern applied to the subcat's `DisplayName` field. A runtime renders `subcats.Manufacturer.values["Stanley"].DisplayName` through the same locale-resolution machinery as any other translatable field, yielding `"Stanley"` for English viewers and `"スタンレー"` for Japanese viewers — while every reference to the value across the catalog keys the same identifier.
+
+This is the recommended v1.4 pattern for translating enum-valued fields. It works for any Enumerated field whose target is a subcat, which is the expected shape for enum values that need translated displays.
+
+### Extension-field translatability
+
+Extension fields (`x.<domain>.<identifier>`) MAY use the polymorphic-translatable-field pattern at the extension author's option. The core spec does not mandate; extension authors choose per-field whether to support translatable values.
+
+**Worked example.** An extension defines `x.museum.description` for exhibit descriptions. The extension author opts into polymorphic translatability:
+
+```json
+{
+  "x.museum.description": {
+    ".context": "exhibit-label",
+    ".machine-translate": "Never",
+    ".en": "The earliest known cuneiform tablet from this region, c. 2400 BCE.",
+    ".fr": "La plus ancienne tablette cunéiforme connue de cette région, vers 2400 AEC."
+  }
+}
+```
+
+A conformant runtime encountering an extension field it doesn't recognize already ignores the field per the extension-namespace rules; a runtime that DOES recognize the extension and finds a polymorphic value applies the same resolution machinery as core translatable fields.
+
+### Locale-aware formatting of non-string types
+
+catdef declares that a field is Date, Money, or Number. How that value renders for a French-locale viewer (`49,00 $CA` vs. `$49.00 CAD`) is a **runtime concern**, resolved via standard library support for locale-aware formatting (CLDR). The spec does not dictate format strings or display conventions for numeric types.
+
+---
+
+## Policy Registry
+
+Policies are author-declared constraints on how downstream tools must handle a field's content. They travel with the data inside translatable-field objects (see [§Internationalization §Dot-prefix convention](#dot-prefix-convention-for-translatable-field-members)). Policy compliance is a conformance requirement (value #9): a runtime that silently ignores a declared policy is not conformant, regardless of how well it handles structure and content.
+
+**The policy vocabulary is closed.** This is the inverse design of the [§Extension Namespace](#extension-namespace): extensions are open-ended (`x.<domain>.<identifier>` — adopters freely add vendor fields that runtimes ignore unless they understand them), whereas policies are spec-defined-only. Authors cannot introduce new policies via the extension namespace; a policy that only some tools recognize defeats the interoperability guarantee the category exists to provide. Future policy additions are explicit spec changes with their own proposals and their own registry entries.
+
+This is a structural commitment, not a stylistic one: policies govern downstream behavior across the ecosystem; extensions govern adopter-specific additions that do not impose obligations on others. Do not use `x.<domain>.<policy-name>` as a workaround for an unregistered policy — such keys are not recognized as policies by conformant runtimes.
+
+### Runtime discovery rule
+
+A runtime resolving a dot-prefixed key inside a translatable-field object:
+
+1. **Matches against this Policy Registry first.** A dot-prefixed key whose name matches a registered policy (e.g., `.context`, `.machine-translate`) is a policy; apply that policy's semantics.
+2. **Falls through to locale-variant classification by BCP-47 shape.** A dot-prefixed key that matches BCP-47 tag shape (e.g., `.en`, `.fr-CA`, `.zh-Hant`) is a locale variant.
+3. **Unknown dot-prefixed key** (not in the registry, not BCP-47-shaped) — warn but tolerate; do not error (see [§Internationalization §Unknown dot-prefixed members](#unknown-dot-prefixed-members)).
+
+Writer obligation is the inverse: writers MUST NOT emit a dot-prefixed key that is neither in the Policy Registry nor a valid BCP-47 locale tag. Writer-side validators reject unknown dot-prefixed keys explicitly.
+
+### Implemented in v1.4
+
+| Policy | Values | Registered | Semantics |
+|--------|--------|------------|-----------|
+| `.context` | free-form string | 1.4 | Disambiguator for translators. Example: `"music-catalog"` tells a translator choosing between multiple French words for "Record" that this is about a recording artist, not a medical record. Advisory to renderers; normative for translation tooling that reads the object. Carried with the object so it reaches translation tooling. |
+| `.machine-translate` | `"Allow"` \| `"Never"` | 1.4 | Default is `"Allow"`. When `"Never"`, translation tooling MUST NOT auto-generate missing locale variants via machine translation, and the runtime MUST mark the rendered content as non-translatable using `translate="no"` (see conformance test ft-i18n-09 for the normative mechanism). A tool encountering a missing locale for a `.machine-translate: "Never"` field SHOULD either surface the primary-locale variant or prompt for human translation; it MUST NOT silently insert an ML-generated translation. Use case: culturally-specific content (family stories, art provenance, specialized terminology, named entities) where machine translation produces plausible-looking but incorrect output. |
+
+### Reserved for later proposals (named but not implemented in v1.4)
+
+| Policy | Planned purpose |
+|--------|-----------------|
+| `.plural` | pluralization rules |
+| `.gender` | grammatical-gender variants |
+| `.dir` | per-locale text direction (LTR / RTL / auto) |
+
+A runtime encountering a reserved-but-unimplemented policy MUST ignore it without error; implementations arriving ahead of the spec are non-conformant in either direction (rejecting it is wrong; acting on undefined semantics is also wrong).
+
+### Policy compliance as a conformance dimension
+
+Policy compliance is tested as a first-class category in the conformance suite (`conformance/policies/`), on par with field types and forward compatibility. See [§Conformance Levels](#conformance-levels) and the `ft-i18n-07` / `-08` / `-09` gating tests for `.context` preservation and `.machine-translate` enforcement.
+
+---
+
 ## Extension Namespace
 
 catdef is extensible. Any implementer can add custom fields, settings, or metadata without modifying the spec — and without risk of collision with future spec versions or other implementers.
@@ -1515,6 +1777,8 @@ On a venue's lobby kiosk, this renders as a date-forward calendar with tonight's
 - No server required
 - MAY ignore: subcats, views declaration, inherits_from, embed config, themes
 
+**L1 Enumerated-namespace resolution.** An L1 runtime that ignores subcats MUST be able to resolve an Enumerated field's value namespace from item references at render time when `data.values.<target>` is not present. The pre-declared namespace (from `subcats.<target>.values` or `data.values.<target>`) is an optimization; the item-reference fallback is the L1-mandatory path. This guarantees that a catdef using subcat-only Enumerated namespaces (see §Subcats §Value resolution) remains L1-renderable without requiring the L1 runtime to implement subcat resolution.
+
 ### Level 2: Standard (lightweight server)
 - Level 1 plus: search, sort, filter, export, history, trash
 - Persistent storage (SQLite, flat files, or equivalent)
@@ -1556,6 +1820,50 @@ The catdef version follows semver:
 
 A catdef MUST specify its version. A runtime MUST refuse to render a catdef with a higher major version than it supports.
 
+### Writer obligation on version stamping
+
+The `catdef` stamp MUST declare the minimum version that defines every feature used in the document. A writer MUST NOT emit a stamp that post-dates any feature (a stamp newer than needed is permitted but SHOULD be avoided — the minimum-version rule is preferred for forward-compatible rendering).
+
+Concretely:
+
+- A document that uses only v1.0 features MUST declare `"catdef": "1.0"` (or later).
+- A document that uses any v1.1-or-later feature MUST declare a stamp that includes that feature's introducing version.
+- A document using any v1.4 feature (`primaryLocale`, polymorphic translatable fields, `.context`, `.machine-translate`, URL object schema, CATIO outer-archive extension rule, subcat value resolution rule, or this writer-obligation rule itself) MUST declare `"catdef": "1.4"`.
+
+The catdef maintainers publish a [Feature-Version Index](#feature-version-index) (non-normative) to assist writers and static analyzers.
+
+A writer that emits a mis-stamped document is non-conformant, regardless of whether the document happens to render correctly on any given reader.
+
+### Reader behavior on mis-stamped documents
+
+Reader behavior is unchanged from existing forward-compat rules (value #5):
+
+- A reader MUST gracefully ignore fields it does not recognize. Unknown fields do not cause render failure.
+- A reader MAY warn when a document uses a feature newer than its stamp suggests (e.g., a `"catdef": "1.3"` document that declares `primaryLocale`). The warning is advisory — the reader continues to render.
+- A reader MUST NOT reject a mis-stamped document purely because of the stamp mismatch. Reader-side robustness protects users whose authoring tools are bug-stamped.
+
+The asymmetry is deliberate: writers must be strict so the ecosystem has reliable stamps to rely on; readers must be lenient so users are never blocked by another author's tooling bug. This is Postel's Law applied to version stamping, and the same writer-strict / reader-lenient pattern governs other v1.4 additions — subcat value resolution superset validation (§Subcats §Value resolution) and polymorphic-field unknown-key handling (§Unknown dot-prefixed members).
+
+### Canonical and reference-document exception
+
+During active development of an unreleased minor version, the canonical reference file(s) and normative reference documentation MAY declare the target version stamp (e.g., `"catdef": "1.4"`) before that version is released. This exception applies only to the canonical and to documents explicitly identified as reference documentation by the catdef maintainers. All other writers MUST NOT emit unreleased-version stamps. On release of the target minor, the exception terminates for that version — the canonical and references become subject to the standard writer-obligation rule.
+
+### Feature-Version Index
+
+This non-normative index maps each feature to the version that introduced it. Authoritative definition of "when a feature was introduced" is the spec text at the tagged version; this index is a fast-path lookup for writers and validators.
+
+| Version | Features introduced |
+|---------|---------------------|
+| 1.0 | Core structure: `catdef`, `product`, `requires`, `hints`, `templates`, `settings`, `data`. Field types: `String`, `Integer`, `RichText`, `Enumerated`, `Photo`. Inline and named `theme` on `product`. Conformance test suite scaffolding. |
+| 1.1 | Field types added: `Number`, `GeoLocation`, `Date`, `Money`, `Boolean`, `CloudFile`, `URL`, `Table`. String `format` attribute (e.g. `isbn`, `vin`, `sku`). Field-def attributes (`unique`, `min`/`max`, `format`, `unit`, `precision`, `required`, `importance`, `widget`, `multi`, `placeholder`, `sort_order`). Canonical file extensions formalized: `.openthing`, `.opencatalog`, `.catdef`. OpenThing + OpenCatalog conceptual framing. Kiosk mode (view modifier). Table `bbox` spatial linking between rows and photo regions. Photo labels (suggested tags on photo galleries). `max_items` attribute on `Photo` and `CloudFile`. Photo transforms: `crop`, `rotate`, `deskew`. |
+| 1.2 | Subcats (`subcats.<name>` with `field_defs` and seeded `values`) — enriched Enumerated values carrying their own per-value field data. |
+| 1.3 | `inherits_from` (catalog inheritance from partner/model catalogs). `views` declaration (`primary_axis`, `modes`, `default_icon`, `kiosk_layout`, `mode_config`). `embed` declaration for iframe embedding. Extended `product` fields (`phone`, `website`, `address`, `hours`, `social`, `sections`) — About page. `scorable` field attribute (geo/time-weighted sorting). `range: true` modifier on `Number`, `Money`, `Date`. Subcat enrichments: `Photo` fields inside subcats; recursive Enumerated edges (a subcat field referencing another subcat by target name). |
+| 1.4 | `primaryLocale` (i18n root). Polymorphic translatable fields. Closed-vocabulary policies — Policy Registry v1.4 entries: `.context`, `.machine-translate`. Value #9 (policy compliance as conformance requirement) adopted as governance. `URL` object schema formalized (CA-006). Conformance validator extended for `Date` circa/range, `Money` range, `Number` range, `URL` object, and range/shape-mismatch rejection (CA-006). CATIO outer-archive extension rule — ZIP bundles use `.opencatalog` / `.openthing` outer extension with content-sniffing (CA-001). Subcat value resolution — `subcats.<target>.values` authoritative when declared (CA-003). Writer-strict / reader-lenient version-stamping rule (this section, CA-002). Canonical reference file artifact. |
+
+Methodology note: the v1.1 and v1.2 columns were backfilled by archaeology against `git log -p -- CATDEF_SPEC.md`, using the version-bump commits (`521c7a0` "v1.1: Number, GeoLocation, String formats, field-def attributes", `f599254` "v1.2: Add Subcats", `3eaa477` "v1.3: inheritance, views, range, scorable, embed, About") as boundary markers. Every commit between two boundary markers ships in the later of the two versions.
+
+MCP conformance levels (M1/M2/M3) and the reference-server design have been deferred to v1.5 and are not part of v1.4 — see [decisions/mcp-conformance-levels-and-reference.md](decisions/mcp-conformance-levels-and-reference.md).
+
 ---
 
 ## Security Considerations
@@ -1588,5 +1896,5 @@ These extensions belong to the catdef standard, not to any runtime. Any conforma
 
 ---
 
-*Specification version 1.3. April 2026.*
+*Specification version 1.4. April 2026.*
 *An open standard. Licensed under MIT.*

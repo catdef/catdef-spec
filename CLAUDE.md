@@ -26,7 +26,7 @@ A fresh Claude session, cold-loading this document, can:
 3. Draft a conformance test for any proposed change to normative behavior, including policy-compliance tests when the change touches the policy vocabulary.
 4. Know the difference between a patch-level fix it should make directly and a proposal-level change that requires the full artifact and maintainer review.
 5. Know when to escalate to the catdef maintainers out-of-band rather than draft in public.
-6. Recognize when a proposal introduces or modifies a *policy* (a closed-vocabulary, author-declared constraint on downstream tool behavior) versus a structural or content feature, and handle policy changes with the additional rigor they require — conformance tests for policy compliance are mandatory, not optional.
+6. Recognize when a proposal introduces or modifies a *policy* (a closed-vocabulary, author-declared constraint on downstream tool behavior) versus a structural or content feature, and handle policy changes with the additional rigor they require — per **value #9**, conformance tests for policy compliance are mandatory, not optional.
 
 If a session cannot do one of these things after reading this file, the file has a gap and the gap is a patch-level fix.
 
