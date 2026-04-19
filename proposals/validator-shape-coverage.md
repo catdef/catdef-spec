@@ -3,13 +3,16 @@
 **Status:** Draft
 **Target version:** 1.4 (minor — formalizes `URL` value shape and extends the reference validator to enforce the full v1.3 value-shape surface)
 **Origin:** [canonical/AUTHORING_FEEDBACK.md CA-006](../canonical/AUTHORING_FEEDBACK.md) (first-implementor feedback — the conformance suite rejects the canonical's spec-compliant value shapes)
-**Conformance level affected:** Test-suite coverage across all levels (L1 through L4). No runtime behavior change — the spec-defined shapes are unchanged; the validator catches up to them.
+**Strategist decision:** [decisions/CA-006.md](../decisions/CA-006.md) — accept with modifications; this revision applies them.
+**Conformance level affected:** Test-suite coverage across all levels (L1 through L4). The `URL` object schema is new normative spec text at v1.4; per CA-002, documents using the URL object form MUST stamp v1.4.
 
 ## Summary
 
 The reference conformance validator `validate_item_field_values()` in `conformance/test_field_values.py` does not recognize several value shapes that CATDEF_SPEC.md already defines. When run against the canonical ([`canonical/catalog.opencatalog`](../canonical/catalog.opencatalog)), it produces 22 false-positive errors against spec-compliant `Date` (circa/range), `Money` (range), `Number` (range), and `URL` (object) values. This proposal extends the validator to recognize those shapes, and formalizes the `URL` object schema in CATDEF_SPEC.md §Field Types (currently implied by prose — "A web URL with optional auto-extracted title, description, og:image" — but not schematized).
 
 Scope is bounded to v1.3 shapes already in the spec plus the `URL` schema formalization. Polymorphic translatable-field validation (v1.4-draft) is out of scope here and belongs with the [i18n proposal's](i18n-polymorphic-fields.md) conformance test additions.
+
+The most strategically important addition in this proposal is **`ft-shape-07`** — a regression test that runs the canonical file through the extended validator. It makes "canonical and conformance suite drift apart" structurally detectable, completing the four-artifact self-correcting loop (spec / canonical / validator / runtime) with a mechanical enforcer rather than editorial discipline. If either the canonical or the validator changes without the other, the test fails.
 
 ## Motivation
 
@@ -55,10 +58,10 @@ Replace with a proper subsection after §GeoLocation Type or adjacent to §Date 
 >
 > | Key | Type | Required | Description |
 > |-----|------|----------|-------------|
-> | `url` | string | yes | The actual URL. MUST be a valid HTTP/HTTPS URL. |
+> | `url` | string | yes | The actual URL. MUST start with `http://` or `https://`. Validators perform this lightweight prefix check; deeper validation (DNS resolution, reachability, TLS) is a runtime concern and is not part of static conformance. |
 > | `title` | string | no | Page title, typically the `<title>` element or `og:title`. |
 > | `description` | string | no | Short description, typically `<meta name="description">` or `og:description`. |
-> | `og_image` | string | no | URL of a representative image, typically `og:image`. |
+> | `og_image` | string | no | URL of a representative image. The JSON key is `og_image` (underscore form) for JSON-interop ergonomics; the source Open Graph property is `og:image` (colon form). Keys containing colons require escaping at every consumer, so catdef uses the underscore form in interchange. |
 >
 > Renderers MAY display the object form as a link preview card (favicon + title + description + image). When a URL field is presented for editing, the runtime MAY fetch and populate metadata on paste. Metadata fields are advisory — a runtime that cannot fetch them simply displays the URL string.
 >
@@ -93,23 +96,29 @@ def validate_field_value(label: str, value, fd: dict, values_map: dict) -> list[
             errors.append(f"{label}: expected Date value (string, circa object, or range object), got {type(value).__name__}")
 
     elif ftype == "Number":
-        if range_ok and isinstance(value, dict):
-            for k in ("min", "max"):
-                if not isinstance(value.get(k), (int, float)) or isinstance(value.get(k), bool):
-                    errors.append(f"{label}: Number range {k} must be a number")
+        if isinstance(value, dict) and ("min" in value or "max" in value):
+            if not range_ok:
+                errors.append(f"{label}: Number range shape used but field def does not declare range: true")
+            else:
+                for k in ("min", "max"):
+                    if not isinstance(value.get(k), (int, float)) or isinstance(value.get(k), bool):
+                        errors.append(f"{label}: Number range {k} must be a number")
         elif isinstance(value, (int, float)) and not isinstance(value, bool):
             pass  # existing check
         else:
             errors.append(f"{label}: expected Number (primitive, or range object with min/max)")
 
     elif ftype == "Money":
-        if range_ok and isinstance(value, dict) and "low" in value and "high" in value:
-            for side in ("low", "high"):
-                obj = value[side]
-                if not isinstance(obj, dict) or not isinstance(obj.get("amount"), (int, float)):
-                    errors.append(f"{label}: Money.range.{side}.amount must be a number")
-                if not isinstance(obj.get("currency"), str) or len(obj.get("currency", "")) != 3:
-                    errors.append(f"{label}: Money.range.{side}.currency must be a 3-letter ISO code")
+        if isinstance(value, dict) and ("low" in value or "high" in value):
+            if not range_ok:
+                errors.append(f"{label}: Money range shape used but field def does not declare range: true")
+            else:
+                for side in ("low", "high"):
+                    obj = value.get(side)
+                    if not isinstance(obj, dict) or not isinstance(obj.get("amount"), (int, float)):
+                        errors.append(f"{label}: Money.range.{side}.amount must be a number")
+                    elif not isinstance(obj.get("currency"), str) or len(obj.get("currency", "")) != 3:
+                        errors.append(f"{label}: Money.range.{side}.currency must be a 3-letter ISO code")
         elif isinstance(value, dict) and "amount" in value:
             # existing plain Money check
             if not isinstance(value["amount"], (int, float)):
@@ -121,10 +130,14 @@ def validate_field_value(label: str, value, fd: dict, values_map: dict) -> list[
 
     elif ftype == "URL":
         if isinstance(value, str):
-            pass  # plain URL string
+            if not (value.startswith("http://") or value.startswith("https://")):
+                errors.append(f"{label}: URL must start with http:// or https://")
         elif isinstance(value, dict):
-            if not isinstance(value.get("url"), str):
+            url_str = value.get("url")
+            if not isinstance(url_str, str):
                 errors.append(f"{label}: URL object must carry a string 'url'")
+            elif not (url_str.startswith("http://") or url_str.startswith("https://")):
+                errors.append(f"{label}: URL.url must start with http:// or https://")
             for k in ("title", "description", "og_image"):
                 if k in value and not isinstance(value[k], str):
                     errors.append(f"{label}: URL.{k} must be a string")
@@ -192,21 +205,41 @@ Rejected for this proposal. Polymorphic fields are a v1.4-draft feature (per the
 
 Rejected. Without a formalized schema, a validator that "accepts URL objects" has no specified set of allowed keys. An implementer could legitimately emit `{"url": "...", "href": "..."}` thinking either key is fine. The formalization is a small prose addition and closes the ambiguity.
 
+### E. Use `og:image` (colon form) as the JSON key
+
+Rejected. JSON keys with colons require escaping at every consumer. The source property name `og:image` is preserved in the key's documentation; the JSON-interchange form is `og_image`. This mirrors the convention used by open-graph JSON representations across the broader web ecosystem.
+
+### F. Deeper URL validation in the static validator (DNS, reachability, TLS)
+
+Rejected for the static validator. A lightweight HTTP/HTTPS prefix check is sufficient to catch obviously-malformed values; deeper validation requires network and belongs at runtime. Keeping the validator static preserves its offline-runnable property, which is load-bearing for the conformance suite's operation in CI and air-gapped environments.
+
+### G. Silent acceptance when a range-shape value appears on a non-range field
+
+Rejected. Today, a Money field without `range: true` that receives `{"low": ..., "high": ...}` would either silently fail or silently accept as a flat Money. The revised validator rejects this explicitly — the `range` attribute is load-bearing, and a shape/field-def mismatch is always a bug. This applies uniformly to `Number`, `Money`, and `Date` range shapes.
+
+## Release management
+
+This proposal is bundle-locked with the v1.4 release (CA-001, CA-002, CA-003, i18n / `primaryLocale`). Rationale:
+
+- The `URL` object schema formalization is new normative spec text introduced at v1.4.
+- Per CA-002, any catdef document using the URL object form MUST stamp v1.4 — the schema is defined at v1.4.
+- If this proposal shipped independently as 1.4.1, the URL schema would live at v1.4 but `ft-shape-07` (which validates a v1.4 document containing URL objects) would live at v1.4.1. That is exactly the mid-version contradiction CA-002's writer-strict stamping rule was designed to prevent.
+- The proposal is small enough that bundle coordination cost is near-zero.
+
+Per the v1.4 release-management constraint shared with CA-001/002/003, merge-to-main is held until the full bundle is coherent. Branch advance and review-in-flight are fine.
+
 ## Open questions
 
-1. **`og_image` vs. `og:image`.** The spec prose uses `og:image` (the actual Open Graph property name with a colon). The proposed object-shape key is `og_image` (underscore), since JSON keys with colons require escaping and conventionally JSON schemas use underscores. Is there a reason to prefer the colon form? Recommendation: `og_image` for JSON ergonomics; cite `og:image` as the source in the key's description.
+None remaining after CA-006 revisions. Prior open questions were resolved into normative text:
 
-2. **Validator enforcement of URL format.** Should `validate_field_value` also enforce that `url` is a valid HTTP/HTTPS URL (basic `urlparse` check), or leave that to runtime concerns? Recommendation: do a lightweight `startswith("http://") or startswith("https://")` check to catch obviously-wrong values. Deeper validation (DNS, reachability) stays a runtime concern.
-
-3. **Range on non-declared range fields.** Today, a Money field without `range: true` that receives `{"low": ..., "high": ...}` silently fails (or worse, silently accepts as a flat Money). Should the validator reject this as a shape/field-def mismatch? Recommendation: yes, reject explicitly — the `range` attribute is load-bearing, and a shape-def mismatch is always a bug.
-
-4. **Relationship to the v1.4 bundle release-management constraint.** This proposal is scoped to v1.3 shape coverage plus a small URL formalization. Does it need to bundle with CA-001/002/003 and the i18n/MCP proposals? Recommendation: **no bundle lock** — this proposal is validator work, not runtime-behavior change. It can ship as a v1.4 minor alongside the bundle without interlock, because existing catdefs don't become invalid and existing runtimes don't become non-conformant. The main bundle can merge with or without this one.
+- `og_image` vs `og:image` → resolved in favor of `og_image` (underscore); colon form cited as Open Graph source.
+- URL format validation → lightweight prefix check (`http://` or `https://`) is normative in the validator.
+- Range/shape mismatch → explicit rejection; `Number`, `Money`, `Date` all reject range-shape values when the field def does not declare `range: true`.
+- Bundle-lock question → resolved in favor of bundle-lock with v1.4 per the Release Management section above.
 
 ## Requested maintainer actions
 
 - Sign off on formalizing the `URL` object schema in CATDEF_SPEC.md §Field Types (the URL Type subsection above).
-- Sign off on extending `validate_field_value()` for Date circa/range, Money range, Number range, and URL object shapes.
-- Confirm target version: 1.4 (minor) per the precedent of CA-001/002/003, or 1.3.1 (patch) since the runtime-behavior surface is unchanged. My read: 1.4 because the URL formalization is a new normative schema, not a pure validator catch-up.
+- Sign off on extending `validate_field_value()` for Date circa/range, Money range, Number range, and URL object shapes, with explicit range/shape-mismatch rejection and lightweight HTTP/HTTPS prefix validation.
 - Confirm polymorphic-translatable-field validation is out of scope here and belongs with the i18n proposal's conformance tests.
-- Confirm `og_image` (underscore) as the JSON-form key for the Open Graph image.
 - Sign off on `ft-shape-07` — the regression test that validates the canonical itself. This is the artifact that makes "canonical and conformance suite drift apart" structurally detectable.
