@@ -1563,6 +1563,8 @@ On a venue's lobby kiosk, this renders as a date-forward calendar with tonight's
 - No server required
 - MAY ignore: subcats, views declaration, inherits_from, embed config, themes
 
+**L1 Enumerated-namespace resolution.** An L1 runtime that ignores subcats MUST be able to resolve an Enumerated field's value namespace from item references at render time when `data.values.<target>` is not present. The pre-declared namespace (from `subcats.<target>.values` or `data.values.<target>`) is an optimization; the item-reference fallback is the L1-mandatory path. This guarantees that a catdef using subcat-only Enumerated namespaces (see §Subcats §Value resolution) remains L1-renderable without requiring the L1 runtime to implement subcat resolution.
+
 ### Level 2: Standard (lightweight server)
 - Level 1 plus: search, sort, filter, export, history, trash
 - Persistent storage (SQLite, flat files, or equivalent)
