@@ -443,7 +443,7 @@ One or more item templates. Each template defines a kind of thing in the catalog
 | `Photo` | Edge to Photo node | An image with storage path, dimensions, metadata. Supports `multi: true` for galleries |
 | `Table` | Edges to Value nodes with sub-fields | Structured multi-row data. Each row is a Value node with its own Fields defined by `columns` |
 | `CloudFile` | Inline (URL + provider metadata) | Pointer to a file in cloud storage (Dropbox, GDrive, OneDrive, Box). Not downloaded, just referenced |
-| `URL` | Inline | A web URL with optional auto-extracted title, description, og:image |
+| `URL` | Inline (string) or Inline (object) | A web URL, either a plain string or an object with `{url, title, description, og_image}`. See §URL Type for the formalized schema |
 | `Date` | Inline | ISO 8601 date string. Supports `circa: true` for approximate dates. Optionally bounded by `min`/`max` |
 | `Money` | Inline (amount + currency) | Monetary value with ISO 4217 currency code |
 | `Boolean` | Inline | True/false toggle |
