@@ -642,6 +642,8 @@ If you want a subcat to exist for future enrichment but have no seed data yet:
 - **Subcat** = shared value enrichment (what "Omega" means across *all* watches)
 - Both use child Field nodes with the same schema; the difference is scope
 
+**Translating enum value displays:** enum values are identifiers; they stay stable across locales. When a catalog needs translated displays for enum values, the polymorphism lives on a subcat field (e.g., `DisplayName`), not on the enum value itself. See [§Internationalization §Translating enum value displays](#translating-enum-value-displays) for the canonical pattern.
+
 **Conformance:**
 - Level 1 runtimes MAY ignore subcats (values still work as plain strings)
 - Level 2+ runtimes SHOULD render subcat fields in value detail views
@@ -1222,6 +1224,145 @@ Catalog-level feature flags and configuration.
 ```
 
 All settings are optional. Omitted settings use the runtime's defaults (which SHOULD be sensible for a personal catalog).
+
+---
+
+## Internationalization
+
+catdef supports internationalization through **polymorphic translatable fields** — selected user-facing string fields may be authored either as a plain string (the simple form, unchanged from v1.3) or as an object whose members are locale-keyed string variants plus author-declared policies. Monolingual catdefs remain trivial; multilingual catdefs are expressed without a parallel schema.
+
+### Authoring pattern
+
+**Simple form (unchanged, current behavior):**
+
+```json
+{
+  "label": "Artist"
+}
+```
+
+**Translated form (new, optional):**
+
+```json
+{
+  "label": {
+    ".context": "music-catalog",
+    ".en": "Artist",
+    ".fr": "Artiste",
+    ".ja": "アーティスト"
+  }
+}
+```
+
+### Dot-prefix convention for translatable-field members
+
+All reserved members inside a translatable-field object are **dot-prefixed** to mark them as translation metadata rather than data. Dot-prefixed members divide into two categories with distinct semantics:
+
+**Locale variants.** One translated string per locale, keyed by a BCP-47 tag. Examples: `.en` (English), `.fr` (French), `.en-GB` (British English), `.zh-Hant` (Traditional Chinese). Strict BCP-47 recommended but not validated at L1. Runtimes resolve locale variants using RFC 4647 §3.4 (Lookup) against the available variants; see §Fallback semantics below.
+
+**Policies.** Statements of author intent about how the field's content must be handled by any tool or runtime that processes it. Policies travel with the data. A downstream tool that reads the catdef inherits the policies and **MUST** respect them. Policy vocabulary is closed and spec-defined — see [§Policy Registry](#policy-registry) for the full registered list.
+
+Policy compliance is a conformance requirement (value #9). An implementation that renders structure and content correctly but ignores declared policies — for instance, by silently auto-translating a field marked `.machine-translate: "Never"` — is **not conformant**. Policy compliance is gated by the conformance suite's `conformance/policies/` category, alongside field-type support and forward-compatibility behavior.
+
+The dot prefix serves three functions: it marks the member as translation metadata rather than a locale code or field name, it namespaces the reserved vocabulary away from author-chosen field names, and it gives parsers a classification rule — **registered policies first** (from [§Policy Registry](#policy-registry)), then **locale variants** (any remaining dot-prefixed key; BCP-47 shape recommended), then **unknown policies** (warn but do not error). Registry-first classification is normative; the BCP-47-shape check is a secondary heuristic for forward compatibility.
+
+### Unknown dot-prefixed members
+
+A runtime encountering a dot-prefixed key it does not recognize applies the following rules, consistent with value #5 (forward compatibility) and the writer-strict / reader-lenient pattern established by §Versioning and §Subcats §Value resolution:
+
+- **Unknown locale variant** (dot-prefixed key matching BCP-47 shape that the runtime does not need) — ignore silently. The viewer's locale will not be served by this variant, but nothing is broken.
+- **Unknown policy** (dot-prefixed key not in the Policy Registry and not BCP-47-shaped) — warn but tolerate. Never error on a forward-compatible extension. A future policy the runtime doesn't yet know about is strictly safer to preserve than to strip.
+- **Writer obligation** — writers MUST NOT emit a dot-prefixed key that is neither in the Policy Registry nor a valid BCP-47 locale tag. Writer-side validators reject unknown dot-prefixed keys explicitly.
+
+### Primary locale declaration
+
+A catdef using translatable fields SHOULD declare its primary locale at the top level:
+
+```json
+{
+  "catdef": "1.4",
+  "primaryLocale": "en",
+  ...
+}
+```
+
+If `primaryLocale` is omitted, the first locale encountered in any translatable field is treated as primary (undefined order; authors should declare explicitly).
+
+### Fallback semantics
+
+Runtimes resolve locale variants using **RFC 4647 §3.4 (Lookup)** against the available locale variants. The catdef's `primaryLocale` is the default if no variant matches via Lookup. Last-resort fallback to any defined variant, with implementation-defined order, MUST emit a warning.
+
+RFC 4647 §3.4 is the standard algorithm for progressively shortening a BCP-47 language tag (e.g., `fr-CA` → `fr` → default). Using it directly avoids edge-case bugs in hand-rolled fallback implementations and gives implementers an off-the-shelf reference.
+
+At no point does the runtime invent a translation it doesn't have. It selects from what's present.
+
+### Which fields are translatable
+
+All user-facing string fields in the core spec are candidates. Conservative v1.4 list:
+
+- `label` (on fields, subcats, enums, collections)
+- `description` / `prompt` (on fields)
+- `title` (on the catdef itself, on collections)
+
+**Explicitly not translatable (at least in v1.4):**
+
+- Field `id`, `name`, `type` — identifiers, not text
+- Numeric / Date / Money values — formatting is the runtime's job (see §Locale-aware formatting below)
+- URLs — may become translatable later; out of scope at v1.4
+- **Enumerated field values at item level** — identifiers, not text. Translated displays are achieved via the subcat-label pattern described below; item-level enum-value shape polymorphism is deferred to v1.5.
+
+### Translating enum value displays
+
+Enum values in catdef are **identifiers** — stable keys that reference subcat records (see [§Subcats](#subcats-enriched-enumerated-values)). Making them shape-polymorphic per-locale would hurt portability (a French and an English catdef would key the same logical entity differently) and conflate identifier with display. The canonical pattern for translated enum displays in v1.4 keeps the identifier stable and moves the polymorphism one level down, onto a subcat field.
+
+**Pattern:**
+
+```json
+{
+  "subcats": {
+    "Manufacturer": {
+      "field_defs": [
+        {"label": "DisplayName", "type": "String"}
+      ],
+      "values": {
+        "Stanley": {
+          "DisplayName": {".en": "Stanley", ".ja": "スタンレー"}
+        },
+        "Omega": {
+          "DisplayName": {".en": "Omega", ".ja": "オメガ"}
+        }
+      }
+    }
+  }
+}
+```
+
+The identifier (`"Stanley"`, `"Omega"`) stays stable. The display value uses the polymorphic-translatable-field pattern applied to the subcat's `DisplayName` field. A runtime renders `subcats.Manufacturer.values["Stanley"].DisplayName` through the same locale-resolution machinery as any other translatable field, yielding `"Stanley"` for English viewers and `"スタンレー"` for Japanese viewers — while every reference to the value across the catalog keys the same identifier.
+
+This is the recommended v1.4 pattern for translating enum-valued fields. It works for any Enumerated field whose target is a subcat, which is the expected shape for enum values that need translated displays.
+
+### Extension-field translatability
+
+Extension fields (`x.<domain>.<identifier>`) MAY use the polymorphic-translatable-field pattern at the extension author's option. The core spec does not mandate; extension authors choose per-field whether to support translatable values.
+
+**Worked example.** An extension defines `x.museum.description` for exhibit descriptions. The extension author opts into polymorphic translatability:
+
+```json
+{
+  "x.museum.description": {
+    ".context": "exhibit-label",
+    ".machine-translate": "Never",
+    ".en": "The earliest known cuneiform tablet from this region, c. 2400 BCE.",
+    ".fr": "La plus ancienne tablette cunéiforme connue de cette région, vers 2400 AEC."
+  }
+}
+```
+
+A conformant runtime encountering an extension field it doesn't recognize already ignores the field per the extension-namespace rules; a runtime that DOES recognize the extension and finds a polymorphic value applies the same resolution machinery as core translatable fields.
+
+### Locale-aware formatting of non-string types
+
+catdef declares that a field is Date, Money, or Number. How that value renders for a French-locale viewer (`49,00 $CA` vs. `$49.00 CAD`) is a **runtime concern**, resolved via standard library support for locale-aware formatting (CLDR). The spec does not dictate format strings or display conventions for numeric types.
 
 ---
 
