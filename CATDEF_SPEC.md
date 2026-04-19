@@ -1366,6 +1366,47 @@ catdef declares that a field is Date, Money, or Number. How that value renders f
 
 ---
 
+## Policy Registry
+
+Policies are author-declared constraints on how downstream tools must handle a field's content. They travel with the data inside translatable-field objects (see [§Internationalization §Dot-prefix convention](#dot-prefix-convention-for-translatable-field-members)). Policy compliance is a conformance requirement (value #9): a runtime that silently ignores a declared policy is not conformant, regardless of how well it handles structure and content.
+
+**The policy vocabulary is closed.** This is the inverse design of the [§Extension Namespace](#extension-namespace): extensions are open-ended (`x.<domain>.<identifier>` — adopters freely add vendor fields that runtimes ignore unless they understand them), whereas policies are spec-defined-only. Authors cannot introduce new policies via the extension namespace; a policy that only some tools recognize defeats the interoperability guarantee the category exists to provide. Future policy additions are explicit spec changes with their own proposals and their own registry entries.
+
+This is a structural commitment, not a stylistic one: policies govern downstream behavior across the ecosystem; extensions govern adopter-specific additions that do not impose obligations on others. Do not use `x.<domain>.<policy-name>` as a workaround for an unregistered policy — such keys are not recognized as policies by conformant runtimes.
+
+### Runtime discovery rule
+
+A runtime resolving a dot-prefixed key inside a translatable-field object:
+
+1. **Matches against this Policy Registry first.** A dot-prefixed key whose name matches a registered policy (e.g., `.context`, `.machine-translate`) is a policy; apply that policy's semantics.
+2. **Falls through to locale-variant classification by BCP-47 shape.** A dot-prefixed key that matches BCP-47 tag shape (e.g., `.en`, `.fr-CA`, `.zh-Hant`) is a locale variant.
+3. **Unknown dot-prefixed key** (not in the registry, not BCP-47-shaped) — warn but tolerate; do not error (see [§Internationalization §Unknown dot-prefixed members](#unknown-dot-prefixed-members)).
+
+Writer obligation is the inverse: writers MUST NOT emit a dot-prefixed key that is neither in the Policy Registry nor a valid BCP-47 locale tag. Writer-side validators reject unknown dot-prefixed keys explicitly.
+
+### Implemented in v1.4
+
+| Policy | Values | Registered | Semantics |
+|--------|--------|------------|-----------|
+| `.context` | free-form string | 1.4 | Disambiguator for translators. Example: `"music-catalog"` tells a translator choosing between multiple French words for "Record" that this is about a recording artist, not a medical record. Advisory to renderers; normative for translation tooling that reads the object. Carried with the object so it reaches translation tooling. |
+| `.machine-translate` | `"Allow"` \| `"Never"` | 1.4 | Default is `"Allow"`. When `"Never"`, translation tooling MUST NOT auto-generate missing locale variants via machine translation, and the runtime MUST mark the rendered content as non-translatable using `translate="no"` (see conformance test ft-i18n-09 for the normative mechanism). A tool encountering a missing locale for a `.machine-translate: "Never"` field SHOULD either surface the primary-locale variant or prompt for human translation; it MUST NOT silently insert an ML-generated translation. Use case: culturally-specific content (family stories, art provenance, specialized terminology, named entities) where machine translation produces plausible-looking but incorrect output. |
+
+### Reserved for later proposals (named but not implemented in v1.4)
+
+| Policy | Planned purpose |
+|--------|-----------------|
+| `.plural` | pluralization rules |
+| `.gender` | grammatical-gender variants |
+| `.dir` | per-locale text direction (LTR / RTL / auto) |
+
+A runtime encountering a reserved-but-unimplemented policy MUST ignore it without error; implementations arriving ahead of the spec are non-conformant in either direction (rejecting it is wrong; acting on undefined semantics is also wrong).
+
+### Policy compliance as a conformance dimension
+
+Policy compliance is tested as a first-class category in the conformance suite (`conformance/policies/`), on par with field types and forward compatibility. See [§Conformance Levels](#conformance-levels) and the `ft-i18n-07` / `-08` / `-09` gating tests for `.context` preservation and `.machine-translate` enforcement.
+
+---
+
 ## Extension Namespace
 
 catdef is extensible. Any implementer can add custom fields, settings, or metadata without modifying the spec — and without risk of collision with future spec versions or other implementers.
