@@ -1,4 +1,4 @@
-# catdef — Specification v1.3
+# catdef — Specification v1.4
 
 ## Overview
 

@@ -13,8 +13,8 @@ A single `.opencatalog` file contains everything: the schema (templates, field d
 
 | Path | Description |
 |------|-------------|
-| [CATDEF_SPEC.md](CATDEF_SPEC.md) | The catdef v1.3 specification — field types, subcats, views, inheritance, conformance levels |
-| [CATIO_SPEC.md](CATIO_SPEC.md) | The CATIO bundled-transport specification — `.opencatalog` ZIP format |
+| [CATDEF_SPEC.md](CATDEF_SPEC.md) | The catdef v1.4 specification — field types, subcats, views, inheritance, conformance levels, i18n, Policy Registry |
+| [CATIO_SPEC.md](CATIO_SPEC.md) | The CATIO v1.4 bundled-transport specification — `.opencatalog` ZIP format (CATDEF + CATIO version in lockstep) |
 | [samples/](samples/) | Sample catdef files you can open in any conformant renderer |
 | [conformance/](conformance/) | The catdef Conformance Test Suite — 98 tests |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to propose changes to the standard |

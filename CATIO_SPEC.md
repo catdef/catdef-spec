@@ -1,4 +1,4 @@
-# catio — Transport Specification v1.0
+# catio — Transport Specification v1.4
 
 ## Overview
 
@@ -24,7 +24,7 @@ The minimal catio document: one real-world object, described.
 
 ```json
 {
-  "catio": "1.0",
+  "catio": "1.4",
   "type": "thing",
 
   "thing": {
@@ -58,7 +58,7 @@ Multiple things, optionally with shared schema.
 
 ```json
 {
-  "catio": "1.0",
+  "catio": "1.4",
   "type": "collection",
 
   "schema": {
@@ -98,7 +98,7 @@ A complete OpenCatalog with OpenThing data — the `.opencatalog` file.
 
 ```json
 {
-  "catio": "1.0",
+  "catio": "1.4",
   "type": "catalog",
 
   "catdef": "1.3",
@@ -116,7 +116,7 @@ A complete OpenCatalog with OpenThing data — the `.opencatalog` file.
 }
 ```
 
-This is the canonical catdef catalog format, identified as a catio document of type `catalog`. Backward-compatible: existing catdef catalog files that lack the `catio` envelope are treated as `type: "catalog"` with `catio: "1.0"` implied.
+This is the canonical catdef catalog format, identified as a catio document of type `catalog`. Backward-compatible: existing catdef catalog files that lack the `catio` envelope are treated as `type: "catalog"` with `catio: "1.0"` implied (the pre-lockstep baseline).
 
 ### Catalog Schema (Starter Kit)
 
@@ -124,7 +124,7 @@ Template definitions only, no data. The `.catdef` format.
 
 ```json
 {
-  "catio": "1.0",
+  "catio": "1.4",
   "type": "schema",
 
   "catdef": "1.3",
@@ -209,7 +209,11 @@ All catio operations return errors in a standard shape:
 
 ## Versioning
 
-catio version follows semver, independent of catdef version. A catio 1.0 envelope can carry a catdef 1.1 payload — the transport doesn't constrain the content.
+CATIO versions track the catdef core specification in lockstep. CATIO X.Y.Z always pairs with catdef X.Y.Z. Versions are bumped together even when only one specification has changed in a given release; this preserves the "what version is this?" question as a single answer.
+
+CATDEF + CATIO are the co-equal core of the standard and bundle their versioning. Consumer specs (Theme Spec, MCP reference design) version independently per their own decision artifacts.
+
+The catio envelope is still transport-agnostic about content: a v1.4 catio envelope MAY carry a catdef payload stamped at any compatible version (`"catdef": "1.0"` through `"catdef": "1.4"`), subject to the catdef writer-stamping rules in CATDEF_SPEC.md §Versioning. Lockstep governs the standard's release cadence, not per-document version matching.
 
 ## Bundled Transport (ZIP)
 
@@ -313,5 +317,5 @@ These extensions belong to the catdef standard, not to any runtime. Any conforma
 
 ---
 
-*Specification version 1.0. April 2026.*
+*Specification version 1.4. April 2026.*
 *An open standard. Licensed under MIT.*
