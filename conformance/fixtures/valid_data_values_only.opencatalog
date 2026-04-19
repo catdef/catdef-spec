@@ -1,0 +1,28 @@
+{
+  "catdef": "1.3",
+
+  "product": {
+    "name": "Data.values only (no subcat)",
+    "slug": "data-values-only"
+  },
+
+  "templates": [
+    {
+      "name": "Watch",
+      "field_defs": [
+        {"label": "Title",     "type": "String",     "sort_order": 10, "required": true},
+        {"label": "Condition", "type": "Enumerated", "sort_order": 20, "target": "Condition"}
+      ]
+    }
+  ],
+
+  "data": {
+    "values": {
+      "Condition": ["Mint", "Excellent", "Very Good", "Good"]
+    },
+    "items": [
+      {"template": "Watch", "fields": {"Title": "Speedmaster", "Condition": "Mint"}},
+      {"template": "Watch", "fields": {"Title": "Submariner",  "Condition": "Very Good"}}
+    ]
+  }
+}
