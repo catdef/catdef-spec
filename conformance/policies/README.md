@@ -11,13 +11,13 @@ Tests here verify that conformant runtimes and tooling respect author-declared p
 
 ## Test categories
 
-Scaffolded at v1.4 (tests land in the v1.4 conformance-test PR):
+Shipping in v1.4 (implemented in `test_i18n_policies.py`):
 
 - **`ft-i18n-07`** — `.context` preservation. A tool that strips `.context` on export is non-conformant.
 - **`ft-i18n-08`** — `.machine-translate: "Never"` translator-tool enforcement. A translation tool that auto-generates missing locale variants on a `Never` field is non-conformant.
 - **`ft-i18n-09`** — `.machine-translate: "Never"` runtime enforcement. A runtime that fails to mark rendered content with `translate="no"` (or the platform-equivalent suppression mechanism) is non-conformant. This gates suppression of OS-level browser translation features (Chrome auto-translate, Safari translate-on-page).
 
-All policy-compliance tests are **gating**: failing one fails catdef conformance at the runtime's declared level.
+All policy-compliance tests are **gating**: failing one fails catdef conformance at the runtime's declared level. Each gating test is paired with a positive-control test that exercises the conformant path, so a silent "always-skip" implementation that happens to pass the MUST-NOT test is caught by the MUST-DO test.
 
 ## Why this category is first-class
 

@@ -1,18 +1,22 @@
 # catdef Conformance Test Suite
 
-This directory contains the official conformance tests for catdef renderers. The suite contains 98 tests organized by subject area.
+This directory contains the official conformance tests for catdef renderers. The suite contains 164 tests organized by subject area, plus 1 `xfail` tracking a known canonical drift (see §"The ft-shape-07 canonical regression" below).
 
 ## Structure
 
 ```
 conformance/
-  fixtures/          catdef files: valid, invalid, and edge-case
-  policies/          policy-compliance tests (value #9; first-class dimension at v1.4+)
-  test_parsing.py    catdef file parsing + validation
-  test_fields.py     field type rendering (all field types)
-  test_search.py     search, sort, filter behavior
-  test_themes.py     theme application
-  test_levels.py     conformance level feature gates
+  fixtures/                  catdef files: valid, invalid, and edge-case (25 files as of v1.4)
+  policies/                  policy-compliance tests (value #9; first-class dimension at v1.4+)
+    test_i18n_policies.py      ft-i18n-07/08/09 — .context preservation, .machine-translate enforcement
+  test_parsing.py            catdef parsing + validation, forward-compat
+  test_field_values.py       field-type value shapes incl. CA-006 Date circa/range, Money range,
+                             Number range, URL object + polymorphic translatable fields + ft-shape-01..07
+  test_photo_transforms.py   photo crop / rotate / deskew
+  test_versioning.py         CA-002 writer-strict stamping + Feature-Version Index + ft-version-01..04
+  test_subcat_values.py      CA-003 subcats-authoritative + ft-subcat-values-01..05
+  test_catio_bundle.py       CA-001 ZIP outer-archive extension + ft-catio-01..05
+  test_i18n.py               polymorphic-field fallback (RFC 4647 Lookup) + ft-i18n-01..06
 ```
 
 ## The ft-shape-07 canonical regression
@@ -56,13 +60,32 @@ Your renderer must:
 
 ## Fixture files
 
-The `fixtures/` directory contains catdef files designed to exercise every corner of the spec:
+The `fixtures/` directory contains catdef files designed to exercise every corner of the spec. Representative fixtures (one per category):
 
+**Parsing / structure**
 - `valid_minimal.opencatalog` — smallest possible valid file
 - `valid_all_field_types.opencatalog` — one field of every type
 - `invalid_no_catdef.catdef` — missing catdef version
 - `invalid_bad_field_type.catdef` — unrecognized field type
 
+**Photo transforms**
+- `valid_photo_transforms.opencatalog`, plus `invalid_*` fixtures for rotation, crop bounds, deskew corners
+
+**Value shapes (CA-006, v1.4)**
+- `valid_v13_value_shapes.opencatalog` — Date circa/range, Money range, Number range, URL object
+
+**Version stamping (CA-002)**
+- `valid_stamp_matches_features.opencatalog`, `valid_stamp_newer_than_features.opencatalog`, `invalid_stamp_older_than_features.opencatalog`
+
+**Subcat value resolution (CA-003)**
+- `valid_subcat_values_only.opencatalog`, `valid_subcat_plus_matching_data_values.opencatalog`, `valid_data_values_only.opencatalog`, `valid_empty_subcat_plus_data_values.opencatalog`, `invalid_data_values_superset.opencatalog`
+
+**CATIO bundles (CA-001)**
+- `valid_raw_opencatalog.opencatalog` (ZIP fixtures are built at test time)
+
+**i18n (polymorphic translatable fields + policies)**
+- `bilingual_labels.opencatalog`, `monolingual_french.opencatalog`, `polymorphic_no_primary.opencatalog`, `locale_variants_fr_ca.opencatalog`, `mt_never_content.opencatalog`
+
 ## Status
 
-The conformance suite is under active development. Contributions welcome.
+The conformance suite covers all five v1.4 release proposals (CA-001/002/003/006 + i18n). Contributions welcome; additions land as part of their respective spec proposals per CLAUDE.md.

@@ -13,10 +13,10 @@ A single `.opencatalog` file contains everything: the schema (templates, field d
 
 | Path | Description |
 |------|-------------|
-| [CATDEF_SPEC.md](CATDEF_SPEC.md) | The catdef v1.3 specification — field types, subcats, views, inheritance, conformance levels |
-| [CATIO_SPEC.md](CATIO_SPEC.md) | The CATIO bundled-transport specification — `.opencatalog` ZIP format |
+| [CATDEF_SPEC.md](CATDEF_SPEC.md) | The catdef v1.4 specification — field types, subcats, views, inheritance, conformance levels, i18n, Policy Registry |
+| [CATIO_SPEC.md](CATIO_SPEC.md) | The CATIO v1.4 bundled-transport specification — `.opencatalog` ZIP format (CATDEF + CATIO version in lockstep) |
 | [samples/](samples/) | Sample catdef files you can open in any conformant renderer |
-| [conformance/](conformance/) | The catdef Conformance Test Suite — 98 tests |
+| [conformance/](conformance/) | The catdef Conformance Test Suite — 164 tests (plus 1 xfail tracking a known canonical drift) |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to propose changes to the standard |
 | [MCP_REFERENCE.md](MCP_REFERENCE.md) | Non-normative reference design for a Model Context Protocol server exposing catdef catalogs |
 | [proposals/](proposals/) | In-flight proposals for spec changes (v1.4 and beyond) |
@@ -24,11 +24,15 @@ A single `.opencatalog` file contains everything: the schema (templates, field d
 
 ## File format
 
-MIME type: `application/vnd.catdef+json`
+MIME types:
+- `application/vnd.opencatalog+json` — a complete catalog (schema + data)
+- `application/vnd.openthing+json` — a single classified object
+- `application/vnd.catdef+json` — schema only (template definitions, no data)
 
 ```json
 {
-  "catdef": "1.3",
+  "catdef": "1.4",
+  "primaryLocale": "en",
   "product": { "name": "My Collection", "slug": "mycollection", ... },
   "inherits_from": "optional_model_slug",
   "views": { "primary_axis": "thing", "modes": ["grid"], "default": "grid" },
@@ -47,6 +51,17 @@ MIME type: `application/vnd.catdef+json`
 `String` `Integer` `Number` `RichText` `Enumerated` `Photo` `Table` `CloudFile` `URL` `Date` `Money` `Boolean` `GeoLocation`
 
 Plus field-def attributes: `unique`, `default`, `format` (isbn, vin, sku, etc.), `unit`, `precision`, `min`/`max`, `circa`, `currency`, `range`, `scorable`, `primary`.
+
+## v1.4 highlights
+
+- **Polymorphic translatable fields** — any user-facing string field (`label`, `description`, `prompt`, `title`) may be authored either as a plain string or as an object with locale-keyed variants (`.en`, `.fr`, `.zh-Hant`, ...) plus author-declared policies. Monolingual catdefs stay trivial; multilingual catdefs are expressed without a parallel schema. RFC 4647 §3.4 Lookup governs locale fallback.
+- **Policy Registry + value #9** — catdef is now a policy-bearing standard. The v1.4 closed vocabulary defines `.context` (translator disambiguator) and `.machine-translate` (`"Allow"` default; `"Never"` suppresses machine translation including OS-level browser features via `translate="no"`). Policy compliance is a first-class conformance dimension; runtimes that ignore a declared policy are non-conformant.
+- **URL object schema** — `URL` fields formalize an object shape carrying `{url, title, description, og_image}` alongside the plain-string form. Link-preview cards, auto-extracted metadata.
+- **Subcat value resolution rule** — when `subcats.<target>.values` is declared, it is authoritative for the Enumerated namespace. Writer-strict / reader-lenient superset validation mirrors the Postel's-Law pattern used across v1.4.
+- **CATIO outer-archive convention** — ZIP-packaged catio bundles use the content-extension on the outer archive (`.opencatalog`, `.openthing`) rather than `.zip`, matching the `.docx` / `.jar` / `.epub` ecosystem convention. Content-sniffing is the authoritative discriminator; `.zip` is SHOULD-accepted for compatibility.
+- **Writer-strict version stamping** — writers MUST stamp the minimum version that defines every feature used. A new non-normative Feature-Version Index maps every feature to its introducing version, making the rule mechanically enforceable.
+- **CATDEF + CATIO lockstep versioning** — the co-equal core specs now pair versions (CATIO 1.4 pairs with CATDEF 1.4). Consumer specs (Theme Spec, MCP reference) continue to version independently.
+- **Canonical reference file artifact** — a normative worked example (`canonical/riverside-heritage-reference-v1.4.opencatalog`) ships with the release; the new `ft-shape-07` conformance regression makes canonical-vs-validator drift structurally detectable.
 
 ## v1.3 highlights
 
