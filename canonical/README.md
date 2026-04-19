@@ -55,18 +55,28 @@ Exhaustively — at least one field, item, or subcat exercises each capability b
 - **`product` / About page.** Extended `product` object with `sections`, social handles, address, hours, phone — the full About-page surface.
 - **Context-aware rendering.** `scorable: "popularity"` (quilt — boosted on kiosk rotation) and `scorable: "recency"` (Date Made).
 
-### v1.4-draft capabilities
+### v1.4 capabilities (i18n + policies)
 
 - **`primaryLocale: "en"`** declared at the top level.
-- **Polymorphic translatable fields.** Item 6's `Title` uses the object form with `.en` and `.fr` variants.
+- **Polymorphic translatable fields.** Two items carry polymorphic `Title` values with `.en` + `.fr` variants:
+  - Item 6 (field-recorded lullaby) — also carries `.context: "heritage-catalog"` to disambiguate for translators.
+  - Item 11 (Cartwright wartime letter) — also carries `.machine-translate: "Never"`, demonstrating that the policy and human-curated translations coexist (the French variant is welcome; auto-translation is not).
 - **Policies.**
   - **`.context: "heritage-catalog"`** on item 6's title — gives human translators the disambiguation context they need.
-  - **`.machine-translate: "Never"`** applied to four fields spanning three items:
-    - Item 2 `Provenance` (historical family narrative with quoted donor phrasing).
-    - Item 6 `Title` and `Provenance` (field-recorded lullaby — a historical quotation).
-    - Item 11 `Provenance` (WWI letter — quoted donor phrasing "Jim never came home").
+  - **`.machine-translate: "Never"`** applied across **nine** fields, demonstrating the safer-default pattern that the i18n decision recommends for narrative and culturally-specific content (per [decisions/i18n-polymorphic-fields.md](../decisions/i18n-polymorphic-fields.md) §Build directive item 1):
+    - **Item-level provenance and titles:**
+      - Item 2 `Provenance` (Cartwright pressed-flower album — historical family narrative with quoted donor phrasing).
+      - Item 6 `Title` and `Provenance` (field-recorded lullaby — historical quotation; also `.fr` variant present).
+      - Item 11 `Title` and `Provenance` (WWI letter — quoted donor phrasing "Jim never came home"; also `.fr` variant present).
+    - **Subcat narrative fields:**
+      - Donor `Notes` for Helen Cartwright (multi-gift donor narrative; touches items 2, 8, 11).
+      - Donor `Notes` for Hiram Davies (multi-generational family narrative; touches items 3, 10).
+      - Location `Notes` for Riverside Millworks (family-business narrative; touches items 1, 3).
+      - Location `Notes` for Van Bergen Schoolhouse (one-room-school history; touches items 4, 6).
 
-A conformant implementation MUST NOT machine-translate any of the `.machine-translate: "Never"` fields regardless of viewer locale, per value #9 (policy compliance as a conformance requirement). This is tested by `ft-i18n-08` and `ft-i18n-09` in the i18n proposal.
+The `.machine-translate: "Never"` default is `"Allow"` per the spec — authors of culturally-specific content must opt in. The canonical demonstrates the pattern so authors copying it inherit the safer default for content where ML translation does harm (paraphrasing historical quotations, mistranslating named entities, fabricating locale variants of personal narratives).
+
+A conformant implementation MUST NOT machine-translate any of the `.machine-translate: "Never"` fields regardless of viewer locale, per value #9 (policy compliance as a conformance requirement). This is tested by `ft-i18n-08` and `ft-i18n-09` in `conformance/policies/test_i18n_policies.py`.
 
 ## What this bundle does not demonstrate
 
