@@ -197,6 +197,7 @@ Summary of items raised, with triage state:
 | CA-003 | `data.values` vs `subcats.<name>.values` authority | **Accept w/ mods** — [decisions/CA-003.md](../decisions/CA-003.md) · [proposal](../proposals/subcat-value-resolution.md) · target v1.4 · canonical compliant (permissive MAY-include pattern) |
 | CA-004 | Pexels API requires `User-Agent` | Tooling note — not spec feedback |
 | CA-005 | Subcat Photo field empty for real-brand entry | Resolved by implementation ([PR #14](https://github.com/catdef/catdef-spec/pull/14) — Stanley placeholder image) |
+| CA-006 | Conformance validator gaps vs. v1.3 value shapes (+ v1.4-draft polymorphic) | Pending triage — proposal drafting in progress |
 
 All three spec-bearing items (CA-001, CA-002, CA-003) have been triaged and target v1.4. Spec-text edits are held under the strategist's v1.4 release-management constraint until the full bundle is coherent — these three plus the i18n / `primaryLocale` proposal and the MCP conformance work land together or not at all. This canonical is already compliant with the three revised proposals as written; no content changes are needed when the spec-text eventually lands. The report format in AUTHORING_FEEDBACK.md will migrate to `catdef.org/feedback` once that endpoint is live; until then the file serves as the audit trail.
 
