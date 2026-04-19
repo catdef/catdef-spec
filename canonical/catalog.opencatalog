@@ -141,7 +141,10 @@
           "Given Name": "Helen",
           "Relationship": "Granddaughter of original owners",
           "Date Contributed": "2019-05-12",
-          "Notes": "<p>Donated the Cartwright family papers, flower album, and wartime correspondence across three separate gifts (2019–2023). Retired teacher.</p>"
+          "Notes": {
+            ".machine-translate": "Never",
+            ".en": "<p>Donated the Cartwright family papers, flower album, and wartime correspondence across three separate gifts (2019–2023). Retired teacher.</p>"
+          }
         },
         "Thomas Osgood Jr.": {
           "Family Name": "Osgood",
@@ -169,7 +172,10 @@
           "Given Name": "Hiram",
           "Relationship": "Retired carpenter",
           "Date Contributed": "2022-06-01",
-          "Notes": "<p>Donated a working set of hand tools inherited from his grandfather, Ellis Davies, who ran the Riverside Millworks.</p>"
+          "Notes": {
+            ".machine-translate": "Never",
+            ".en": "<p>Donated a working set of hand tools inherited from his grandfather, Ellis Davies, who ran the Riverside Millworks.</p>"
+          }
         },
         "Margaret Olivares": {
           "Family Name": "Olivares",
@@ -260,7 +266,10 @@
           "Coordinates": {"lat": 42.3320, "lng": -74.0190, "address": "Mill Street, Riverside", "label": "Riverside Millworks (former)"},
           "Operating Years": {"start": "1878", "end": "1949"},
           "Region": "Adair County",
-          "Notes": "<p>Water-powered woodworking shop run by the Davies family for three generations.</p>"
+          "Notes": {
+            ".machine-translate": "Never",
+            ".en": "<p>Water-powered woodworking shop run by the Davies family for three generations.</p>"
+          }
         },
         "Cartwright Family Home": {
           "Address": "17 Elm Avenue, Riverside",
@@ -274,7 +283,10 @@
           "Operating Years": {"start": "1899", "end": "1942"},
           "Region": "Parkhurst County",
           "Photo": {"filename": "loc_van_bergen_schoolhouse.jpg"},
-          "Notes": "<p>One-room schoolhouse depicted in the 1903 town-plan map. Closed and converted to a barn after district consolidation.</p>"
+          "Notes": {
+            ".machine-translate": "Never",
+            ".en": "<p>One-room schoolhouse depicted in the 1903 town-plan map. Closed and converted to a barn after district consolidation.</p>"
+          }
         },
         "New Britain, CT": {
           "Address": "New Britain, Connecticut",
@@ -801,7 +813,12 @@
       {
         "template": "Artifact",
         "fields": {
-          "Title": "Letter from Private Cartwright to his sister",
+          "Title": {
+            ".context": "heritage-catalog",
+            ".machine-translate": "Never",
+            ".en": "Letter from Private Cartwright to his sister",
+            ".fr": "Lettre du soldat Cartwright à sa sœur"
+          },
           "Accession Number": "RHS.2023.011",
           "Photos": [
             {"filename": "item11_letter.jpg", "slot": 1, "caption": "Overview", "is_primary": true}
@@ -825,7 +842,7 @@
             "provider": "example.org",
             "filename": "cartwright-letter-1917.pdf"
           },
-          "Notes": "<p>The <em>Provenance</em> field is marked <code>.machine-translate: \"Never\"</code>. The family's phrasing (\"Jim never came home\") is a historical quotation in the donor's own words; auto-translation would produce plausible-looking but false paraphrases. Conformant renderers display the primary-locale variant even when the viewer's locale is absent.</p>"
+          "Notes": "<p>This item demonstrates the <strong>translatable + Never</strong> coexistence pattern. The <em>Title</em> carries an English and French variant alongside <code>.machine-translate: \"Never\"</code> — meaning the title is welcome to be translated by humans (the French variant is a human-curated translation), but tooling MUST NOT auto-translate it to other locales. The <em>Provenance</em> carries the same policy; the family's phrasing (\"Jim never came home\") is a historical quotation in the donor's own words, where machine translation would produce plausible-looking but false paraphrases. Conformant renderers display whichever locale variant is explicitly present, falling back to the primary locale rather than synthesizing a translation.</p>"
         }
       },
 
