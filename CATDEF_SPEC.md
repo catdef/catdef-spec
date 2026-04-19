@@ -577,6 +577,54 @@ On import:
 
 Seed values carry in CATIO bundles, enabling partners to ship curated subcat libraries (common brands, common conditions, common materials) that customers get automatically when they inherit from a model catalog.
 
+### Value resolution
+
+The Enumerated namespace `<target>` (e.g., `"Brand"`, `"Material"`, `"Donor"`) can have its values declared in two places:
+
+1. **`subcats.<target>.values`** — the enriched form: each value is an object with field data matching the subcat's `field_defs`.
+2. **`data.values.<target>`** — the bare form: an array of value names only, without enrichment.
+
+When a subcat named `<target>` is declared:
+
+- `subcats.<target>.values` is **authoritative**. The set of value names in that object is the complete namespace.
+- `data.values.<target>` is **optional**.
+- A writer MAY omit `data.values.<target>` when `subcats.<target>.values` is declared; the `subcats.<target>.values` keys are the authoritative namespace. A writer MAY also include `data.values.<target>` as a subset — this is useful when the catdef is targeted at L1 runtimes that ignore subcats and benefit from a pre-declared namespace.
+- An importer encountering both MUST resolve from `subcats.<target>.values`.
+
+**Superset validation (writer-strict / reader-lenient asymmetry).**
+
+A writer MUST NOT emit a catdef in which `data.values.<target>` contains names that are not keys of `subcats.<target>.values`. Writer-side validation tools MUST reject such documents.
+
+A reader encountering such a document MUST NOT reject it on this basis. The reader MAY warn that `data.values.<target>` contains names not seeded in `subcats.<target>.values`. The reader resolves the value namespace from `subcats.<target>.values` only; extra names in `data.values.<target>` are ignored.
+
+This asymmetry — writer strict, reader lenient — matches the pattern established by the `catdef` version-stamping rule (§Versioning) and the polymorphic-field unknown-key handling (§Unknown dot-prefixed members).
+
+**Shared namespaces.** A subcat's value namespace is shared across all templates, fields, and subcats that reference it by target name. Multiple references resolve to the same value set; there is no per-reference scoping.
+
+When no subcat is declared for `<target>`:
+
+- `data.values.<target>` is the authoritative bare-name list. Used for Enumerated fields that don't need enrichment (simple option lists like `["Mint", "Excellent", "Very Good", "Good"]`).
+- Declaring values via an un-seeded subcat (i.e., `subcats.<target>` exists with `field_defs` but no `values` object) is permitted; in that case `data.values.<target>` supplies the names and the `field_defs` apply once any enrichment is attached after import.
+
+**Writer decision tree:**
+
+```
+If you want enriched values (e.g., Brand has Founded year, Country, Specialty):
+  → declare subcats.<target> with field_defs AND values
+  → data.values.<target> is optional; include it (as a subset) only
+    if you want pre-declared namespace visibility for L1 runtimes
+    that ignore subcats
+
+If you want bare-name values only (e.g., Condition is ["Mint", "Good", …]):
+  → declare data.values.<target> with a name array
+  → no subcats entry needed
+
+If you want a subcat to exist for future enrichment but have no seed data yet:
+  → declare subcats.<target> with field_defs only (no values)
+  → declare data.values.<target> with the name array
+  → each value will get empty subcat fields on import, fillable later
+```
+
 **Renderer behavior:**
 - A "Sub-Catalogs" tab (alongside Items, Photos) lists all Enumerated value namespaces
 - Clicking a namespace shows all values in a table with subcat columns
