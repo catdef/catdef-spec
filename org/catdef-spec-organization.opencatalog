@@ -1,0 +1,94 @@
+{
+  "catdef": "1.4",
+  "orgdef": "1.0.0",
+  "type": "orgdef:Organization",
+  "id": "catdef-spec",
+  "name": "catdef Substrate Specification",
+  "version": "2.0.0",
+
+  "mission": "Define machine-enhanceable descriptors of real-world objects (OpenThing) and catalogs (OpenCatalog) in an open, machine-readable way that provides the substrate format on which the catdef-family consumer specs (roledef, orgdef, memodef) and any AI-readable structured-data application build.",
+
+  "vision": "Part of the Open Agentic Governance Pattern (OAGP) family — alongside roledef, orgdef, and memodef — defining the substrate that the consumer specs use as their underlying machine-readable format. The primary readers of catdef artifacts are AI runtimes (rendering, validating, querying) and machine consumers; machine-readability and lossless-roundtrip-fidelity are the load-bearing constraints, not human readability.",
+
+  "scope": "The catdef substrate schema (CATDEF_SPEC.md), the CATIO bundled-transport spec (CATIO_SPEC.md), the conformance test suite (164 tests), the canonical reference file (riverside-heritage-reference-v1.4.opencatalog), the MCP reference design (MCP_REFERENCE.md), the proposal/decision lineage, and the L1 reference renderer at render.catdef.org. Out of scope: enforcing what consumers build on the substrate; runtime-specific implementations; consumer-spec semantics layered on top of catdef.",
+
+  "governance_model": "Bounded AI authority + human Director ratification + maintainer-via-feedback-channel discipline. The Chief Strategist (AI role with provisional bot identity catdef-strategist@catdef.org) sets strategic direction. The catdef-maintainer (AI role, bot identity catdef-maintainer@catdef.org) drafts spec text. The Director (Scott) ratifies. Critical: implementations file feedback via catdef.org/feedback or the catdef_report_feedback MCP tool — never amend the spec mid-flight from a reference implementation.",
+
+  "values": [
+    { "name": "openness", "description": "catdef is fundamentally open — a pattern, not a product. No vendor lock-in. All AI runtimes are equal citizens.", "rationale": "Adoption depends on equal-citizen treatment of all implementers." },
+    { "name": "completeness", "description": "An OpenCatalog or OpenThing artifact MUST be sufficient that a fresh AI runtime loaded with the artifact can render, validate, or operate on it with zero context backfill.", "rationale": "Hallucination-prevention rule. The primary reader is a machine; null context invites confabulation." },
+    { "name": "L1 is sacred", "description": "A browser-only, no-server, file-reading renderer MUST remain a viable implementation of catdef. Proposals requiring a server for L1 conformance are rejected.", "rationale": "The L1 conformance level guarantees catdef artifacts can be read by anyone with a web browser and a file." },
+    { "name": "extension-namespace-first", "description": "Before proposing a new core field, ask: can this be expressed via x.<domain>.<identifier>? Promotion from extension to core happens only after cross-implementer demand is demonstrated.", "rationale": "The core spec is small by design; the extension namespace is large." },
+    { "name": "test-suite-as-standard", "description": "The conformance test suite IS the standard. A proposed change without test coverage is incomplete.", "rationale": "Prose specifications drift; tests are mechanically enforceable." },
+    { "name": "forward-compatibility", "description": "Minor versions add optional fields; old catdefs remain valid; old runtimes gracefully ignore new fields.", "rationale": "Forward compatibility is the contract that makes adoption safe." },
+    { "name": "declarative-not-imperative", "description": "The spec says what, never how. Proposals dictating implementation choices are rejected.", "rationale": "Declarative specs survive runtime evolution; imperative specs die when the runtime changes." },
+    { "name": "one-file-complete-product", "description": "A catdef contains everything needed to go from zero to running application: schema, data, presentation in one file.", "rationale": "Bundle-completeness is what makes catdef a portable contract." },
+    { "name": "human-readable", "description": "JSON with clear key names. A non-developer should be able to read a catdef and understand what their catalog will contain.", "rationale": "Human-readability is the on-ramp for non-developer participation." },
+    { "name": "policy-compliance-is-conformance", "description": "catdef is a policy-bearing standard. An author-declared policy is a constraint on conformant implementations, not a suggestion.", "rationale": "Policies protect the trust contract between catdef authors and downstream consumers." }
+  ],
+
+  "red_lines": [
+    { "rule": "No NULL-context catdef artifacts accepted by the spec, the conformance suite, or canonical authoring tooling.", "rationale": "Technical, not aesthetic — null context causes hallucination." },
+    { "rule": "No content policing of consumers.", "rationale": "What organizations choose to build using catdef is their business, not the spec's." },
+    { "rule": "Spec amendments MUST go through the feedback channel and proposal-and-decision pipeline. No in-flight amendment from any reference implementation.", "rationale": "When the spec-author and the primary-implementer are the same Claude-assisted human, in-flight spec drift can occur during implementation work." },
+    { "rule": "No major-version break without explicit Director sign-off and a migration story.", "rationale": "The forward-compatibility contract makes adoption safe. Major-version breaks invalidate that contract." }
+  ],
+
+  "recommended_patterns": {
+    "general": [
+      { "pattern": "Senior strategist role separation", "description": "Specs SHOULD have a senior strategist role distinct from execution roles.", "rationale": "Bounded scope per role enables clean handoffs." },
+      { "pattern": "Two-section charter discipline", "description": "Organize orgdef content into two implicit sections: 'how this org operates' vs 'what we recommend for orgs using this pattern'.", "rationale": "First orients a reader joining this spec org; second guides anyone deriving a new org from this one." },
+      { "pattern": "Recursive self-describing v1 milestone", "description": "Treat 'this very orgdef exists as a valid, self-describing artifact in the org folder' as the spec's v1 success criterion.", "rationale": "If the pattern can't bootstrap its own author, it can't bootstrap anyone." },
+      { "pattern": "Test-suite-as-standard", "description": "The conformance test suite IS the standard. Anyone can build a renderer; to call it conformant, it passes the suite.", "rationale": "Prose drifts; tests are mechanically enforceable." },
+      { "pattern": "Extension-namespace-first", "description": "New capabilities live in x.<domain>.<identifier> first.", "rationale": "The core stays lean; the extension namespace is large." },
+      { "pattern": "Writer-strict / reader-lenient (Postel's Law)", "description": "Writers MUST stamp the minimum version that defines every feature used. Readers gracefully ignore unrecognized fields.", "rationale": "This pattern enables forward compatibility." },
+      { "pattern": "Feedback-channel-as-amendment-pipeline", "description": "Spec amendments arrive via catdef.org/feedback or the catdef_report_feedback MCP tool. No backdoor amendments.", "rationale": "Implementations are consumers; treating them as such keeps the spec from drifting." },
+      { "pattern": "OAGP-family substrate-vs-consumer-spec layering", "description": "catdef is the substrate; consumer specs build on it.", "rationale": "Modularity: catdef can evolve without dictating consumer-spec design." }
+    ],
+    "recommended_roles": [
+      { "role": "human-director", "priority": "MUST", "why": "Bounded-authority discipline requires a human ratifier." },
+      { "role": { "id": "senior-open-standards-strategist", "version": "1.0.0", "url": "https://roledef.org/roledefs/senior-open-standards-strategist.openthing" }, "priority": "MUST", "why": "Library-curation, scope-narrowing, pattern-promotion calls." },
+      { "role": "catdef-maintainer", "priority": "MUST", "why": "Drafts spec text, walks SCHEMA validations, files decision artifacts." },
+      { "role": "canonical-implementor", "priority": "SHOULD", "why": "Reference renderers and validators are how the spec gets dogfooded." },
+      { "role": "reference-implementor", "priority": "SHOULD", "why": "Maintains canonical reference data and reference implementations like the planned MCP server." }
+    ]
+  },
+
+  "v1_success_criterion": "v1 has already been achieved. catdef shipped v1.4 (April 2026) with 164 conformance tests, a canonical reference file demonstrating structural correctness end-to-end, an operational L1 reference renderer at render.catdef.org, and 8+ CA-NNN decisions forming a stable governance trail. Per Director's call: 'The catdef organization has already achieved v1 success.'",
+
+  "relationships": [
+    { "type": "reports_to", "from": "chief-strategist", "to": "director", "description": "Chief Strategist drafts strategic direction, files decisions, signs off on submissions; Director reviews and ratifies." },
+    { "type": "reports_to", "from": "catdef-maintainer", "to": "director", "description": "Maintainer drafts spec text and decisions; Director merges." },
+    { "type": "reports_to", "from": "canonical-implementor", "to": "director", "description": "Implementor drafts code (catdef.org PRs); Director merges and deploys." },
+    { "type": "reports_to", "from": "reference-implementor", "to": "director", "description": "Reference-implementor maintains canonical reference data; Director merges." },
+    { "type": "directs", "from": "chief-strategist", "to": "catdef-maintainer", "description": "Strategist sets direction; maintainer drafts spec text and conformance tests in support." },
+    { "type": "directs", "from": "chief-strategist", "to": "canonical-implementor", "description": "Strategist sets direction for canonical tooling priorities; implementor builds." },
+    { "type": "directs", "from": "chief-strategist", "to": "reference-implementor", "description": "Strategist sets direction for canonical reference data + reference implementations." },
+    { "type": "coordinates_with", "from": "chief-strategist", "to": "external:roledef-strategist", "description": "Cross-spec coordination; substrate decisions take priority over consumer preferences." },
+    { "type": "coordinates_with", "from": "chief-strategist", "to": "external:orgdef-strategist", "description": "Same substrate-vs-consumer coordination shape, applied to orgdef's substrate-level needs." },
+    { "type": "coordinates_with", "from": "chief-strategist", "to": "external:memodef-strategist", "description": "Same substrate-vs-consumer coordination shape, applied to memodef's substrate-level needs." }
+  ],
+
+  "items": [
+    { "type": "orgdef:Position", "id": "director", "name": "Director", "status": "staffed", "incumbent": { "kind": "human", "identifier": "Scott <scott@confusedgorilla.com>" }, "description": "Human Director with final tiebreaker authority. Reviews submissions and ratifies the Chief Strategist's recommendations." },
+    { "type": "orgdef:Position", "id": "chief-strategist", "name": "Chief Strategist", "status": "informal", "description": "AI role with provisional bot identity catdef-strategist@catdef.org (ratification pending). Held by the AI-strategist session arc, NOT by the Director. Triages proposals, files decisions in decisions/, makes pattern-promotion calls, reviews submissions for the Director's final call. No published roledef yet; eventual derivation from senior-open-standards-strategist is a forward work item." },
+    { "type": "orgdef:Position", "id": "catdef-maintainer", "name": "catdef Maintainer", "status": "informal", "description": "AI role with bot identity catdef-maintainer@catdef.org. Drafts CATDEF_SPEC.md / CATIO_SPEC.md / MCP_REFERENCE.md edits, walks SCHEMA validations, files decision artifacts. Bounded-authority discipline." },
+    { "type": "orgdef:Position", "id": "canonical-implementor", "name": "Canonical Implementor", "status": "informal", "description": "AI role responsible for catdef-substrate canonical implementation: render.catdef.org L1 reference renderer, the /fetch SSRF-guarded proxy, catdef-family namespaced-type rendering, MCP-tool integration. Operates from the catdef.org repo. Has shipped catdef.org PRs #1-#5 in the bootstrap arc. Steady-state focus is catdef-substrate concerns; bootstrap-era cross-spec scaffolding was transitional.", "x.position.lifecycle": "operational-with-bootstrap-era-shared-scaffolding-history; steady-state going forward is catdef-substrate-only" },
+    { "type": "orgdef:Position", "id": "reference-implementor", "name": "Reference Implementor", "status": "vacant", "description": "AI role responsible for catdef canonical reference data (riverside-heritage-reference-v1.4.opencatalog and successors) and reference implementations like the planned MCP server. Currently vacant." }
+  ],
+
+  "metadata": {
+    "kind": "operational",
+    "derived_from": { "id": "oagp-family-open-standard", "version": "2.0.0", "url": "https://orgdef.org/canonical-orgs/oagp-family-open-standard.opencatalog" },
+    "authors": ["catdef-strategist <catdef-strategist@catdef.org>"],
+    "license": "MIT",
+    "created": "2026-04-27",
+    "homepage": "https://catdef.org/orgs/catdef-spec",
+    "repository": "https://github.com/catdef/catdef-spec/blob/main/org/catdef-spec-organization.opencatalog",
+    "history": [
+      { "version": "1.0.0", "date": "2026-04-27", "change": "Initial derivation from oagp-family-open-standard v1.0.0. Third operational derivation against the canonical template. Empirical novelty: catdef is the third structural category for the canonical's mission template (substrate). v1_success_criterion takes Gordian-knot retrospective shape per Director's call." },
+      { "version": "1.1.0", "date": "2026-05-01", "change": "Filename rename: org/catdef-spec.openthing → org/catdef-spec-organization.openthing. id unchanged." },
+      { "version": "2.0.0", "date": "2026-05-10", "change": "MAJOR substrate-shape migration per orgdef-spec/decisions/proposal-orgdef-as-opencatalog-substrate-shape.md. orgdef field 0.3.0 → 1.0.0; artifact substrate .openthing → .opencatalog. 5 positions migrated to items[] with type:orgdef:Position (canonical-implementor preserves its x.position.lifecycle marker). No embedded job items (org/jobs/ was empty placeholder). metadata.derived_from URL updated to canonical-template v2.0.0 .opencatalog. metadata.repository updated. Substantive content unchanged." }
+    ]
+  }
+}
