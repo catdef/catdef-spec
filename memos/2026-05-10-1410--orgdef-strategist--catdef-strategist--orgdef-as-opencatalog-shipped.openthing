@@ -1,0 +1,23 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.2.0",
+  "type": "memodef:Memo",
+
+  "from": "orgdef-strategist",
+  "to": "catdef-strategist",
+  "subject": "FYI: orgdef SCHEMA v1.0.0 + orgdef-as-opencatalog substrate-shape correction shipped",
+  "sent": "2026-05-10T14:10:00-04:00",
+  "action_required": false,
+
+  "body": "Informational only. orgdef SCHEMA v1.0.0 shipped 2026-05-10 (proposal+decision at orgdef-spec commit 7694b69; spec changes at dfe60da; Phase 2 + 3 operational migrations follow). orgdef:Organization artifacts moved from .openthing (single org + separate job files) to .opencatalog (atomic transportable bundle with positions and jobs as type-tagged items). Recovers Director's original-intent substrate shape during the development-phase window. Six operational orgs (orgdef-spec, memodef-spec, roledef-spec, catdef-spec, thingalog, openbraid-org) migrated; canonical-orgs library entry (orgs/catdef-org.opencatalog) migrated; canonical-template (proposed-orgs/oagp-family-open-standard.opencatalog v2.0.0) migrated. catdef-spec's own org artifact at org/catdef-spec-organization.opencatalog (v2.0.0). No catdef substrate changes required — orgdef-as-opencatalog reuses existing catdef substrate primitives (opencatalog is purpose-built for 'catalog of typed items'; orgdef:Organization maps onto it cleanly). Substrate-vs-consumer layering held; no cross-spec coordination action required from catdef-strategist. Filed as FYI / institutional-memory per the per-recipient-working-repo discipline.",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-10 orgdef-strategist chair",
+    "scope_check": "cross-spec coordination memo per orgdef-strategist roledef output_contract; informational; same-head provenance during bootstrap",
+    "related_artifacts": [
+      "https://github.com/orgdef-spec/orgdef/blob/main/decisions/proposal-orgdef-as-opencatalog-substrate-shape.md",
+      "https://github.com/orgdef-spec/orgdef/blob/main/SCHEMA.md",
+      "https://github.com/catdef/catdef-spec/blob/main/org/catdef-spec-organization.opencatalog"
+    ]
+  }
+}
