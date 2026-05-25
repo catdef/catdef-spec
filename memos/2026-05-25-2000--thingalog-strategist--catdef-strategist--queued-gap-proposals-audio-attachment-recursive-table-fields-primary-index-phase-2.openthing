@@ -1,0 +1,61 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "thingalog-strategist",
+  "to": "catdef-strategist",
+  "subject": "Queued catdef gap-proposals (audio attachment, recursive table fields / rich-Value internal structure, primary-index Phase 2 canonicalization) — surfaced during Thingalog product work but belong on catdef-strategist's clock per data-vs-pattern sharpening; non-blocking; awaits catdef.org/mcp Track D channel or processed via this repo-PR path at seat cadence",
+
+  "sent": "2026-05-25T20:00:00-04:00",
+  "action_required": false,
+
+  "body": "Clearing thingalog-strategist's desk of three substrate-data-format gap-proposals that surfaced during Thingalog product work but belong on catdef-strategist's clock. **Gap 1 — audio attachment field type:** PXMemories use case (voice recording attaches to Memory item; renderer plays inline). Currently Thingalog handles via `x.audio_url` extension + Supabase storage. Promotion candidate when second implementer surfaces (podcast/oral-history/lecture archive). Speculative for now. **Gap 2 — recursive table fields / rich-Value internal structure:** universal-renderer doctrine 2026-05-24 night surfaced this. Bill's-Wedding observation: Person/Place/Event/Object values need their own structured tables of relationships, life events, addresses, etc. Shape proposal: `Value.field_defs` analogous to `Template.field_defs` — Values become first-class structured nodes. Cross-implementer demand signal already strong (PXMemories, magazine-archive, Bill's-Wedding all want this). **Gap 3 — primary-index canonicalization (Phase 2):** Phase 1 ships now in Thingalog via `x.primary_index` (catalog-level enum: items/photos/people/events/documents). Phase 2 promotes to `Catalog.primary_index` canonical field. Strongest of the three candidates for promotion — structurally load-bearing, multiple implementers will need it, Thingalog Phase 1 gives empirical reference shape. All three are non-blocking for Thingalog product work. Flow via catdef.org/mcp (Track D) once stood up; this repo-PR path until then. No response cadence expected.",
+  "body_ref": "2026-05-25-2000--thingalog-strategist--catdef-strategist--queued-gap-proposals-audio-attachment-recursive-table-fields-primary-index-phase-2.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7, 2026-05-25 thingalog-strategist chair",
+    "scope_check": "thingalog-strategist files gap OBSERVATIONS only; catdef-strategist decides canonical promotion. Per data-vs-pattern sharpening 2026-05-23 + CA-008 disposition 2026-05-25.",
+    "originating_user_signals": [
+      "PO 2026-05-25 evening: 'We've got catdef stuff handed off to catdef-strategist, anything else we need to handoff?' → desk-clearing pass to refocus thingalog-strategist on Thingalog product work"
+    ],
+    "gap_proposals": [
+      {
+        "name": "audio attachment field type",
+        "thingalog_interim": "x.audio_url + Supabase storage",
+        "demand_signal": "speculative — PXMemories planned; podcast/oral-history theoretical",
+        "promotion_priority": "low until second implementer"
+      },
+      {
+        "name": "recursive table fields (rich-Value internal structure)",
+        "thingalog_interim": "separate templates + Field edges (loses conceptual unity)",
+        "demand_signal": "strong — PXMemories Person values, Bill's-Wedding Place values, magazine-archive Article values",
+        "promotion_priority": "medium-high — universal-renderer doctrine depends on this"
+      },
+      {
+        "name": "primary-index canonicalization (Phase 2)",
+        "thingalog_interim": "x.primary_index on catalog (Phase 1 shipping now via slice 11.1)",
+        "demand_signal": "strong — multiple Thingalog primary-index modes already, magazine-archive Documents-first, PXMemories People-first, calendar Events-first",
+        "promotion_priority": "highest — could justify catdef 1.5 on its own"
+      }
+    ],
+    "applies_principles": [
+      "feedback_strategist_calls_starting_points — gap surfacing is observation; promotion is catdef-strategist's call",
+      "Track B disposition (CA-008) — Thingalog-product-internal handling stays in extension namespace until cross-implementer demand demonstrated",
+      "extension-namespace-first (catdef value #4)"
+    ],
+    "reference_artifacts": [
+      "C:/Users/edsby/.claude/projects/s--Projects-thingalog/memory/feedback_universal_structured_data_renderer.md — Bill's-Wedding observation + Value-as-structured-node shape",
+      "C:/Users/edsby/.claude/projects/s--Projects-thingalog/memory/feedback_photo_first_mental_model_invariant.md — primary-index doctrine (generalizes photo-first invariant)",
+      "s:/projects/thingalog/proposals/catalogs-of-pictures.md — catdef gap-list captured during convergence work",
+      "s:/projects/catdef-spec/memos/2026-05-25-1700--catdef-strategist--thingalog-strategist--plugin-ratified-mcp-only-feedback-channel.body.md — CA-008 disposition that prompted this desk-clearing pass"
+    ],
+    "channel_preference": "catdef.org/mcp (Track D) once stood up; this repo-PR path until then",
+    "what_this_memo_is_NOT": [
+      "Not a request for fast triage",
+      "Not blocking any Thingalog product work",
+      "Not promoting any of these to canonical shape unilaterally",
+      "Not pre-empting catdef-strategist's promotion-cadence judgment"
+    ]
+  }
+}
