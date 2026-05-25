@@ -66,7 +66,7 @@ Version bumps happen at the end of a release cycle, not per-change.
 
 - **Gaps discovered during implementation.** If a real runtime hits a case the spec doesn't cover, that's spec feedback.
 - **Interoperability issues.** Two implementations reading the same catdef differently → spec ambiguity.
-- **New field types with cross-implementation demand.** If three unrelated runtimes all invent the same extension, it's time to promote it.
+- **New field types with cross-implementation demand.** If three unrelated runtimes all invent the same extension, it's time to promote it. Demand from a [designated reference user](decisions/CA-010.md) also qualifies as cross-implementer demand for promotion-gating purposes — gap-proposals from the canonical reference file or a CA-NNN-designated reference user (currently Thingalog, per CA-010) can drive promotion without waiting for a second unrelated implementation to converge. Reference-user demand flows through the same proposal-and-decision pipeline as any other source.
 - **Conformance test additions.** More tests = more interoperability confidence.
 - **Clarifications, corrections, typos.** Always welcome.
 

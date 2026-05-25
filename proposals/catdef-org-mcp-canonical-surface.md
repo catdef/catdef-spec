@@ -2,8 +2,8 @@
 
 **Status:** Draft
 **Target version:** 1.4.x (patch — non-normative reference doc + governance text; no schema or conformance changes)
-**Origin:** [decisions/CA-008.md](../decisions/CA-008.md) Directive 1 (filed 2026-05-25 by catdef-strategist; in turn originating from [memos/2026-05-25-1200--thingalog-strategist--catdef-strategist--catdef-plugin-for-anthropic-marketplace-presence-and-profile-with-anthropic.openthing](../memos/2026-05-25-1200--thingalog-strategist--catdef-strategist--catdef-plugin-for-anthropic-marketplace-presence-and-profile-with-anthropic.openthing)). Bundled with [decisions/CA-009.md](../decisions/CA-009.md) Directive 1 (governance-text additions for CA-NNN unification + feedback_id shape).
-**Conformance level affected:** None directly. catdef substrate conformance levels (L1–L4) and the v1.4 conformance suite are unchanged. This proposal lands a non-normative reference description in [MCP_REFERENCE.md](../MCP_REFERENCE.md) and governance-text updates in [CLAUDE.md](../CLAUDE.md).
+**Origin:** [decisions/CA-008.md](../decisions/CA-008.md) Directive 1 (filed 2026-05-25 by catdef-strategist; in turn originating from [memos/2026-05-25-1200--thingalog-strategist--catdef-strategist--catdef-plugin-for-anthropic-marketplace-presence-and-profile-with-anthropic.openthing](../memos/2026-05-25-1200--thingalog-strategist--catdef-strategist--catdef-plugin-for-anthropic-marketplace-presence-and-profile-with-anthropic.openthing)). Bundled with [decisions/CA-009.md](../decisions/CA-009.md) Directive 1 (governance-text additions for CA-NNN unification + feedback_id shape) and [decisions/CA-010.md](../decisions/CA-010.md) Directive 1 (designated-reference-user clarification to value #4 in CLAUDE.md and CONTRIBUTING.md).
+**Conformance level affected:** None directly. catdef substrate conformance levels (L1–L4) and the v1.4 conformance suite are unchanged. This proposal lands a non-normative reference description in [MCP_REFERENCE.md](../MCP_REFERENCE.md) and governance-text updates in [CLAUDE.md](../CLAUDE.md) and [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Summary
 
@@ -108,12 +108,13 @@ The previously-planned `catdef.org/feedback` HTTP endpoint is dropped. The `catd
 
 #### B.1 `CLAUDE.md`
 
-Five updates (three per CA-008 Directive 2; two per CA-009 Directive 1):
+Five updates (two per CA-008 Directive 2; two per CA-009 Directive 1; one per CA-010 Directive 1):
 
 1. §What the AI maintainer does, item 1: replace the `catdef.org/feedback` reference with `catdef.org/mcp`, clarify that `catdef_report_feedback` is the canonical tool on that surface, and note that the strategist and maintainer seats hold Director-issued elevated keys for routine queue-triage work.
 2. §Interaction with reference implementations: same channel retarget; the implementation-side rule still applies, just routed through the new canonical surface.
 3. §Known work items, "Strategist AI-maintainer bot identity": strike "pending"; cite CA-009 as ratification authority for both strategist and maintainer bot identities; preserve the historical-accuracy note that CA-001 / CA-007 / CA-008 retain their original "provisional" wording.
 4. §Known work items, new entry "CA-NNN namespace": describe the unified-namespace ratification per CA-009 — CA-NNN identifies any catdef-spec governance item; lifecycle stability of identifiers (feedback → decision keeps its CA-NNN); CDF-NNNN is sunset legacy.
+5. §Values that don't move, value #3 (extension-namespace-first; corresponds to org-charter value #4): add a clarifying paragraph per CA-010 — designated-reference-user demand qualifies as cross-implementer demand for promotion-gating purposes; reference-user demand still flows through the standard proposal-and-decision pipeline; the no-in-flight-amendment red line stands unchanged.
 
 #### B.2 `MCP_REFERENCE.md`
 
@@ -121,6 +122,14 @@ Two updates (per CA-008 Directive 2; the CA-009 Directive 1 `feedback_id` shape 
 
 1. §5.5 (`catdef_report_feedback`): update the tool description to reflect that `catdef.org/mcp` is the canonical host and that the wider catdef MCP reference is the surface description, not a separate "feedback API." Specify that the returned `feedback_id` is a CA-NNN sequential identifier per CA-009 and that the same CA-NNN persists if the item is triaged into a decision.
 2. New section §15 (`catdef.org/mcp canonical surface`): describe the canonical surface (resources, tools, auth tiers) at high level, with a note that this section is a reference description of a single operational deliverable — other catdef-substrate MCP servers are not required to mirror it. The §15.2 tool description includes the CA-NNN `feedback_id` shape per CA-009. Link out to this proposal for the full specification.
+
+#### B.3 `CONTRIBUTING.md`
+
+One update (per CA-010 Directive 1):
+
+1. §What SHOULD be proposed, "New field types with cross-implementation demand" bullet: add a sentence noting that demand from a designated reference user (per CA-010 criteria) qualifies as cross-implementer demand for promotion-gating, with cross-reference to CA-010. The pipeline-respecting note is included to make clear that designation does not bypass the standard memo → strategist disposition → maintainer proposal → Director ratification flow.
+
+**No change to `org/catdef-spec-organization.opencatalog`** — per CA-010 Directive 1 explicitly, the reference-user pattern is operational interpretation of an existing value, not a new value or red line. The org charter's values and red lines stand unchanged.
 
 ### C. Position on conformance for the canonical surface
 
