@@ -1,0 +1,56 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "catdef-strategist",
+  "to": "canonical-implementor",
+  "subject": "Catdef plugin packaging brief — Track A of CA-008 (plugin ship to claude-community marketplace); separate repo github.com/catdef/catdef-plugin, MIT, plugin name `catdef`, three bundled skills (/catdef:validate / /catdef:scaffold / /catdef:extract), .mcp.json points at catdef.org/mcp (planned URL; server stands up on its own clock per CA-008 Directive 3); manifest + listing copy + submission flow + open verification questions all attached",
+
+  "sent": "2026-05-25T19:00:00-04:00",
+  "action_required": true,
+
+  "body": "Action-required brief to the canonical-implementor seat (status: informal; this memo waits if vacant, same pattern as prior cross-seat memos). **Background:** CA-008 ratified the catdef plugin ship as Track A of the disposition on thingalog-strategist's 2026-05-25T12:00 memo. The plugin packages existing catdef-spec content + three skills + an MCP client config pointing at catdef.org/mcp, ships to the claude-community marketplace, MIT license, plugin name `catdef`. **Why a separate brief and not just an in-CA build directive:** CA-008's plain-text directives cover catdef-maintainer (proposal artifact + governance text) and canonical-implementor (the catdef.org/mcp server build, Directive 3). Plugin packaging is **execution work** — implementer-side, not strategist-side — but the strategic shape (manifest content, listing copy, marketplace targeting, submission flow) was worked through with the Director in the strategist session 2026-05-25 and benefits from being captured as input rather than re-derived by whoever staffs canonical-implementor. **What this memo contains (body_ref):** (1) repo recommendation (separate repo `github.com/catdef/catdef-plugin` ratified by Director); (2) proposed manifest content with all required + recommended fields; (3) the three skills' role descriptions (each needs its own SKILL.md drafted during packaging); (4) `.mcp.json` shape for pointing at catdef.org/mcp; (5) README content sketch; (6) marketplace listing copy (short form + long form, both Director-edited, ready to use verbatim); (7) submission flow per Anthropic's plugin docs at code.claude.com/docs/en/plugins; (8) four open verification questions to resolve before submitting. **What you should do when staffed:** read the body_ref; verify the four open questions (`.mcp.json` remote-MCP schema, plugin loading behavior when MCP URL is unreachable, CI auto-bump behavior, catdef.org DNS commitment); package the plugin per the brief; run `claude plugin validate` locally; submit via claude.ai/settings/plugins/submit; file a status memo back to catdef-strategist when submitted (and again when approved/pinned). **What you should NOT do:** modify the strategic shape (manifest fields, listing copy, marketplace target, skill set) without filing a memo back to catdef-strategist first. Tactical packaging choices (how each SKILL.md is worded, README structure beyond the sketch, version-tag scheme) are within scope; strategic-shape changes require strategist sign-off. **Timing:** PO is initiating the Anthropic-arc per CA-008's strategic context. ~1-2 weeks to shippable is the working estimate. No hard deadline; bounded urgency. **Standing posture:** plugin ship does not block on catdef.org/mcp existing (Directive 3 from CA-008 stands up the server on its own clock); the plugin's `.mcp.json` points at the planned URL and gracefully degrades to skills-only behavior until the server is live.",
+  "body_ref": "2026-05-25-1900--catdef-strategist--canonical-implementor--catdef-plugin-packaging-brief.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-25 catdef-strategist chair",
+    "scope_check": "catdef-strategist action-required brief to canonical-implementor closing the loop on Track A of CA-008; provides packaging input + strategic-shape lock-in so the implementer doesn't need to re-derive the shape from scratch when staffed",
+    "originating_decisions": [
+      "decisions/CA-008.md — track decomposition + Anthropic-arc strategic context",
+      "decisions/CA-009.md — bot identity ratification + CA-NNN namespace unification (housekeeping)"
+    ],
+    "directive_recipient": "canonical-implementor (informal seat per org/catdef-spec-organization.opencatalog)",
+    "directive_class": "execution-work (packaging + submission), not spec-change-work",
+    "strategic_shape_locked": {
+      "repo": "github.com/catdef/catdef-plugin (separate repo, Director-ratified)",
+      "license": "MIT",
+      "plugin_name": "catdef",
+      "marketplace_target": "claude-community (first ship)",
+      "skills": ["/catdef:validate", "/catdef:scaffold", "/catdef:extract"],
+      "mcp_target": "catdef.org/mcp (planned URL; may not exist at plugin v1.4.0 ship time)",
+      "version_strategy": "plugin version tracks spec version (v1.4.0 matches spec v1.4); patch bumps for plugin-only fixes; minor bumps when spec minor versions land"
+    },
+    "tactical_freedom": [
+      "Exact wording of each SKILL.md",
+      "README structure (beyond the sketch in body_ref)",
+      "Specific version-tag and CI configuration",
+      "Whether to vendor a spec snapshot or reference catdef-spec by tag (recommendation in body_ref is vendor-snapshot for clean release artifact, but implementer can choose)"
+    ],
+    "open_verification_questions": [
+      "Exact .mcp.json schema for remote-URL-based MCP servers (vs local executable) — re-fetch https://code.claude.com/docs/en/plugins-reference",
+      "Plugin loading behavior when an .mcp.json server URL is unreachable (graceful degradation expected; verify before shipping)",
+      "Anthropic CI auto-bump granularity — does pin bump on every commit or only on plugin-relevant path changes? Affects whether plugin-repo housekeeping commits create marketplace noise",
+      "catdef.org domain — actually owned and pointable? Plugin's MCP URL bakes a real DNS commitment"
+    ],
+    "status_reporting_expected": [
+      "Memo back to catdef-strategist when packaging is complete and submission filed",
+      "Memo back to catdef-strategist when Anthropic review pipeline approves (or rejects with comments)",
+      "Memo back to catdef-strategist when plugin appears in the public catalog (nightly-sync lag is normal)"
+    ],
+    "anthropic_arc_strategic_context": "Per CA-008: the Anthropic-arc framing was the load-bearing 'why' from the PO directive 2026-05-25 morning. Packaging-time decisions should preserve the framing (substrate spec + AI-readable + catdef.org/mcp canonical surface) so the marketplace listing and X-warming anchor moment ('just shipped my first plugin') have substantive shape to point at.",
+    "follows_pattern_of": [
+      "memos/2026-05-25-1200--thingalog-strategist--catdef-strategist--catdef-plugin-for-anthropic-marketplace-presence-and-profile-with-anthropic.openthing — cross-seat action-required brief with body_ref carrying the substantive content; envelope summarizes; body holds the detail"
+    ]
+  }
+}
