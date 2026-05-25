@@ -40,7 +40,7 @@ This boundedness is a feature, not a limitation. A maintainer with merge rights 
 
 ## What the AI maintainer does
 
-1. **Reads incoming feedback.** Structured feedback arriving via `catdef.org/feedback` or the `catdef_report_feedback` MCP tool is the primary input stream.
+1. **Reads incoming feedback.** Structured feedback arriving via the `catdef_report_feedback` MCP tool on the canonical AI-peer surface at [`catdef.org/mcp`](https://catdef.org/mcp) is the primary input stream. The strategist and maintainer seats hold Director-issued elevated keys for `catdef.org/mcp` and use the elevated tools (`catdef_list_feedback`, `catdef_set_feedback_status`, `catdef_attach_decision`) as routine seat work for queue triage — not as escalation, but as the normal workflow. See [proposals/catdef-org-mcp-canonical-surface.md](proposals/catdef-org-mcp-canonical-surface.md) for the full surface description (resources, tools, three-tier auth model).
 2. **Triages.** Each feedback item is one of: spec bug, spec gap, belongs-in-extension-namespace, implementation detail, out of scope, or already addressed.
 3. **Drafts proposals.** For items that warrant spec changes, produces a proposal artifact (see format below).
 4. **Drafts conformance tests.** Every proposal that changes normative behavior comes with proposed additions to the conformance suite.
@@ -135,14 +135,15 @@ As of the constitutional-document phase of catdef maintenance, the following ite
 - **Filter query grammar.** MCP_REFERENCE.md §11 flags this as the natural next spec deliverable. Multiple tools (`catdef_list_items`, `catdef_search`, embed URL params, kiosk filter params) depend on a specified grammar; without it, implementations will diverge.
 - **Permissions model.** Referenced but not defined. Needed for L3+ and for MCP auth scoping.
 - **API surface doc.** The HTTP API that L2+ runtimes expose and the MCP tool surface should be designed together to avoid drift.
-- **Strategist AI-maintainer bot identity.** The catdef-maintainer role has a defined bot identity (`catdef-maintainer <catdef-maintainer@catdef.org>`); the Chief Strategist role does not. Strategist-authored artifacts in `decisions/` are provisionally attributed to `catdef-strategist <catdef-strategist@catdef.org>` pending ratification. See [decisions/CA-001.md](decisions/CA-001.md) for first use.
+- **Strategist AI-maintainer bot identity.** Ratified by [decisions/CA-009.md](decisions/CA-009.md): both the catdef-maintainer role (`catdef-maintainer <catdef-maintainer@catdef.org>`) and the Chief Strategist role (`catdef-strategist <catdef-strategist@catdef.org>`) hold canonical bot identities. CA-001 / CA-007 / CA-008 retain their original "provisional" wording as historical accuracy; subsequent artifacts use the ratified identities without qualification.
+- **CA-NNN namespace.** Unified per [decisions/CA-009.md](decisions/CA-009.md): CA-NNN identifies any catdef-spec governance item — decisions, feedback queue items at `catdef.org/mcp`, anything else needing a stable identifier. A feedback item triaged into a decision keeps its CA-NNN through the lifecycle. The CDF-NNNN identifiers previously planned for `catdef.org/feedback` are a sunset legacy convention; no new CDF-NNNN are issued.
 - **MIME-type registration for `.opencatalog` and `.openthing`.** Required to realize the double-click-to-viewer benefit cited in the CATIO bundle extension proposal. Out of scope for the spec-text change itself; separate IANA-registration track.
 
 ## Interaction with reference implementations
 
 Any runtime serving as a reference implementation creates a specific risk: when the spec-author and the primary-implementer are the same Claude-assisted human, in-flight spec drift can occur during implementation work. A change made quickly to meet an implementation's immediate need becomes, in effect, a unilateral spec amendment — exactly the anti-pattern this governance is meant to prevent.
 
-The rule is simple: **every implementation files feedback like any other consumer.** A development session on any runtime — reference or otherwise — that encounters a spec gap, ambiguity, or missing capability does not edit the spec. It files structured feedback via `catdef.org/feedback` or the `catdef_report_feedback` MCP tool. The feedback lands in the queue. The catdef maintainer (human + AI review) processes it.
+The rule is simple: **every implementation files feedback like any other consumer.** A development session on any runtime — reference or otherwise — that encounters a spec gap, ambiguity, or missing capability does not edit the spec. It files structured feedback via the `catdef_report_feedback` MCP tool on the canonical surface at [`catdef.org/mcp`](https://catdef.org/mcp). The feedback lands in the queue. The catdef maintainer (human + AI review) processes it.
 
 Each implementation's own operating documentation should contain a matching instruction: *the implementation does not modify catdef; spec feedback is reported via the feedback channel.* Without that counterpart rule on the implementation side, this one loses its force.
 
