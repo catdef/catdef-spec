@@ -170,7 +170,7 @@ Schema-level changes (adding templates, adding field_defs, adding subcats) are s
 
 ### 5.5 Meta tools
 
-**`catdef_report_feedback`** — Sends structured feedback to `catdef.org/feedback` on behalf of the user. Useful when an AI notices a spec gap during work. Wraps the existing feedback API; the server handles auth.
+**`catdef_report_feedback`** — Files structured feedback into the catdef feedback queue. The canonical host for this tool is `catdef.org/mcp` (see §15); other catdef MCP servers MAY proxy to it. Useful when an AI notices a spec gap, ambiguity, or implementation friction during work. Feedback is private at submission and becomes public only via explicit curation (e.g., when cited by a CA-NNN decision). Authentication is server-mediated; clients call the tool with a body and receive a `feedback_id` for later status lookup. The `feedback_id` is a **CA-NNN sequential identifier** drawn from the unified namespace established by [decisions/CA-009.md](decisions/CA-009.md) — a feedback item triaged into a decision keeps its CA-NNN through the lifecycle (filed → triaged → decided → implemented).
 
 ## 6. MCP Prompts
 
@@ -291,3 +291,43 @@ This document is non-normative. Specifically:
 2. **Spec the filter grammar.** This is blocking concrete tool shapes.
 3. **Prototype a reference server.** Local stdio, L1 read-only, targeting the `.opencatalog` file format. Publish as `catdef/catdef-mcp`.
 4. **Iterate.** Treat v0.1 of this document as a discussion draft. Version it separately from the catdef spec.
+
+## 15. The `catdef.org/mcp` canonical surface
+
+A single operational MCP server hosted at `catdef.org/mcp` serves catdef's *own* substrate — the spec text, decisions, proposals, conformance index, canonical reference catalog — as MCP resources, and exposes the feedback channel + a small set of grounding/validation tools as MCP tools. This is the canonical AI-peer entry point to catdef itself, established by [decisions/CA-008.md](decisions/CA-008.md) and specified in detail in [proposals/catdef-org-mcp-canonical-surface.md](proposals/catdef-org-mcp-canonical-surface.md).
+
+**Important scope note: this section is a reference description of a single operational deliverable, not a normative requirement for other catdef-substrate MCP servers.** A third-party MCP server fronting a catdef catalog (per §§4–8 of this document) MUST NOT be required to mirror `catdef.org/mcp`'s tools or resources to be conformant. The patterns in §§4–8 govern *catalog* MCP surfaces; this section describes one specific *spec-host* MCP surface.
+
+### 15.1 Resources
+
+Resource URIs extend the existing `catdef://spec` reservation to a sub-path scheme. `catdef://spec` (no path) returns the main spec document; `catdef://spec/<path>` addresses specific spec artifacts (other spec docs, individual conformance tests, the canonical reference catalog, individual CA-NNN decisions, individual proposals). All resources are anonymous-tier readable. The server emits change notifications when underlying artifacts change.
+
+See [proposals/catdef-org-mcp-canonical-surface.md §A.2](proposals/catdef-org-mcp-canonical-surface.md) for the full resource URI table and content-types.
+
+### 15.2 Tools
+
+Anonymous tier (no auth): `catdef_describe`, `catdef_lookup` (spec term → spec passage), `catdef_list_decisions` (CA-NNN index), `catdef_validate` (conformance-suite check on an artifact).
+
+Standard tier (api-key, format `cdfk_<random>`): adds `catdef_report_feedback` and `catdef_get_feedback_status` (scoped to the key's own submissions). Submissions receive a CA-NNN sequential `feedback_id` per [decisions/CA-009.md](decisions/CA-009.md); the same CA-NNN persists through the lifecycle if the item is later triaged into a decision artifact at `decisions/CA-NNN.md`.
+
+Elevated tier (Director-issued key, format `cdfk_dir_<random>`): adds `catdef_list_feedback`, `catdef_set_feedback_status`, `catdef_attach_decision` — the queue-triage tools used by the strategist and maintainer seats as routine seat work.
+
+See [proposals/catdef-org-mcp-canonical-surface.md §§A.3–A.5](proposals/catdef-org-mcp-canonical-surface.md) for input/output schemas.
+
+### 15.3 Three-tier auth
+
+`catdef.org/mcp` uses HTTP bearer-token auth per §9. Three tiers:
+
+- **Anonymous** — no key; reads spec resources and calls read-only tools.
+- **Standard** — self-serve api-key; adds feedback submission + own-status read. Issuance per the sncro / thingalog pin-grant pattern, or HTTP form at `catdef.org/mcp/issue-key` (v0 mechanism TBD per [proposals/catdef-org-mcp-canonical-surface.md Open Question 1](proposals/catdef-org-mcp-canonical-surface.md)).
+- **Elevated** — Director-issued; adds queue read + status writes + decision attachment. The Director controls who occupies the strategist/maintainer seats, and the same gate controls the elevated keys — no additional per-session ceremony in v0.
+
+### 15.4 Privacy posture
+
+All feedback is private at submission. The queue is not publicly listable; only the submitter (via their own api-key) and elevated-tier holders can read queue items. Public visibility arrives only via explicit curation — when an elevated-tier holder attaches a queue item to a CA-NNN decision via `catdef_attach_decision`, the decision's prose summarizes and contextualizes the feedback, and that public summary becomes the durable record. Raw feedback bodies are not auto-published. Submitter attribution defaults to anonymous; opt-in via `attribution.public_consent: true`.
+
+### 15.5 Relationship to the rest of this document
+
+§§4–8 describe the patterns for *any* catdef MCP server fronting *any* catdef catalog. This §15 describes *one* canonical server, hosted at *one* canonical URL, fronting catdef's *own* substrate.
+
+The catalog-facing tool surface (`catdef_list_items`, `catdef_get_item`, `catdef_create_item`, etc.) is **not** part of the `catdef.org/mcp` v0 surface — the canonical reference catalog is exposed as a resource fetch only. Whether to add the catalog-facing tools to `catdef.org/mcp` (so AI peers can browse the reference catalog as a live mount) is [open question 7 in the proposal](proposals/catdef-org-mcp-canonical-surface.md) and deferred to a follow-on.
