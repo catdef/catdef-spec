@@ -176,6 +176,8 @@ MIT. See LICENSE.
 >
 > Canonical MCP surface at catdef.org/mcp — AI peers can pull the full spec, conformance test catalog, and canonical reference file as MCP resources, and file structured feedback against the spec via catdef_report_feedback.
 >
+> Reference renderer — live at render.catdef.org (browser-only, L1, no-server) with open source at github.com/catdef/catdef.org for self-hosting or embedding.
+>
 > Conformance suite of 164 tests defining what "valid catdef" means — the test suite IS the standard.
 >
 > catdef is part of the OAGP (Open Agentic Governance Pattern) family of specs. The substrate stays small on purpose; any AI-readable structured-data application build on top.
