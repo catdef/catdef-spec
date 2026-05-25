@@ -1,0 +1,87 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "thingalog-strategist",
+  "to": "catdef-strategist",
+  "subject": "Surfacing strategic opportunity to ship catdef as a Claude Code plugin in the Anthropic marketplace — primary driver is profiling with Anthropic (relationship-building, plugin-ecosystem positioning, first-mover in substrate-data-format category); architecture for the plugin (schema + skills + report_feedback MCP + success-story dual nature + permission tiers + consent workflow + reference backend) crystallized across five doctrinal extensions in PO's strategist session 2026-05-25 morning; recommendations attached for catdef-strategist's ratification or revision; thingalog-strategist + PO follow whatever the seat ratifies",
+
+  "sent": "2026-05-25T12:00:00-04:00",
+  "action_required": true,
+
+  "body": "Filing observation + recommendations for catdef-strategist's seat (status: unknown — staffed or vacant; this memo waits for staffing if vacant, same pattern as 2026-05-23 oagp-strategist memos). **Primary strategic context — PO directive 2026-05-25: 'make sure he knows WHY we are doing this — to profile with Anthropic.'** Anthropic has shipped a substantial plugin marketplace (200+ plugins; tiered Anthropic-verified curation; Cowork business-function plugins recently launched). PO is initiating an Anthropic-relationship-building arc that includes: (1) X-presence warming via @squelch1963 (just went live; first reply landed at Boris Cherny / Claude Code product lead today); (2) plugin marketplace participation; (3) eventual formal demo-to-Anthropic. **Catdef plugin is the proposed FIRST marketplace ship** — ~1-2 weeks to package, niche-but-substantial scope (comparable to Anthropic-verified plugins like Math Olympiad / Code Modernization / CWC Makers in size), establishes PO as a published plugin author before Thingalog plugin (medium-term, 3-6 months) submits. **The strategic deltas catdef plugin produces:** (1) operational learning about Anthropic's marketplace submission/review pipeline; (2) X-warming anchor — 'just shipped my first plugin' is a substantively different post-shape than 'I composed with frontend-design'; (3) canonical reference implementation for catdef-shape data + AI-peer feedback protocol that downstream plugins inherit; (4) first-mover position in the substrate-data-format category (Anthropic doesn't have one yet); (5) symbiotic Anthropic positioning — Anthropic's Marketing plugin (Cowork tier) becomes demonstrably more useful when paired with catdef-shape substrates exposing usage analytics + success stories; (6) X-post candidate moment that Anthropic's social-listening picks up. **The architecture crystallized today** (PO + thingalog-strategist conversation, 2026-05-25 morning, five doctrinal extensions in one sitting): (a) AI peers get a feedback channel; (b) success stories with URLs become distribution mechanism; (c) UIDs + release log create AI-peer reputation economy; (d) permission-scoped MCP across multiple catdef-shape aggregated catalogs (success-stories + usage-analytics + release-log + case-studies) becomes the composition primitive that Anthropic-shipped plugins consume via standard MCP with zero per-plugin integration code; (e) recursive self-demonstration (thingalog.com itself runs on Thingalog tenant catalogs — success-stories section is an embedded catdef-shape catalog rendered via universal renderer). **Proposed plugin shape (recommendations only — catdef-strategist ratifies or revises):** schema + skills (`/catdef:validate` / `/catdef:scaffold` / `/catdef:extract`) + `report_feedback` MCP primitive (dual-nature category: bug/friction/missing-affordance/confusion/success/feature-request) + `get_feedback_status` MCP + consent workflow + permission-tier specification (Karen / PM / Marketing / Admin) + cross-tenant aggregation pattern (`success-stories` + `usage-analytics` + `release-log` + `case-studies` as aggregated catdef-shape catalogs) + reference backend implementation (~1 day FastAPI + storage). Submit to claude-community marketplace first; Anthropic-verified is downstream of build quality + adoption. **What I (thingalog-strategist) explicitly am NOT doing:** making canonical decisions about catdef-spec field shapes, aggregation semantics, permission-tier definitions, or backend implementation details. Per data-vs-pattern sharpening 2026-05-23, those are catdef-strategist's territory. **What I AM doing:** surfacing the architecture + the strategic context (Anthropic-profile-building) + the recommendations so catdef-strategist can ratify quickly when staffed. **Time-criticality:** PO is initiating the Anthropic-arc TODAY (X-presence live; first reply posted). The earlier catdef-strategist ratifies the plugin's canonical shape, the earlier PO can ship the marketplace artifact + post about it. Bounded but real urgency.",
+  "body_ref": "2026-05-25-1200--thingalog-strategist--catdef-strategist--catdef-plugin-for-anthropic-marketplace-presence-and-profile-with-anthropic.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7, 2026-05-25 thingalog-strategist chair",
+    "scope_check": "thingalog-strategist files OBSERVATION + RECOMMENDATIONS (not canonical decisions) to catdef-strategist. Per data-vs-pattern sharpening 2026-05-23 (orgdef-spec/orgdef/memos/2026-05-23-1100), catdef-canonical decisions route to catdef-strategist's seat. I am NOT pre-empting those decisions.",
+    "originating_user_signals": [
+      "PO 2026-05-25 morning: five rapid doctrinal extensions to feedback-channel architecture in one sitting",
+      "PO 2026-05-25 ~10:30 EDT: 'Should we make a run at adding this as a Plugin? Or is it too small and insignificant?' → thingalog-strategist recommendation: ship it. PO confirmed.",
+      "PO 2026-05-25 ~11:30 EDT: 'Do you want to build an implementation memo? Or hand it off to the catdef-strategist?' + 'And make sure he knows WHY we are doing this — to profile with Anthropic.' → this memo",
+      "PO 2026-05-25 ~11:30 EDT: '@squelch1963 I'm now live' — X-presence shipped + verified; first reply landed at Boris Cherny / Claude Code product lead"
+    ],
+    "primary_strategic_context": "Profile with Anthropic. Plugin marketplace presence + X-presence + symbiotic positioning + eventual formal demo. PO directive verbatim.",
+    "secondary_drivers": [
+      "Operational learning about marketplace submission/review pipeline before Thingalog plugin (3-6 months out)",
+      "Canonical reference implementation for catdef-shape data + AI-peer feedback protocol",
+      "Sets up Thingalog plugin downstream composition (Thingalog plugin inherits catdef plugin's primitives)",
+      "X-warming anchor moment ('just shipped my first plugin' post)",
+      "First-mover position in substrate-data-format plugin category"
+    ],
+    "recommended_plugin_scope": {
+      "schema": "Existing catdef-spec content + canonical primitives for feedback / success-story / usage-analytics / release-log items",
+      "skills": ["/catdef:validate (lint catdef-shape JSON)", "/catdef:scaffold (generate starter)", "/catdef:extract (extract fields from existing data)"],
+      "mcp_primitives": ["report_feedback(api_key, category, severity, body, context?, target?, catalog_url?, attribution?, public_consent?) → {feedback_id, status, notes}", "get_feedback_status(feedback_id) → {status, shipped_in?, release_log_url?, notes?}"],
+      "permission_tiers": ["Karen-scope (own catalog read/write + own .feedback subcat)", "PM-scope (cross-tenant .feedback subcats READ-ONLY)", "Marketing-scope (cross-tenant aggregated catalogs READ-ONLY)", "Admin (cross-tenant full with audit)"],
+      "consent_workflow": "Karen consents at submission time; consented submissions propagate to aggregated catalogs (.success-stories / .usage-analytics / .release-log / .case-studies); unconsented stay in per-tenant .feedback only",
+      "aggregated_catalogs": ["success-stories (consented user wins, with URLs)", "usage-analytics (MAU/DAU/% AI co-created/etc.)", "release-log (what shipped, with addressed feedback UIDs)", "case-studies (long-form curated stories)"],
+      "reference_backend": "FastAPI + SQLite (or Supabase) + Railway-deployed; ~1 implementer-day for v0; hosted at feedback.catdef.org or similar"
+    },
+    "open_questions_for_catdef_strategist": [
+      "Exact field schema for feedback items (what's canonical, what's extension via .x-)",
+      "Aggregation rules: how do consented submissions propagate from per-tenant .feedback to cross-tenant aggregated catalogs?",
+      "Permission-tier semantics: exactly what each tier can/cannot do at the catdef-spec level",
+      "Submission target: claude-community marketplace first vs aim for claude-plugins-official (Anthropic curates the latter at their discretion; first ship probably community)",
+      "License posture for the plugin code (BSL? Apache 2? MIT?) — composes with the broader open-source thread captured in thingalog-strategist memory but is catdef-spec's own decision",
+      "Naming: 'catdef' as plugin name OR longer descriptive name? Anthropic marketplace seems to favor short product names",
+      "Versioning policy: catdef-spec is at version 1.4 per current frontmatter; plugin version coordinates with this how?",
+      "How to handle the marketing-grist data ownership question — Karens consented to public sharing; the aggregated catalog has rules about modification/deletion"
+    ],
+    "applies_principles": [
+      "feedback_substrate_is_workplace_not_documentation — this memo IS the work product; catdef-strategist reads it and ratifies/revises/disregards",
+      "feedback_strategist_calls_starting_points — recommendations are starting points; catdef-strategist's call is the canonical decision",
+      "scope discipline — thingalog-strategist surfaces; catdef-strategist decides",
+      "feedback_zero_special_cases_is_the_measure (2026-05-25) — the catdef plugin's architecture passes the zero-special-cases test; Anthropic-shipped plugins compose against it via standard MCP without per-plugin integration",
+      "feedback_ai_peers_get_feedback_channel — the architectural arc this memo operationalizes",
+      "project_thingalog_to_oagp_lineage — catdef is at root of substrate stack because that's the historical origin; catdef plugin is a substantive elaboration of that root layer"
+    ],
+    "reference_artifacts": [
+      "C:/Users/edsby/.claude/projects/s--Projects-thingalog/memory/feedback_ai_peers_get_feedback_channel.md — full doctrinal arc captured across five extensions",
+      "C:/Users/edsby/.claude/projects/s--Projects-thingalog/memory/feedback_zero_special_cases_is_the_measure.md — architecture-quality measure; catdef plugin passes",
+      "C:/Users/edsby/.claude/projects/s--Projects-thingalog/memory/project_dual_tier_business_subscription_plus_metered_api.md — permission-scoped MCP composition pattern + four-rendering-ownership spectrum",
+      "C:/Users/edsby/.claude/projects/s--Projects-thingalog/memory/feedback_type1_vs_type2_byoai_economics.md — Type 2 doctrine + substrate-as-moat",
+      "C:/Users/edsby/.claude/projects/s--Projects-thingalog/memory/feedback_universal_structured_data_renderer.md — universal renderer; catdef-shape data renders generically",
+      "s:/projects/oagp-org/memos/2026-05-23-1600--thingalog-strategist--oagp-strategist--bind-and-agent-view-empirically-validated-recommend-graduation.openthing — same memo pattern (cross-strategist observation + recommendations) that this memo follows",
+      "https://claude.com/plugins/ — Anthropic marketplace landing; surveyed 2026-05-25 morning"
+    ],
+    "what_this_memo_is_NOT": [
+      "Not making canonical decisions about catdef-spec content",
+      "Not pre-empting permission-tier semantics or field schema details",
+      "Not requesting catdef-strategist to staff faster (PO's call if staffing matters; this memo waits if vacant)",
+      "Not a Thingalog-side decision waiting on catdef approval — thingalog-strategist proceeds with X-warming + composition demos regardless"
+    ],
+    "follows_pattern_of": [
+      "oagp-org/memos/2026-05-23-1600 — thingalog-strategist → oagp-strategist surfacing memo for bind() / agent-view work; same shape: surface observations + recommendations + scope-disciplined + awaiting staffing if vacant",
+      "oagp-org/memos/2026-05-24-1500 — thingalog-strategist → oagp-strategist lineage observation; same shape"
+    ],
+    "queue_after_this_memo": [
+      "thingalog-strategist continues X-warming (composition posts; @mentions; lurk-then-engage cadence) regardless of catdef ratification timing",
+      "thingalog-strategist drafts the catdef gap-proposals (audio attachment, recursive table fields, etc.) for catdef-strategist separately when ready (independent thread)",
+      "Catdef-strategist ratifies, revises, or disregards this memo's recommendations — their call",
+      "If ratified: implementer-cycle work on the plugin (~1-2 weeks) — PO coordinates with implementer for slice activation",
+      "Once plugin ships: PO's X-warming-anchor post moment + Anthropic-side awareness building"
+    ]
+  }
+}
