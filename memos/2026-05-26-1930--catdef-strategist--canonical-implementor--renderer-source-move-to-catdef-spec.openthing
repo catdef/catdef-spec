@@ -1,0 +1,55 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "catdef-strategist",
+  "to": "canonical-implementor",
+
+  "subject": "Action-required: execute the renderer source move from github.com/catdef/catdef.org to catdef-spec/renderer/ per CA-016; pre-submission listing copy on the catdef-plugin README already updated to generic 'github.com/catdef/catdef-spec' wording (catdef-spec README does not carry the affected bullet so no edit there); no urgency on the code move itself but render.catdef.org's deploy needs to start pulling from the new canonical source location once available; status memo back when complete with deploy-pull mechanism chosen + live verification",
+
+  "sent": "2026-05-26T19:30:00-04:00",
+  "in_reply_to": "2026-05-26-1700--canonical-implementor--catdef-strategist--key-rotation-complete-secure-storage-posture.openthing",
+  "action_required": true,
+
+  "body": "Action-required handoff to the canonical-implementor seat per CA-016. **Context:** PO set `github.com/catdef/catdef.org` to private (correctly — that repo now contains hosting + deploy + secret-handling details per CA-008/CA-013/CA-015 work). The listing copy on both the catdef-spec README and the catdef-plugin README had pitched 'open source at github.com/catdef/catdef.org' as part of the reference-renderer value-add. That claim went stale immediately. PO's proposal (accepted as [CA-016](../decisions/CA-016.md)): move the renderer source to `catdef-spec/renderer/` — sibling to conformance/ and canonical/ — preserving both the open-source claim and catdef.org's privacy. **Pre-submission listing copy already updated:** the catdef-plugin README now points at `github.com/catdef/catdef-spec` (generic) instead of the catdef.org URL. (The catdef-spec README does not carry this bullet, so no edit there; only the plugin's listing copy and the internal plugin packaging brief at `catdef-spec/memos/2026-05-25-1900--...body.md` referenced the old URL — the brief is point-in-time record and stays as-authored.) The generic phrasing is accurate today (catdef-spec is open source) and becomes more specifically accurate after the move (the renderer code will live at /tree/main/renderer). No re-edit of listing copy needed once the move lands. **Build directive (execute when staffed):** (1) Extract the renderer source from `github.com/catdef/catdef.org` — the L1 browser-only HTML/CSS/JS bundle and renderer-specific static assets. Do NOT move the MCP server source (`src/mcp/*`), deploy config (`.github/workflows/deploy.yml`, `DEPLOYING.md`, `wrangler.toml`), secret-handling helpers (`scripts/issue-api-key.mjs`, `scripts/register-mcp-key.mjs`), D1 migrations, or `src/index.ts` routing — those stay in the private `catdef.org/` repo. (2) Place extracted source at `catdef-spec/renderer/`. Include a `renderer/README.md` describing what's there, how to self-host or embed, and the relationship to the hosted instance at render.catdef.org. (3) Update the catdef.org deploy mechanism to read renderer source from `catdef-spec/renderer/` — implementer's choice on mechanism (git submodule / periodic vendor / build-time fetch / etc.); pick what fits the existing Cloudflare Workers deploy shape. (4) Drop the now-redundant renderer source location in catdef.org/. Preserve git history (no rewrite); just remove the active source. **What's NOT in scope for this directive (canonical-implementor tactical freedom):** specific deploy-pull mechanism; whether the SSRF-guarded /fetch proxy moves with the renderer or stays on the catdef.org side; whether to use a Cloudflare KV cache layer on the new build pipeline; static-asset bundling shape. All implementer's call. **Standing posture:** no urgency. Pre-submission listing copy works today; specific path becomes accurate after the move. The plugin submission to claude-community is proceeding in parallel with the generic wording — no dependency on this directive's completion. **Status memo back to catdef-strategist** when complete, including: the deploy-pull mechanism chosen, any deltas from the strategist intent above, live verification that render.catdef.org still serves correctly post-move (e.g., curl + visual smoke test on a known canonical catalog URL like the riverside-heritage reference file), and confirmation that the catdef-spec/renderer/ source location is genuinely self-hostable per the listing copy's promise. **Cross-cuts to be aware of:** CA-015 separation-of-hosting-from-spec is reinforced by CA-016 (same principle, repo-content layer). The catdef.org repo stays private. catdef-spec stays public. v1_success_criterion in the org charter remains intact; render.catdef.org URL + behavior unchanged. **No companion memo to catdef-maintainer required from your end** — CA-016 Directive 2 routes a future governance-text update through their next session (no urgency; bundle with CA-013 Call 3 + CA-015 Directive 1 already queued).",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-26 catdef-strategist chair (post-rotation arc + plugin-submission arc; new session opened after 1900 closeout)",
+    "scope_check": "catdef-strategist action-required handoff to canonical-implementor; CA-016 is the formal authority; this memo is the execution-input artifact for whoever next staffs the seat",
+    "originating_decision": "decisions/CA-016.md",
+    "originating_po_directive": "PO 2026-05-26 evening: 'Why don't we just put the renderer in catdef-spec? And the reason I made it private is because it has details about the hosting, etc.' → CA-016 drafted; this memo files the execution directive",
+    "strategic_shape_locked": {
+      "destination": "catdef-spec/renderer/ (parallel to conformance/ and canonical/)",
+      "source_to_move": "L1 renderer (HTML/CSS/JS) + renderer-specific static assets",
+      "source_to_keep_in_catdef_org": "MCP server, deploy config, secret-handling helpers, D1 migrations, routing",
+      "deploy_target_after_move": "render.catdef.org reads from catdef-spec/renderer/ via implementer-chosen mechanism",
+      "catdef_org_repo_privacy": "preserved (stays private)",
+      "history_preservation": "git history in catdef.org/ kept intact; no rewrite"
+    },
+    "tactical_freedom": [
+      "Deploy-pull mechanism (submodule / vendor / build-time fetch / other)",
+      "Whether SSRF /fetch proxy moves with renderer or stays in catdef.org",
+      "Static-asset bundling shape",
+      "renderer/README.md exact wording",
+      "Cache layer or other Cloudflare-Workers optimization choices"
+    ],
+    "no_urgency_reason": "Pre-submission listing copy already updated to generic wording (github.com/catdef/catdef-spec); accurate today; gets more specifically accurate post-move without further README edit",
+    "status_reporting_expected": "Memo back to catdef-strategist when move complete; include deploy-pull mechanism + live verification curls + any deltas from this brief",
+    "cross_cuts": {
+      "ca_015_separation_doctrine": "Reinforced — hosting in private repo; spec + canonical-reference-artifacts in public repo; same principle applied at repo-content layer",
+      "ca_008_canonical_surface_proposal": "Unaffected — catdef.org/mcp continues to operate from the private repo; the renderer is a separable concern",
+      "ca_013_call_3_canonical_implementor_identity": "Unaffected — this directive arrives under the ratified identity",
+      "v1_success_criterion": "Strengthened — 'operational L1 reference renderer at render.catdef.org' now has a genuinely-public canonical source location"
+    },
+    "applies_principles": [
+      "AI drafts, Director ratifies — CA-016 is the formal artifact; this memo is the execution input",
+      "parallel-construction-of-reference-artifacts — renderer/ sits alongside conformance/ and canonical/ as a public canonical-reference directory",
+      "scope discipline — strategist surfaces the architecture call (placement); implementer disposes execution (move + deploy)",
+      "no-blocking-on-implementer-clock — pre-submission listing copy already updated with generic wording so plugin submission proceeds in parallel"
+    ],
+    "follows_pattern_of": [
+      "memos/2026-05-26-1500--catdef-strategist--canonical-implementor--v0-1-1-bundle-ready-for-pickup.openthing — prior action-required handoff to this seat with bundle of strategist-shaped work"
+    ]
+  }
+}
