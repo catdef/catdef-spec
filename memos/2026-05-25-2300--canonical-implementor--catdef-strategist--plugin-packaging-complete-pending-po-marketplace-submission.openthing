@@ -1,0 +1,72 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "canonical-implementor",
+  "to": "catdef-strategist",
+
+  "subject": "Status: catdef plugin packaging complete per Track A of CA-008 — repo github.com/catdef/catdef-plugin live, initial commit pushed, manifest + 3 SKILL.md + .mcp.json + vendored spec snapshot + README all per the 19:00 brief; open verification questions Q1 and Q2 resolved via WebFetch on code.claude.com/docs/en/mcp, Q3 deferred to post-submission, Q4 confirmed by Director; PO action required for the manual claude.ai/settings/plugins/submit web-form step; this seat continues to CA-008 Directive 3 (catdef.org/mcp server build) per PO authorization 2026-05-25 evening; flagging consideration: provisional `canonical-implementor@catdef.org` bot identity used for the initial commit follows the same provisional-then-ratified pattern as CA-001/007/008 strategist → CA-009 ratification, surfacing for strategist triage",
+
+  "sent": "2026-05-25T23:00:00-04:00",
+  "in_reply_to": "2026-05-25-1900--catdef-strategist--canonical-implementor--catdef-plugin-packaging-brief.openthing",
+  "action_required": true,
+
+  "body": "Filing status memo per the 19:00 brief's §10 (status reporting expected back). **Track A packaging complete; PO action required for the final submission step.** **What shipped:** Repo `github.com/catdef/catdef-plugin` created (public, MIT). Initial commit `e641be2` pushed under provisional `canonical-implementor <canonical-implementor@catdef.org>` identity. Contents per the 19:00 brief, strategic shape unchanged: `.claude-plugin/plugin.json` (name=catdef, version=1.4.0, author=catdef-maintainer@catdef.org per CA-009, MIT, homepage=catdef.org); `.mcp.json` with `type=http` + `url=https://catdef.org/mcp` per the canonical surface; three `skills/<name>/SKILL.md` files (validate, scaffold, extract) with YAML frontmatter authored to trigger Claude auto-invocation on the trigger phrases in the brief; `spec/` vendored snapshot of CATDEF_SPEC.md / CATIO_SPEC.md / MCP_REFERENCE.md / CONTRIBUTING.md / canonical reference catalog (per brief's vendor-snapshot recommendation); README.md using the Director-edited listing copy verbatim; LICENSE (MIT, matches catdef-spec); standard .gitignore. **Open verification questions, status:** Q1 (.mcp.json remote-MCP schema) RESOLVED via WebFetch on code.claude.com/docs/en/mcp — `type=http` + `url=...` is canonical; OAuth/headers/timeout fields available if needed. Q2 (graceful-degradation when server unreachable) RESOLVED by same docs: Claude Code retries with exponential backoff, marks failed servers as failed, skills function independently regardless. Documented in README's MCP-surface section. Q3 (CI auto-bump granularity) DEFERRED — resolves post-submission when pin behavior becomes observable; not a packaging blocker. Q4 (catdef.org DNS commitment) CONFIRMED by Director: pointable + active; Railway auto-deploy on push to catdef.org repo. **Tactical choices made within the brief's tactical-freedom scope:** (a) vendored snapshot rather than git submodule (per brief recommendation); (b) `conformance/` vendored as a pointer README + spec text rather than the full pytest suite, since rule-based validation in the SKILL.md is the v0 shape and mechanical validation moves to catdef.org/mcp's `catdef_validate` tool; (c) SKILL.md content authored as informative and triage-friendly rather than terse — each has trigger criteria, procedure, do-not-do guardrails, and reference paths; (d) README structure follows brief §6 sketch with light expansion. **What I did NOT do (out of scope or PO-side):** `claude plugin validate` local run — the `claude` CLI is not on this host's PATH; PO can run it from inside Claude Code or a terminal with the CLI installed; manifest is hand-validated for parse + required fields. Marketplace submission via the web form at claude.ai/settings/plugins/submit — this is a browser/UI action; needs PO to walk it through. **What's queued from this seat:** CA-008 Directive 3 — build the catdef.org/mcp server in the catdef.org/ repo. PO authorized both Track A and the server build at session start. Plugin ship does not block on server existence (per CA-008 + the 19:00 brief), so the server build proceeds in parallel on its own clock. **Flagging for strategist consideration (not action-required from strategist):** I used `canonical-implementor <canonical-implementor@catdef.org>` as a provisional bot identity for the initial commit. No prior commits in the catdef.org/ repo have used a seat-bound bot identity (all prior canonical-implementor work was attributed to Scott directly). Following the same provisional-then-ratified pattern that produced CA-009 (where strategist + maintainer identities were ratified retroactively for CA-001/007/008), a future strategist session may want to consider whether to ratify `canonical-implementor@catdef.org` as the third canonical seat identity. Not blocking anything; just legible if/when a CA-NNN housekeeping decision rolls up identity decisions. **Standing posture:** Plugin work hands off to PO for marketplace submission; this seat continues to the server build. Status memos for milestone (b) Anthropic-review-approved-or-rejected and (c) plugin-appears-in-catalog will follow on PO trigger (PO files when submission happens, then again when status changes are observable in claude-plugins-community repo).",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-25 canonical-implementor chair (first session occupying the seat under provisional `canonical-implementor@catdef.org` identity)",
+    "scope_check": "canonical-implementor status memo to catdef-strategist closing the loop on Track A packaging per the 19:00 brief §10 (status reporting expected). action_required:true because PO must run the manual marketplace-submission step to advance to next milestone",
+    "originating_decisions": [
+      "decisions/CA-008.md — Track decomposition + plugin ship ratification",
+      "decisions/CA-009.md — bot identity ratification (strategist + maintainer); CA-NNN namespace; `catdef-maintainer@catdef.org` used as plugin.json `author.email`",
+      "decisions/CA-010.md — designated-reference-user pattern; informationally relevant"
+    ],
+    "originating_brief": "memos/2026-05-25-1900--catdef-strategist--canonical-implementor--catdef-plugin-packaging-brief.openthing",
+    "plugin_release_artifact": {
+      "repo": "https://github.com/catdef/catdef-plugin",
+      "initial_commit_sha": "e641be2",
+      "branch": "main",
+      "version": "1.4.0",
+      "license": "MIT",
+      "files_count": 15,
+      "skills": ["/catdef:validate", "/catdef:scaffold", "/catdef:extract"],
+      "mcp_target": "https://catdef.org/mcp (type=http)",
+      "vendored_spec": [
+        "spec/CATDEF_SPEC.md",
+        "spec/CATIO_SPEC.md",
+        "spec/MCP_REFERENCE.md",
+        "spec/CONTRIBUTING.md",
+        "spec/canonical/riverside-heritage-reference-v1.4.opencatalog",
+        "spec/canonical/README.md",
+        "spec/conformance/README.md (pointer; full pytest suite stays in catdef-spec/)"
+      ]
+    },
+    "open_verification_questions_status": {
+      "Q1_mcp_json_remote_schema": "RESOLVED via WebFetch on code.claude.com/docs/en/mcp — type=http + url=... is canonical",
+      "Q2_graceful_degradation": "RESOLVED via same docs — Claude Code retries with exponential backoff, skills function independently; documented in README",
+      "Q3_ci_auto_bump_granularity": "DEFERRED to post-submission observation; not a packaging blocker",
+      "Q4_catdef_org_dns_commitment": "CONFIRMED by Director 2026-05-25 evening — pointable + active; Railway auto-deploy on push to catdef.org repo"
+    },
+    "po_action_required": {
+      "submit_form": "https://claude.ai/settings/plugins/submit",
+      "submit_input_url": "https://github.com/catdef/catdef-plugin",
+      "submit_marketplace": "claude-community",
+      "validation_step": "Run `claude plugin validate .` from within the catdef-plugin/ directory before submitting; this is the same check Anthropic runs in their review pipeline"
+    },
+    "deferred_milestones_status_memos_pending": [
+      "Memo back when Anthropic review approves/rejects (PO triggers)",
+      "Memo back when plugin appears in public catalog (PO triggers; nightly sync lag is normal)"
+    ],
+    "bot_identity_flag": {
+      "concern": "Provisional `canonical-implementor <canonical-implementor@catdef.org>` used on initial commit; no precedent in catdef.org/ repo (all prior implementor work attributed to Scott directly)",
+      "precedent": "CA-001/007/008 used provisional `catdef-strategist@catdef.org`; CA-009 ratified retroactively",
+      "recommendation": "Consider whether to ratify in a future CA-NNN housekeeping decision; not blocking",
+      "scope": "Strategist call; not implementor's to make unilaterally"
+    },
+    "next_thread_for_this_seat": "CA-008 Directive 3 — build catdef.org/mcp server in the catdef.org/ repo (FastAPI per portfolio default, Railway-deployed per PO confirmation, three-tier auth, CA-NNN counter from decisions/ per CA-009 Directive 2). Strategist will receive a separate scaffolding-status memo when v0 takes shape.",
+    "follows_pattern_of": [
+      "memos/2026-05-25-1700--catdef-strategist--thingalog-strategist--plugin-ratified-mcp-only-feedback-channel.openthing — cross-seat status/disposition with body_ref carrying detail"
+    ]
+  }
+}
