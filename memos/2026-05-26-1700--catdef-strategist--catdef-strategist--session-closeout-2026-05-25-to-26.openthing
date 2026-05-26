@@ -1,0 +1,68 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "catdef-strategist",
+  "to": "catdef-strategist",
+
+  "subject": "Session closeout 2026-05-25 mid-afternoon → 2026-05-26 mid-afternoon: occupied catdef-strategist seat; disposed of 2 inbound thingalog-strategist batches (catdef plugin for Anthropic marketplace; 3 queued gap-proposals) plus 3 canonical-implementor status memos (plugin packaging complete, catdef.org/mcp v0.1 live, cross-seat closeout); filed 4 decisions (CA-008 track decomposition + catdef.org/mcp introduction; CA-009 bot-identity ratification + CA-NNN unification; CA-010 designated reference user pattern; CA-013 three housekeeping calls); filed 3 MCP feedback items (CA-011 catdef_list_decisions GitHub 401 — fixed mid-session by canonical-implementor; CA-012 URI inconsistency; CA-014 schema-vocabulary translation); v1.5 work pickup list updated; plugin packaging brief drafted then refined with render-engine addition; README updated for post-v1.4 state + catdef.org/mcp surface + scott@catdef.org human contact; v0.1.1 bundle handed to canonical-implementor with explicit collision-risk acceptance which did not materialize",
+
+  "sent": "2026-05-26T17:00:00-04:00",
+  "action_required": false,
+
+  "body": "Session closeout for the 2026-05-25 mid-afternoon → 2026-05-26 mid-afternoon arc. First session occupying the catdef-strategist seat under the ratified identity (CA-009). **What was drafted (with paths):** (1) decisions/CA-008.md — Track decomposition + Anthropic-arc strategic context + catdef.org/mcp introduction; (2) decisions/CA-009.md — strategist + maintainer bot identity ratification + CA-NNN namespace unification (sunset CDF-NNNN); (3) decisions/CA-010.md — designated reference user pattern formalized; Thingalog designated as first reference user; (4) decisions/CA-013.md — three housekeeping calls (sunset legacy /feedback createGitHubIssue; add GitHub Actions deploy workflow; ratify canonical-implementor bot identity); (5) six outbound memos: 2026-05-25-1700 → thingalog-strategist (plugin disposition); 2026-05-25-1900 → canonical-implementor (plugin packaging brief with render-engine addition filed via a small follow-on commit per Director directive); 2026-05-25-2100 → thingalog-strategist (gap dispositions first read, strict value-#4 interpretation); 2026-05-25-2200 → thingalog-strategist (revised dispositions per CA-010, supersedes 2100 in part); 2026-05-26-1500 → canonical-implementor (v0.1.1 bundle handoff); (6) three MCP feedback submissions filed dogfood-style via catdef_report_feedback (CA-011, CA-012, CA-014) — all triaged via catdef_set_feedback_status; (7) README.md updates for post-v1.4 state (165 tests, MCP surface section, decisions/ row added, Feedback section split into AI-peer-MCP and human-email channels). **What was decided:** strategist-level dispositions across 4 CA-NNN decisions captured above; v1.5 work pickup list explicitly re-ordered in the 2026-05-25-2200 body_ref (Primary-index Phase 2 LEAD; value-shape bundle of CA-007 + OQ8 follow-on + item-level polymorphism + rich-Value internal structure as coordinated design; MCP-conformance + theme-spec restructure as parallel tracks; audio attachment deferred pending PXMemories ship on revised empirical-surface grounds). **What's in flight (started but didn't land):** (a) canonical-implementor's v0.1.1 bundle — CA-011 fix landed during this session (verified via post-fix catdef_list_decisions call returning 9 decisions cleanly); CA-012 + CA-013 Calls 1 + 2 still queued for that seat's continued work; (b) catdef-maintainer governance-text updates per CA-013 Call 3 (canonical-implementor bot identity acknowledgment in org artifact + CLAUDE.md known-work-items) — flagged as no urgency in v0.1.1 handoff; (c) Plugin marketplace submission — PO web-form action; outside strategist seat. **What's open (items surfaced but not addressed):** (a) CA-014 (schema-vocabulary translation: input enum vocabulary differs from queue-display vocabulary) — triaged; queued for v0.1.2 or v0.2 cycle; preferred fix is unifying input + storage schemas; (b) v1.5 cycle remains queued — Director triggers when ready; Primary-index Phase 2 leads; (c) Thingalog standard MCP key — optional; mint when thingalog-strategist files a request memo OR pre-mint per Director's preference. **Notable session-arc observations (worth carrying forward in seat history):** (1) The 21:00 first-read on gap dispositions applied value #4 cross-implementer-demand strictly; PO pushback ('we know that a use case is coming, and we really want Thingalog to be a reference user of catdef') led to CA-010 reference-user pattern formalization; the 22:00 revision supersedes-in-part. Both memos preserved as institutional record. Generalizable lesson: when a value's strict reading is tighter than the spec's own practice (canonical reference file already drives single-implementer promotion), formalizing the pattern via CA-NNN beats either holding the strict line or ad-hoc loosening it. (2) catdef.org/mcp v0.1 was stood up by canonical-implementor during this session arc; this seat performed the first dogfood test which surfaced CA-011 + CA-012 + CA-014. Strong empirical validation of CA-008 Track D: the feedback channel handled its first real catdef-side feedback during the same session it was instantiated. Eating own dogfood worked. (3) The CA-NNN collision risk PO accepted (option c) during the v0.1.1 fix window did NOT materialize. CA-014 was allocated cleanly post-CA-011-fix (counter resynced past decisions/CA-013.md); the option-c risk acceptance turned out to be the right call. (4) Strategist decisions on main went via direct commit (rule bypass under Director auth); maintainer governance bundle went via admin-merged PR (#40). Two workflow patterns now established and both ratified by usage. Future strategist sessions inherit the choice: direct-commit for small/routine decisions; PR-shape for larger or coordinated work. **What future incumbents of this seat should know on next onboarding:** (i) The reference-user pattern (CA-010) is now established — gap-proposals from Thingalog qualify for v1.5 promotion without external-implementer demand demonstration. Criteria for additional designations codified in CA-010 §Criteria for future designations. (ii) The catdef.org/mcp queue is the operational workplace; catdef_list_feedback is the seat's primary visibility into the inbound; check it early in onboarding. (iii) The strategist's elevated MCP key is held by PO (cdfk_dir_<random>; D1 holds hash only); request via memo or in-chat when staffing. (iv) v1.5 trigger is the Director's call; this seat does not unilaterally launch the cycle; when triggered, Primary-index Phase 2 (Gap 3 from 2026-05-25-2000) leads. (v) The supersedes-in-part pattern (2100 → 2200 here) is fine and preserves institutional record; don't overwrite or delete superseded memos. (vi) The MCP server's input + storage vocabulary mismatch (CA-014) is real but minor; AI peers may see different category/severity values in queue display vs what they submitted until fix lands. (vii) When the v0.1.1 bundle (CA-012 + CA-013 Calls 1 + 2) ships, expect a status memo back from canonical-implementor; standard milestone-reporting pattern.",
+  "body_ref": "2026-05-26-1700--catdef-strategist--catdef-strategist--session-closeout-2026-05-25-to-26.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-25 → 2026-05-26 catdef-strategist chair. Working directory s:/Projects/catdef-spec; no additional working directories used (closeout drafting confined to the strategist seat's home repo)",
+    "scope_check": "Closeout memo from catdef-strategist (session-ending seat) to itself, capturing this session's institutional record for the seat's next incumbent. Per /oagp-closeout discipline: institutional, not narrative; durable context, not retrospective",
+    "session_arc": {
+      "started": "2026-05-25 mid-afternoon — onboarded via /oagp-onboard; surveyed substrate; staffed catdef-strategist seat by explicit PO authorization",
+      "midpoint_1": "2026-05-25 evening — first inbound (catdef plugin proposal) disposed via CA-008 + cross-seat handoffs; bot-identity housekeeping via CA-009; gap-proposals dispositioned with first-read strict-value-#4 interpretation",
+      "midpoint_2": "2026-05-25 late evening — PO pushback on gap dispositions; CA-010 reference-user pattern formalization; 2100 → 2200 revision filed",
+      "midpoint_3": "2026-05-26 morning — canonical-implementor session shipped Track A plugin repo + catdef.org/mcp v0.1; first dogfood test surfaced CA-011 + CA-012 + (later) CA-014; CA-013 housekeeping filed; v0.1.1 bundle handed off",
+      "ended": "2026-05-26 mid-afternoon — README updates pushed; CA-014 filed and triaged; closeout invoked"
+    },
+    "artifacts_summary": {
+      "decisions_filed": [
+        "decisions/CA-008.md — Track decomposition + catdef.org/mcp introduction",
+        "decisions/CA-009.md — bot identity ratification + CA-NNN namespace unification",
+        "decisions/CA-010.md — designated reference user pattern + Thingalog as first designation",
+        "decisions/CA-013.md — three housekeeping calls (legacy /feedback sunset; deploy workflow; canonical-implementor bot identity ratification)"
+      ],
+      "outbound_memos": [
+        "memos/2026-05-25-1700--catdef-strategist--thingalog-strategist--plugin-ratified-mcp-only-feedback-channel.openthing (+.body.md)",
+        "memos/2026-05-25-1900--catdef-strategist--canonical-implementor--catdef-plugin-packaging-brief.openthing (+.body.md)",
+        "memos/2026-05-25-2100--catdef-strategist--thingalog-strategist--gap-dispositions-and-v1-5-pickup-list-update.openthing (+.body.md)",
+        "memos/2026-05-25-2200--catdef-strategist--thingalog-strategist--revised-dispositions-per-CA-010-reference-user-designation.openthing (+.body.md) [supersedes 2100 in part]",
+        "memos/2026-05-26-1500--catdef-strategist--canonical-implementor--v0-1-1-bundle-ready-for-pickup.openthing",
+        "memos/2026-05-26-1700--catdef-strategist--catdef-strategist--session-closeout-2026-05-25-to-26.openthing (+.body.md) [this memo]"
+      ],
+      "mcp_feedback_filed": [
+        "CA-011 (catdef_list_decisions GitHub 401) — filed + triaged + FIXED mid-session by canonical-implementor",
+        "CA-012 (dynamic resource URI inconsistency) — filed + triaged; queued for v0.1.x",
+        "CA-014 (schema-vocabulary translation) — filed + triaged; queued for v0.1.2 or v0.2"
+      ],
+      "other_changes": [
+        "README.md updated — 165 tests, MCP surface section, decisions/ row, Feedback section split into AI-peer + human channels",
+        "Plugin packaging brief 1900 followed by render-engine-bullet edit (4decde7) before recovery + push"
+      ]
+    },
+    "session_admin_observations": {
+      "git_workflow": "Strategist artifacts committed directly to main with rule bypass under Director auth; one branch-state recovery early in session (commits accidentally landed on canonical-implementor's local feature branch; cherry-picked to main; feature branch reset to maintainer's HEAD; clean recovery)",
+      "po_directives_count": "~15 substantive PO directives across the session arc; all captured in memo metadata.originating_PO_directive fields where load-bearing",
+      "ide_open_file_signals": "Multiple ide_opened_file signals during the session (scripts/issue-api-key.mjs; src/mcp/counter.ts; src/mcp/tools.ts) — interpreted as PO situational hints about active canonical-implementor work; not directly actioned"
+    },
+    "applies_principles": [
+      "seat-vs-incumbent — closeout is for the seat's history, not this session's narrative; future incumbents read it on their onboard",
+      "AI drafts, Director ratifies — strategist decisions on main went via direct commit under Director auth; closeout memo itself is a draft until Director commits",
+      "feedback_substrate_is_workplace_not_documentation — the catdef.org/mcp queue is now the operational workplace; this seat used it for its own findings",
+      "institutional-memory-via-superseded-artifact-preservation — the 21:00 → 22:00 supersedes-in-part pattern preserves both reads; future sessions see the strict-vs-pattern reasoning side-by-side",
+      "pattern-formalization-over-ad-hoc-loosening — CA-010's reference-user pattern resolved a tension between strict value #4 reading and the spec's own practice; future sessions inherit the legible answer"
+    ],
+    "follows_pattern_of": [
+      "memos/2026-05-26-1430--canonical-implementor--canonical-implementor--session-closeout-cross-seat-2026-05-25-to-26.openthing — precedent for self-addressed closeout memo with comprehensive subject + body_ref"
+    ]
+  }
+}
