@@ -16,10 +16,11 @@ A single `.opencatalog` file contains everything: the schema (templates, field d
 | [CATDEF_SPEC.md](CATDEF_SPEC.md) | The catdef v1.4 specification — field types, subcats, views, inheritance, conformance levels, i18n, Policy Registry |
 | [CATIO_SPEC.md](CATIO_SPEC.md) | The CATIO v1.4 bundled-transport specification — `.opencatalog` ZIP format (CATDEF + CATIO version in lockstep) |
 | [samples/](samples/) | Sample catdef files you can open in any conformant renderer |
-| [conformance/](conformance/) | The catdef Conformance Test Suite — 164 tests (plus 1 xfail tracking a known canonical drift) |
+| [conformance/](conformance/) | The catdef Conformance Test Suite — 165 tests |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to propose changes to the standard |
-| [MCP_REFERENCE.md](MCP_REFERENCE.md) | Non-normative reference design for a Model Context Protocol server exposing catdef catalogs |
-| [proposals/](proposals/) | In-flight proposals for spec changes (v1.4 and beyond) |
+| [MCP_REFERENCE.md](MCP_REFERENCE.md) | Reference description of the canonical MCP surface served live at [catdef.org/mcp](https://catdef.org/mcp) |
+| [decisions/](decisions/) | Ratified governance decisions (CA-NNN) — the institutional memory of the spec's evolution |
+| [proposals/](proposals/) | Proposals (in-flight and ratified) for spec changes and operational deliverables |
 | [CLAUDE.md](CLAUDE.md) | Maintainer operating manual (AI-assisted review) — see CONTRIBUTING.md |
 
 ## File format
@@ -88,9 +89,26 @@ Anyone can build a catdef renderer. To call it conformant, it must pass the test
 
 **The test suite is the standard.** See [conformance/](conformance/) for details.
 
-## Feedback
+## MCP — programmatic access for AI peers
 
-File spec feedback at [catdef.org/feedback](https://catdef.org/feedback) — structured intake for AI agents and humans.
+[catdef.org/mcp](https://catdef.org/mcp) is the canonical AI-peer surface for catdef. JSON-RPC 2.0 over HTTP.
+
+- **Read the spec as MCP resources** — `catdef://spec/CATDEF_SPEC.md`, `catdef://spec/CATIO_SPEC.md`, `catdef://spec/MCP_REFERENCE.md`, the canonical reference catalog, and individual CA-NNN decisions
+- **Ground yourself** — `catdef_lookup({term})`, `catdef_list_decisions`, `catdef_describe`
+- **Validate artifacts** — `catdef_validate({artifact})`
+- **File structured feedback** — `catdef_report_feedback({category, severity, body})` (standard tier; submissions land in the unified CA-NNN queue)
+- **Triage** — `catdef_list_feedback`, `catdef_set_feedback_status`, `catdef_attach_decision` (elevated tier; Director-issued keys for the strategist + maintainer seats)
+
+Three-tier bearer auth: anonymous reads spec + grounding tools; standard-tier api-keys (`cdfk_<random>`) add feedback submission; elevated-tier keys (`cdfk_dir_<random>`, Director-issued) add queue triage.
+
+A [Claude Code plugin](https://github.com/catdef/catdef-plugin) packages spec content + skills (`/catdef:validate`, `/catdef:scaffold`, `/catdef:extract`) + an MCP client config pointing at this surface.
+
+See [proposals/catdef-org-mcp-canonical-surface.md](proposals/catdef-org-mcp-canonical-surface.md) for the ratified design and [decisions/CA-008.md](decisions/CA-008.md) for the governance disposition.
+
+## Feedback and contact
+
+- **AI peers / programmatic submitters** — file via `catdef_report_feedback` on the MCP surface above. Submissions get a CA-NNN identifier that persists through the entire lifecycle (filed → triaged → decided → shipped) per [CA-009](decisions/CA-009.md). All feedback is private at submission and becomes public only via explicit curation.
+- **Humans** — email [scott@catdef.org](mailto:scott@catdef.org) for direct contact. The legacy web form at [catdef.org/feedback](https://catdef.org/feedback) remains operational and lands submissions in the same CA-NNN queue.
 
 ## License
 
