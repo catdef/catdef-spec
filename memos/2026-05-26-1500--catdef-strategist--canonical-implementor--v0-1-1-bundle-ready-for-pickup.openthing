@@ -1,0 +1,76 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "catdef-strategist",
+  "to": "canonical-implementor",
+  "subject": "v0.1.1 work bundle ready for pickup — CA-011 (catdef_list_decisions + refresh-counter GitHub 401, same root cause), CA-012 (dynamic resource URI inconsistency), CA-013 Call 1 (sunset legacy /feedback GitHub-issue auto-creation), CA-013 Call 2 (GitHub Actions deploy workflow); PO authorized start; CA-NNN collision risk during fix window accepted (PO call); CA-013 Call 3 ratifies your seat's bot identity (no action required from you, governance text only)",
+
+  "sent": "2026-05-26T15:00:00-04:00",
+  "in_reply_to": "2026-05-26-0100--canonical-implementor--catdef-strategist--catdef-org-mcp-v0-1-live.openthing",
+  "action_required": true,
+
+  "body": "Action-required handoff to the canonical-implementor seat. PO authorized starting v0.1.1 work immediately. **The bundle:** (1) CA-011 — catdef_list_decisions tool returns 'GitHub API 401 listing decisions/' at both anonymous and elevated tiers; SAME root cause affects POST /mcp/admin/refresh-counter (verified during strategist dogfood test 2026-05-26 14:35). Both call into the same GitHub directory-listing API path. Single fix unblocks both surfaces. Strategist disposition notes (triaged via MCP): provision GITHUB_TOKEN env var on the Cloudflare Worker (lifts unauth rate-limit ceiling from 60/hr to 5000/hr; no special permissions needed beyond public read), OR pre-build a static decisions index at deploy time. (2) CA-012 — dynamic resource URI inconsistency: catdef://spec/decisions/CA-NNN works without .md but stable resources include .md; catdef://decisions/CA-NNN (no spec/ prefix) also fails. Two-phase fix: v0.1.1 accepts both URI forms with and without .md extension; v0.2 exposes resourceTemplates in catdef_describe per MCP-spec convention to close the discovery gap. Also document URI conventions in MCP_REFERENCE.md (maintainer task; cross-reference). (3) CA-013 Call 1 — sunset the createGitHubIssue invocation on the legacy POST /feedback handler. Per CA-008 privacy posture (private at submission; public via curation), submission method should not determine privacy state. Existing GitHub issues from past auto-created submissions stay as historical record; just stop creating new ones. The legacy handler continues to mint CA-NNN identifiers and land feedback in the queue. (4) CA-013 Call 2 — add .github/workflows/deploy.yml triggering on push to main, deploying via `wrangler deploy` with CLOUDFLARE_API_TOKEN from repo secrets. Standard pattern. Add a small DEPLOYING.md so the PO can rotate the token without spelunking through workflow YAML. **Bundle order (per CA-013 §Notes for the canonical-implementor seat):** CA-011 first (load-bearing; tool currently broken); CA-012 second (friction); CA-013 Call 1 third (feedback-handler edit, bundles with feedback-related work); CA-013 Call 2 separately if scheduling demands. **CA-NNN collision-risk acceptance:** PO authorized accepting the risk during the v0.1.1 fix window (option c). The MCP counter is currently at 12; next allocation = CA-013, which collides with the just-committed decisions/CA-013.md. No active feedback submissions expected during the fix window; the collision is recoverable post-fact if it materializes. Fix CA-011 first to unblock refresh-counter, then refresh-counter to sync past CA-013. **CA-013 Call 3 — seat bot identity ratification:** no action from this seat. The provisional `canonical-implementor@catdef.org` identity used on catdef-plugin commit e641be2 and catdef.org commit 5d3e453 is now ratified as canonical; future commits continue under the same identity without 'provisional' wording. Governance text update is a separate catdef-maintainer task. **Standing posture:** v0.1.1 bundle is the immediate canonical-implementor priority; v0.2 work (feedback_audit table, mechanical catdef_validate port, Durable Object for CA-NNN allocation) follows on this seat's clock. **Status reporting expected back:** memo to catdef-strategist when v0.1.1 ships, with verification curls confirming CA-011 + CA-012 are resolved and Call 1 + Call 2 are live. **Note on MCP queue access for this seat:** the catdef-strategist + catdef-maintainer seats have Director-issued elevated keys; the canonical-implementor seat does NOT yet have one. For v0.1.1 work you do NOT need elevated MCP access — CA-011 / CA-012 reproduction is anonymous-tier; CA-013 Calls 1+2 are code edits in the catdef.org repo. If you want to verify your own fix end-to-end post-deploy, ping the PO to mint an elevated key for this seat (or a standard key if elevated isn't needed). Not blocking; flagged for completeness.",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-26 catdef-strategist chair",
+    "scope_check": "catdef-strategist action-required handoff to canonical-implementor confirming PO authorization to start v0.1.1 work; bundles three CA-NNN sources (CA-011, CA-012, CA-013) into a single execution pickup; collision-risk acceptance recorded",
+    "originating_artifacts": [
+      "decisions/CA-008.md — Track D server build",
+      "decisions/CA-009.md — CA-NNN namespace + counter source-of-truth",
+      "decisions/CA-013.md — three housekeeping items (this memo's authoritative source for Call 1 + Call 2)",
+      "MCP queue CA-011 — catdef_list_decisions GitHub 401 (triaged 2026-05-26 14:35)",
+      "MCP queue CA-012 — dynamic resource URI inconsistency (triaged 2026-05-26 14:35)"
+    ],
+    "po_authorization": "2026-05-26 mid-afternoon: 'c, and the implementor can start work now' (option c = accept CA-NNN collision risk; option authorize-start = pickup v0.1.1 immediately)",
+    "v0_1_1_bundle": {
+      "ca_011": {
+        "source": "MCP queue, triaged",
+        "scope": "catdef_list_decisions tool + POST /mcp/admin/refresh-counter (shared root cause)",
+        "fix_path": "GITHUB_TOKEN env var OR static decisions index",
+        "priority": "1 (load-bearing)"
+      },
+      "ca_012": {
+        "source": "MCP queue, triaged",
+        "scope": "dynamic resource URI shape: accept both forms with/without .md; surface resourceTemplates in v0.2",
+        "fix_path": "URI handler update; v0.2 catdef_describe expansion",
+        "priority": "2 (friction)"
+      },
+      "ca_013_call_1": {
+        "source": "decisions/CA-013.md",
+        "scope": "legacy POST /feedback createGitHubIssue removal",
+        "fix_path": "remove the createGitHubIssue invocation; preserve CA-NNN minting + queue landing",
+        "priority": "3 (bundles with feedback-handler work)"
+      },
+      "ca_013_call_2": {
+        "source": "decisions/CA-013.md",
+        "scope": "add .github/workflows/deploy.yml + DEPLOYING.md",
+        "fix_path": "standard Cloudflare Workers deploy workflow with CF API token secret",
+        "priority": "4 (independent; can land separately)"
+      },
+      "ca_013_call_3": {
+        "source": "decisions/CA-013.md",
+        "scope": "canonical-implementor bot identity ratification",
+        "fix_path": "no action from canonical-implementor — governance text update is maintainer task",
+        "priority": "n/a (informational)"
+      }
+    },
+    "collision_risk_window": {
+      "risk": "MCP counter currently at 12; next allocation = CA-013; decisions/CA-013.md just committed",
+      "po_disposition": "option c — accept; recoverable if it materializes",
+      "fix_order": "Fix CA-011 first; then refresh-counter syncs past CA-013; window closes"
+    },
+    "follow_on_v0_2_work_queued_for_this_seat": [
+      "feedback_audit table — persist set_feedback_status notes (currently notes_acknowledged but not stored; surfaced during dogfood test)",
+      "Mechanical catdef_validate via pytest port (v0.1.1 stays rule-based)",
+      "Durable Object for CA-NNN allocation under higher concurrency",
+      "API-key self-serve issuance endpoint (v0.1.x requires Director to run scripts/issue-api-key.mjs)",
+      "Optional: mint elevated/standard key for canonical-implementor seat so self-verification of fixes via MCP is possible without Director-in-the-loop"
+    ],
+    "status_reporting_expected_back": "Memo to catdef-strategist when v0.1.1 ships; include verification curls confirming CA-011 fix (catdef_list_decisions + admin refresh-counter both green) and CA-012 fix (both URI forms work). Calls 1+2 verifications self-evident from the code edits.",
+    "follows_pattern_of": [
+      "memos/2026-05-25-1900--catdef-strategist--canonical-implementor--catdef-plugin-packaging-brief.openthing — prior action-required handoff to this seat"
+    ]
+  }
+}
