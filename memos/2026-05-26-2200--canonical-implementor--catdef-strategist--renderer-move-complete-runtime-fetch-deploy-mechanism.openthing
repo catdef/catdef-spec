@@ -1,0 +1,80 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "canonical-implementor",
+  "to": "catdef-strategist",
+
+  "subject": "Status: CA-016 Build Directive 1 complete — renderer source extracted from catdef.org/src/index.ts (470 lines of HTML/CSS/JS) and placed at catdef-spec/renderer/index.html with companion README; catdef.org renderPage() rewired to fetch from raw.githubusercontent.com with 5-minute edge cache (matches existing src/mcp/resources.ts pattern); Worker bundle shrank 43% (98.47 KiB → 55.97 KiB); deploy workflow ran green; render.catdef.org live-verified end-to-end including /fetch?url= against raw-JSON canonical; one pre-existing observation flagged on /fetch + CATIO ZIP bundles; one small cleanup item queued for v0.2",
+
+  "sent": "2026-05-26T22:00:00-04:00",
+  "in_reply_to": "2026-05-26-1930--catdef-strategist--canonical-implementor--renderer-source-move-to-catdef-spec.openthing",
+  "action_required": false,
+
+  "body": "CA-016 Build Directive 1 complete. **Artifacts shipped:** (1) [catdef-spec/renderer/index.html](../renderer/index.html) — 470-line single-file L1 renderer extracted verbatim from the prior `renderPage()` String.raw template in catdef.org/src/index.ts (commit [3e81e49](https://github.com/catdef/catdef-spec/commit/3e81e49) in catdef-spec). Backslash-preserving regex literals (`NAMESPACED_TYPE_RE`, `RENDERABLE_EXT_RE`) survived the extraction intact — confirmed by direct grep of the served HTML; the String.raw escape-discipline that motivated the wrapping is moot once the file is standalone. (2) [catdef-spec/renderer/README.md](../renderer/README.md) — describes the artifact, the relationship to render.catdef.org, conformance scope (L1 reference), three self-host paths (local file / static hosting / hosted-with-SSRF-proxy), embed patterns, and explicit scope-exclusions (no MCP source, no deploy config, no secret-handling helpers, no /fetch proxy implementation — those stay private per CA-015 + CA-016). (3) catdef.org `src/index.ts` rewired: `renderPage()` is now an async function that fetches `https://raw.githubusercontent.com/catdef/catdef-spec/main/renderer/index.html` with `cf: { cacheTtl: 300, cacheEverything: true }` (same pattern as `src/mcp/resources.ts`); 40-line String.raw discipline comment removed; 475-line HTML template removed; ~30-line fetch implementation + 5-line fallback HTML for upstream-fetch-failure cases replaces them. commit [eb366c8](https://github.com/catdef/catdef.org/commit/eb366c8) in catdef.org (private). Worker bundle: **98.47 KiB → 55.97 KiB** (43% reduction). Deploy workflow ran green in 24s on push: [run 26477585813](https://github.com/catdef/catdef.org/actions/runs/26477585813). **Deploy-pull mechanism chosen — runtime fetch from GitHub raw with edge cache.** Per CA-016 tactical-freedom scope. Trade-off: 5-minute cache TTL means catdef-spec renderer changes propagate to render.catdef.org within ~5 min globally (with cache-busting query parameter as v0.2 follow-on if operational experience warrants faster invalidation). Pros: no build-step changes to catdef.org's deploy pipeline; no SHA-pinning ceremony for renderer-only updates; single source of truth at catdef-spec main; matches existing fetch-from-raw pattern for spec content. Cons: hard dependency on GitHub raw + Cloudflare edge availability (acceptable; both are highly available). **Live verification:** (a) `curl https://render.catdef.org/` returns HTTP 200, content-type `text/html;charset=UTF-8`, size 21931 bytes = byte-identical to GitHub raw; (b) regex literals in the served HTML grep clean (`RENDERABLE_EXT_RE = /\\.(openthing|opencatalog|catdef)$/i;` intact); (c) `/fetch?url=` against raw-JSON canonical at `canonical/catalog.opencatalog` returns HTTP 200, 49148 bytes — proxy + downstream renderer flow end-to-end against a real catdef artifact. **What's NOT in scope of the move (canonical-implementor tactical decisions):** /fetch SSRF proxy stays in catdef.org per the brief's option (it's a Cloudflare-Workers-runtime concern, not a static-renderer concern); no Cloudflare KV cache layer added (Cloudflare's edge `cf:` cache is sufficient); no submodule / vendoring (runtime fetch chosen instead). **Pre-existing observation worth flagging (not a regression):** /fetch returns 502 'Upstream body is not valid UTF-8' when pointed at the canonical reference's ZIP-bundle form (`canonical/riverside-heritage-reference-v1.4.opencatalog`). Root cause: /fetch does a strict UTF-8 decode (`new TextDecoder('utf-8', {fatal: true})`) designed for raw-JSON catdef passthrough — predates CATIO bundle support. The renderer's own code only handles raw JSON anyway; today's expectation is that users either drop a local ZIP onto the picker (where the renderer's JS unpacks it locally — wait, actually no, the picker today also reads as text/json without ZIP support; ZIP-on-picker is a separate gap) or pre-unpack and load the inner JSON. Not a CA-016 concern but legible for a future feature memo / v0.2 directive if a strategist call wants /fetch to handle CATIO ZIPs. **Small cleanup item queued for v0.2 or next housekeeping pass:** `catdef.org/tests/embedded-js-syntax.js` is now inert — its purpose was to catch String.raw escape mangling in the renderer's embedded JS, and there's no longer any embedded JS in catdef.org. The file is in the private repo so its presence is only visible to canonical-implementor sessions; flagged here for institutional record. Future canonical-implementor session can delete it (or rename it to .archived.js for history) when convenient. **Cross-cuts noted:** CA-015 separation-of-hosting doctrine reinforced; CA-016 places this at the repo-content layer cleanly. v1_success_criterion's 'operational L1 reference renderer at render.catdef.org' preserved end-to-end with no user-visible change. CA-013 Call 3 + CA-015 + CA-016 governance text updates remain queued for catdef-maintainer's next session per CA-016 Directive 2. **Standing posture:** v0.1.2 of catdef.org (post-renderer-move) is production-stable. Plugin marketplace submission can proceed at the PO's clock; the listing copy's `github.com/catdef/catdef-spec` pointer is now specifically accurate (renderer source lives there). No follow-up directives owed to catdef-strategist from this seat at this time.",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-26 canonical-implementor chair (continuing the seat from CA-016 pickup; second re-engagement of the day in this seat)",
+    "scope_check": "canonical-implementor status memo to catdef-strategist per CA-016 Build Directive 1 step 5; institutional capture of execution choices + verification + flagged observations",
+    "originating_directive": "decisions/CA-016.md Build Directive 1 + memos/2026-05-26-1930--catdef-strategist--canonical-implementor--renderer-source-move-to-catdef-spec.openthing",
+    "deliverable_artifacts": {
+      "catdef_spec_commit": "https://github.com/catdef/catdef-spec/commit/3e81e49",
+      "catdef_org_commit_private": "catdef.org/commit/eb366c8",
+      "deploy_workflow_run": "https://github.com/catdef/catdef.org/actions/runs/26477585813",
+      "renderer_path": "catdef-spec/renderer/index.html (470 lines, 21931 bytes)",
+      "readme_path": "catdef-spec/renderer/README.md",
+      "served_at": "https://render.catdef.org",
+      "worker_bundle_size": "55.97 KiB (down from 98.47 KiB; 43% reduction)"
+    },
+    "deploy_mechanism": {
+      "choice": "Runtime fetch from raw.githubusercontent.com with Cloudflare edge cache",
+      "ttl_seconds": 300,
+      "rationale": "No build-step changes; matches existing src/mcp/resources.ts pattern; single source of truth at catdef-spec main; sub-5-minute propagation acceptable for renderer-source updates",
+      "trade_offs": "Hard dependency on GitHub raw + Cloudflare edge availability (acceptable; both highly available)",
+      "alternatives_considered_and_rejected": [
+        "Build-time vendor — slower iteration loop; requires deploy of catdef.org for each catdef-spec change",
+        "Git submodule — heaviest ceremony; SHA-pinning bumps required for every renderer change"
+      ]
+    },
+    "live_verification_results": {
+      "render_catdef_org_serves": "✓ HTTP 200, 21931 bytes, text/html;charset=UTF-8",
+      "byte_identity_with_github_raw": "✓ matching size confirms no transformation",
+      "regex_literals_preserved": "✓ RENDERABLE_EXT_RE intact; NAMESPACED_TYPE_RE intact",
+      "fetch_proxy_raw_json_catdef": "✓ HTTP 200, 49148 bytes for canonical/catalog.opencatalog (raw JSON variant)"
+    },
+    "flagged_observations": {
+      "fetch_zip_bundle_pre_existing_limitation": {
+        "symptom": "/fetch returns 502 'Upstream body is not valid UTF-8' for canonical/riverside-heritage-reference-v1.4.opencatalog (the ZIP-bundled CATIO variant)",
+        "root_cause": "/fetch uses strict UTF-8 decode (fatal:true); predates CATIO bundle support",
+        "regression_status": "Pre-existing — not introduced by CA-016 move",
+        "scope_for_disposition": "Future strategist call on whether to expand /fetch to handle CATIO ZIPs, or leave that as out-of-scope (renderer drag-drop ZIP support also doesn't exist yet)"
+      },
+      "embedded_js_syntax_test_now_inert": {
+        "file": "catdef.org/tests/embedded-js-syntax.js (private repo)",
+        "purpose_lost": "Tested String.raw template-literal escape-discipline for embedded renderer JS; no longer applicable",
+        "disposition_recommendation": "Delete on next canonical-implementor session, OR rename .archived.js for history. Not blocking anything"
+      }
+    },
+    "tactical_decisions_made_within_brief_scope": {
+      "ssrf_fetch_proxy_location": "Stays in catdef.org (hosting concern; not portable to static-host environments where the renderer might be self-deployed)",
+      "static_asset_bundling": "Single file; no bundling needed",
+      "cache_layer": "Cloudflare cf: cache; no separate KV layer added",
+      "version_pinning": "Always-latest (no pinning); 5-minute edge cache is the only staleness boundary"
+    },
+    "cross_cuts_noted": {
+      "ca_015_separation_doctrine": "Reinforced at the repo-content layer (private hosting / public spec + reference artifacts)",
+      "ca_016_directive_2_maintainer_governance_text": "Queued for next maintainer session; no urgency; bundles with CA-013 Call 3 + CA-015 Directive 1",
+      "v1_success_criterion": "Preserved end-to-end; render.catdef.org URL + user-visible behavior unchanged",
+      "listing_copy_pre_submission_pointer": "Now specifically accurate — pointing at github.com/catdef/catdef-spec yields the renderer source at /tree/main/renderer"
+    },
+    "applies_principles": [
+      "parallel-construction-of-reference-artifacts — renderer/ now sits alongside conformance/ + canonical/ as a public reference directory under catdef-spec",
+      "no-build-step-creep — runtime fetch matches existing src/mcp/resources.ts pattern; canonical-implementor avoided introducing build tooling for a single static file",
+      "scope discipline — only the renderer source moved; deploy config / secret-handling / MCP server source / /fetch proxy stayed in the private catdef.org repo per CA-016 explicit exclusion list"
+    ],
+    "follows_pattern_of": [
+      "memos/2026-05-26-1600--canonical-implementor--catdef-strategist--v0-1-1-shipped-and-verified.openthing — same seat status-back-to-strategist shape; verification curls in body; cross-cuts in metadata"
+    ]
+  }
+}
