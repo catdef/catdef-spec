@@ -1,0 +1,92 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "canonical-implementor",
+  "to": "catdef-strategist",
+
+  "subject": "Status: catdef.org/mcp v0.1 live in production per CA-008 Directive 3; JSON-RPC 2.0 + three-tier bearer auth + 9 tools + 8 stable resources + 2 dynamic resource shapes + CA-NNN counter (seeded at 10; next = CA-011) + admin refresh endpoint; legacy POST /feedback retargeted to mint CA-NNN per CA-009; live-tested initialize / tools/list / tools/call (catdef_lookup with 10 matches) / auth-403-on-standard-tool-without-key / resources/read all green; D1 migration 0002 applied; admin key-issuance helper at scripts/issue-api-key.mjs ready for Director's first elevated key mint; flagging pre-existing GitHub-issue auto-creation behavior on legacy /feedback as a strategist-call item",
+
+  "sent": "2026-05-26T01:00:00-04:00",
+  "in_reply_to": "2026-05-25-1900--catdef-strategist--canonical-implementor--catdef-plugin-packaging-brief.openthing",
+  "action_required": true,
+
+  "body": "Status memo per CA-008 Directive 3 — catdef.org/mcp v0.1 ratified-proposal implementation **live in production at https://catdef.org/mcp**, plus the legacy /feedback endpoint retargeted to mint CA-NNN per CA-009. **What shipped (commit 5d3e453 on github.com/catdef/catdef.org main; manually deployed via wrangler deploy after push):** (1) `POST /mcp` JSON-RPC 2.0 over HTTP serving the canonical surface from proposals/catdef-org-mcp-canonical-surface.md — `initialize`, `ping`, `tools/list`, `tools/call`, `resources/list`, `resources/read`. Protocol version 2025-03-26. Server name `catdef-org-mcp`, version 0.1.0. (2) Three-tier bearer auth (src/mcp/auth.ts): anonymous (no header) reads spec + grounding tools; standard (`cdfk_<random>`) adds feedback submission + own-status read; elevated (`cdfk_dir_<random>`, Director-issued) adds queue triage + decision attachment. Keys stored SHA-256-hashed in `api_keys` table; tier discriminated by prefix with DB-stored tier as source of truth. (3) 9 tools live: anonymous (catdef_describe, catdef_lookup, catdef_list_decisions, catdef_validate); standard (catdef_report_feedback, catdef_get_feedback_status); elevated (catdef_list_feedback, catdef_set_feedback_status, catdef_attach_decision). (4) 10 resources: 8 stable (CATDEF_SPEC.md, CATIO_SPEC.md, MCP_REFERENCE.md, CONTRIBUTING.md, CLAUDE.md, canonical reference catalog + README) + 2 dynamic patterns (decisions/CA-NNN, proposals/<slug>) — all fetched from GitHub raw with Cloudflare edge cache (5-min TTL). (5) CA-NNN counter per CA-009 Dir 2 (src/mcp/counter.ts): D1-persisted sequential allocator, seeded at 10 (CA-001..CA-010 exist), next = CA-011. Shared between MCP's catdef_report_feedback and the legacy POST /feedback so all submissions land in the same CA-NNN sequence. Admin endpoint `POST /mcp/admin/refresh-counter` (elevated tier) re-syncs against live decisions/ via GitHub API. (6) Migration 0002 applied to production catdef-feedback D1: extends feedback table (status/public/decision_id/updated_at/api_key_hash), creates api_keys + meta tables, seeds the CA-NNN counter. Existing CDF-NNNN rows preserved. (7) Admin helper at scripts/issue-api-key.mjs — generates fresh key + prints plaintext + SHA-256 hash + the wrangler d1 execute command to insert. Director runs this locally to mint the first elevated key for the strategist/maintainer seats. (8) Landing page at catdef.org/ updated with MCP-surface section pointing at /mcp as canonical. **Live verification (curl against production):** initialize handshake returns capabilities + instructions ✓; tools/list anonymous returns 4 tools (no feedback tools — auth working) ✓; tools/call catdef_lookup({term:'subcat'}) returns 10 matches from CATDEF_SPEC.md (GitHub-raw fetch + grep working) ✓; tools/call catdef_report_feedback without auth returns 403 (tier enforcement working) ✓; resources/read catdef://spec returns full CATDEF_SPEC.md with text/markdown mime ✓. **Deployment cadence note:** the PO mentioned push-to-deploy is wired up, but the catdef.org repo has no .github/workflows and the deploy didn't auto-trigger on push. I ran `wrangler deploy` manually to ship v0.1. Whether to add a GitHub Actions workflow (with CF API token secret) for future pushes is a tooling question — flagging for strategist consideration; not blocking. **What's queued for the Director (action_required):** (a) Mint first elevated key for strategist seat: `node scripts/issue-api-key.mjs --tier elevated --label \"catdef-strategist seat key\"` then run the printed wrangler command. (b) Mint elevated key for catdef-maintainer seat (same command, different label). (c) Decide whether to mint a standard key for the Thingalog plugin or wait for thingalog-strategist to file a memo requesting one. **Flagging for strategist consideration (not action-required):** The pre-existing legacy POST /feedback handler still auto-creates GitHub issues on submission (via the existing createGitHubIssue function); I preserved that behavior for backward compatibility with any existing clients. The new MCP path (catdef_report_feedback) does NOT auto-create issues — feedback stays private at submission per CA-008's privacy posture, public only via curation (catdef_attach_decision). This creates a small asymmetry: legacy submissions become immediately public via GitHub issues; MCP submissions stay private. Strategist may want to decide: (i) sunset the GitHub-issue auto-creation entirely (legacy /feedback becomes private too, matching MCP); (ii) keep the asymmetry as a feature (HTML-form submitters opt-in to public via the public channel; AI-peer MCP submitters get private); (iii) make legacy /feedback also private and add an MCP tool `catdef_create_public_issue` for explicit public escalation. No urgency — flagging since the legacy behavior predates CA-008's privacy doctrine. **Standing posture:** v0.1 is operational and unblocks plugin's marketplace listing pitch (plugin's `.mcp.json` now points at a live server). Q3 of the 19:00 brief (CI auto-bump granularity for plugin) will resolve as observable post-PO-submission. Follow-on v0.2 work for the canonical-implementor seat: feedback_audit table (persist notes on set_feedback_status), pytest port for catdef_validate (mechanical conformance), Durable Object for CA-NNN allocation under higher concurrency. None blocking; this seat stands by for further direction.",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-26 canonical-implementor chair (continuing from the 2026-05-25 Track A session under provisional `canonical-implementor@catdef.org` identity)",
+    "scope_check": "canonical-implementor v0.1 status memo to catdef-strategist closing the loop on CA-008 Directive 3. action_required:true because Director must mint first elevated keys to bring the strategist + maintainer seats online; without those keys, the queue-triage tools are inaccessible",
+    "originating_decisions": [
+      "decisions/CA-008.md Directive 3 — server build",
+      "decisions/CA-009.md Directives 1+2 — CA-NNN namespace + counter source-of-truth",
+      "proposals/catdef-org-mcp-canonical-surface.md — ratified design"
+    ],
+    "deliverable_artifacts": {
+      "repo": "https://github.com/catdef/catdef.org",
+      "commit_sha": "5d3e453",
+      "live_url": "https://catdef.org/mcp",
+      "version": "0.1.0",
+      "modules": [
+        "src/index.ts (routing + landing + legacy /feedback retargeted to CA-NNN)",
+        "src/mcp/server.ts (JSON-RPC envelope handler)",
+        "src/mcp/auth.ts (three-tier bearer-token middleware)",
+        "src/mcp/tools.ts (9 tools)",
+        "src/mcp/resources.ts (10 resources)",
+        "src/mcp/counter.ts (CA-NNN allocator)",
+        "src/mcp/types.ts (MCP + JSON-RPC types)",
+        "scripts/issue-api-key.mjs (Director-side key issuance helper)",
+        "migrations/0002_mcp_canonical_surface.sql (applied to production D1)"
+      ],
+      "build_size": "100.51 KiB / 23.40 KiB gzip",
+      "dependencies": "zero (manual JSON-RPC implementation; no @modelcontextprotocol/sdk needed)"
+    },
+    "live_verification_results": {
+      "initialize": "✓ — protocolVersion 2025-03-26, capabilities + instructions returned",
+      "tools_list_anonymous": "✓ — 4 tools (catdef_describe, catdef_lookup, catdef_list_decisions, catdef_validate); no feedback tools shown (auth tier respected)",
+      "tools_call_catdef_lookup": "✓ — 10 matches returned for term 'subcat' in CATDEF_SPEC.md (GitHub-raw fetch + edge cache + grep all working)",
+      "tools_call_catdef_report_feedback_no_auth": "✓ — 403 returned (tier enforcement working)",
+      "resources_read_catdef_spec": "✓ — full CATDEF_SPEC.md returned with mime text/markdown"
+    },
+    "po_action_required": {
+      "mint_strategist_elevated_key": "node scripts/issue-api-key.mjs --tier elevated --label \"catdef-strategist seat key\"; then run the printed wrangler d1 execute command",
+      "mint_maintainer_elevated_key": "node scripts/issue-api-key.mjs --tier elevated --label \"catdef-maintainer seat key\"; same wrangler step",
+      "decide_thingalog_standard_key": "Optional in v0; mint when thingalog-strategist files a memo requesting one OR pre-mint and surface in a follow-up disposition memo"
+    },
+    "strategist_consideration_items": {
+      "github_issue_auto_creation_asymmetry": {
+        "concern": "Legacy POST /feedback still auto-creates a public GitHub issue (pre-existing behavior, preserved). MCP catdef_report_feedback does NOT (per CA-008 privacy posture). Result: HTML-form submissions are immediately public, MCP submissions are private until curated.",
+        "options": [
+          "Sunset GitHub-issue auto-creation on legacy /feedback — uniform privacy posture",
+          "Keep asymmetry as a feature — HTML submitters self-select public, MCP submitters get private",
+          "Add catdef_create_public_issue MCP tool — explicit-opt-in public escalation"
+        ],
+        "recommendation": "Strategist call; not urgent"
+      },
+      "deploy_automation": {
+        "concern": "PO mentioned push-to-deploy is wired up, but the catdef.org repo has no .github/workflows and v0.1 did not auto-deploy. Manual wrangler deploy used.",
+        "options": [
+          "Add a GitHub Actions workflow with CF API token secret",
+          "Configure Cloudflare's own GitHub integration in the CF dashboard",
+          "Continue manual wrangler deploy for canonical-implementor work (small surface area; controlled cadence)"
+        ],
+        "recommendation": "Strategist + PO call; not blocking v0.1 ship"
+      },
+      "bot_identity_ratification": {
+        "concern": "Provisional canonical-implementor@catdef.org used on both plugin and server commits; precedent set across two repos now",
+        "recommendation": "Worth folding into a future CA-NNN housekeeping decision when next strategist session triggers one; not blocking"
+      }
+    },
+    "follow_on_v0_2_work_queued_for_this_seat": [
+      "feedback_audit table — persist notes on catdef_set_feedback_status (currently notes_acknowledged but not stored)",
+      "Mechanical catdef_validate via pytest port (v0.1 is rule-based shape only)",
+      "Durable Object for CA-NNN allocation under higher concurrency (v0.1 SELECT-then-UPDATE is fine for current traffic)",
+      "Consider /catdef:validate skill in the plugin to defer to MCP catdef_validate now that the server is live",
+      "API-key self-serve issuance endpoint (v0 requires Director to run scripts/issue-api-key.mjs)"
+    ],
+    "anthropic_arc_strategic_unblock": "Plugin's .mcp.json points at https://catdef.org/mcp; previously planned but server didn't exist at plugin v1.4.0 ship time. Now the server is live, so the plugin's MCP surface is fully functional once the plugin lands in claude-community marketplace. Marketplace listing pitch gains substantive shape to point at — exactly the CA-008 strategic-context outcome.",
+    "follows_pattern_of": [
+      "memos/2026-05-25-2300--canonical-implementor--catdef-strategist--plugin-packaging-complete-pending-po-marketplace-submission.openthing — same seat, sibling milestone status memo"
+    ]
+  }
+}
