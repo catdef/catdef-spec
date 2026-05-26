@@ -1,0 +1,49 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "canonical-implementor",
+  "to": "canonical-implementor",
+
+  "subject": "Session closeout 2026-05-26 (post-1430 re-engagement): v0.1.1 bundle shipped (CA-011 + CA-012 + CA-013 Calls 1 & 2) + deploy workflow live + elevated MCP keys rotated after observing chat-exposure surface; both new keys held in PO password manager + ~/.claude.json on PO machine; nothing in flight; second closeout in the same day's operational arc",
+
+  "sent": "2026-05-26T17:00:00-04:00",
+  "action_required": false,
+
+  "body": "Session closeout. This is the **second** closeout filed in today's operational arc: the prior one at [memos/2026-05-26-1430...session-closeout-cross-seat...](2026-05-26-1430--canonical-implementor--canonical-implementor--session-closeout-cross-seat-2026-05-25-to-26.openthing) captured the catdef-maintainer + canonical-implementor cross-seat session through plugin ship + server v0.1 live. PO re-engaged the canonical-implementor seat after that closeout to pick up the strategist's 15:00 v0.1.1 bundle. **What was drafted (with paths):** (1) [github.com/catdef/catdef.org commit e83766d](https://github.com/catdef/catdef.org/commit/e83766d) — v0.1.1 bundle: new `src/mcp/github.ts` (401-resilient helper); counter.ts + tools.ts refactored to use it; resources.ts URI handling for the four shapes per CA-012; createGitHubIssue + dead constants removed from src/index.ts per CA-013 Call 1; `.github/workflows/deploy.yml` + `DEPLOYING.md` per CA-013 Call 2; server version bumped 0.1.0 → 0.1.1. (2) [commit cb84d77](https://github.com/catdef/catdef.org/commit/cb84d77) — deploy workflow fix: pinned wranglerVersion: '4' + explicit step-level `env: CLOUDFLARE_API_TOKEN` for token propagation after the first workflow run failed. (3) `scripts/register-mcp-key.mjs` was drafted but **rejected by PO** in favor of installing the official `claude` CLI globally via npm — Director's preference was the canonical CLI path rather than a one-off helper script. Script work was wasted but a side-effect-free abandonment; no commit. (4) Two status memos to catdef-strategist: [16:00 v0.1.1 shipped](2026-05-26-1600--canonical-implementor--catdef-strategist--v0-1-1-shipped-and-verified.openthing) and (companion to this closeout) [17:00 key-rotation security posture](2026-05-26-1700--canonical-implementor--catdef-strategist--key-rotation-complete-secure-storage-posture.openthing). **What was decided:** (a) when the chat-exposure surface for the elevated MCP keys was identified — both keys were printed verbatim in chat earlier in the day and a transcript file containing them sat untracked locally — the disposition was revoke + rotate immediately; (b) for the rotation flow, the keys never re-enter chat output: PO mints locally, copies to password manager, registers via `claude mcp add` which writes the bearer to `~/.claude.json` — server-side this seat only handles hashes, never plaintext; (c) `claude mcp add --header` argument-ordering quirk discovered (--header must come AFTER positional args; commander parses it as variadic-eating-positionals if placed first); documented for future onboarding; (d) anonymous tier of the production server kept the canonical-implementor seat fully functional for the rotation work — no need to mint a separate canonical-implementor-tier key at this time. **What's in flight (started but didn't land):** nothing. Both Track A + server v0.1.1 + key rotation are at clean stopping points. **What's open (items surfaced but not addressed in this re-engagement):** (a) `GITHUB_TOKEN` Worker secret remains expired/invalid; code falls back to unauth (60/hr) gracefully — rotate to restore 5000/hr when convenient (per DEPLOYING.md); (b) Node 20 deprecation on GitHub Actions runners (June 2nd 2026); a one-line workflow update will fix it when the deadline approaches; (c) catdef plugin still pending PO marketplace submission via claude.ai/settings/plugins/submit; (d) the local transcript file at `transcripts/canonical-implementor/2026-05-25-1750--...body.md` contains the (now-dead) old keys — PO opted to keep the file rather than redact or delete, since the keys it contains are revoked and harmless; flagging for future incumbents that the file exists with archival-only content; (e) v0.2 work queue (feedback_audit table, mechanical catdef_validate, Durable Object for CA-NNN under load, self-serve api-key issuance endpoint, resourceTemplates exposure in catdef_describe) remains queued for a future canonical-implementor session per a future strategist bundle handoff. **Cross-session observations for future incumbents:** (i) the canonical-implementor seat now has THREE working repos to know about: catdef-spec (institutional memory + spec text + decisions + memos), catdef.org (the Worker hosting render.catdef.org + catdef.org/mcp), catdef-plugin (the Claude Code marketplace plugin). Each lives independently; vendoring patterns at release boundaries. (ii) The chat-as-exposure-surface lesson: bearer tokens transmitted through chat are *permanently* exposed for the lifetime of whatever transcript persists. The right channel for AI-peer key delivery is the MCP client config layer (~/.claude.json), not the conversation. (iii) `claude mcp add` is the canonical Director-side tool for key registration; install it on the local machine via `npm install -g @anthropic-ai/claude-code` if missing. (iv) `wrangler` CWD matters: running wrangler from `C:\WINDOWS\system32` fails with a `.wrangler/cache` permission error — always `cd` to a writeable project dir first. (v) The local-transcript-as-secret-store pitfall: if /oagp-closeout's prompted transcript save captures full session output, ANY secrets that crossed the chat are now in that file; redact-or-delete before committing.",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-26 canonical-implementor chair (continuing the seat from the post-1430 re-engagement). Working directory s:/Projects/catdef-spec; additional working directory s:/Projects/catdef.org",
+    "scope_check": "Second closeout memo in the same day's operational arc. First closeout (2026-05-26-1430) captured the original cross-seat session through plugin ship + server v0.1 live. This one captures the re-engagement that picked up the strategist's v0.1.1 bundle handoff plus the key-rotation security work that the bundle's dogfood-testing-exposed-keys-in-chat issue triggered",
+    "session_arc": {
+      "started": "2026-05-26 ~15:00 — PO re-engaged after 14:30 closeout; surfaced strategist's 15:00 v0.1.1 bundle handoff memo",
+      "midpoint_1": "2026-05-26 ~16:00 — v0.1.1 shipped + verified + counter refreshed",
+      "midpoint_2": "2026-05-26 ~16:20 — deploy workflow first run failed; second commit (cb84d77) fixed token propagation",
+      "midpoint_3": "2026-05-26 ~16:50 — chat-exposure surface for elevated keys identified; rotation initiated",
+      "ended": "2026-05-26 ~17:00 — both keys rotated, MCP config registered on PO machine, second closeout filed"
+    },
+    "artifacts_summary": {
+      "v0_1_1_ship": {
+        "code_commits": ["github.com/catdef/catdef.org e83766d (bundle)", "github.com/catdef/catdef.org cb84d77 (workflow fix)"],
+        "server_version": "0.1.1",
+        "deploys": ["manual wrangler deploy after e83766d", "automated via Actions workflow on cb84d77 push and 26461758195 workflow_dispatch"]
+      },
+      "key_rotation": {
+        "old_keys_state": "Revoked in D1 by label; production returns 401 for both",
+        "new_keys_state": "Active in D1; registered in ~/.claude.json (catdef-strategist + catdef-maintainer entries); plaintext only on PO machine (password manager + MCP config); never crossed into chat output",
+        "validation": "9 tools visible to both new keys (live curl confirmed via Node fetch that didn't echo the bearer in output)"
+      },
+      "status_memos_filed": [
+        "memos/2026-05-26-1600--canonical-implementor--catdef-strategist--v0-1-1-shipped-and-verified.openthing",
+        "memos/2026-05-26-1700--canonical-implementor--catdef-strategist--key-rotation-complete-secure-storage-posture.openthing (companion)"
+      ]
+    },
+    "applies_principles": [
+      "seat-vs-incumbent — closeout captures institutional state for the seat's history, not session narrative; the two closeouts in one day reflect two distinct work threads on the same seat",
+      "AI drafts, Director ratifies — this closeout is a draft until PO commits; key rotation actions were PO-authorized at each step (revoke, mint, register)",
+      "chat-as-permanent-record — bearer tokens transmitted through chat exposure live forever in any persisted transcript; the canonical secret channel is the MCP client config layer, not the conversation"
+    ],
+    "second_closeout_in_arc_rationale": "The 14:30 closeout was sound: at that moment, all in-scope work was done. PO re-engaged with new strategist-side work (v0.1.1 bundle) in a separate operational thread. Two closeouts more accurately reflect institutional state than retroactively editing the first to bundle the second's content"
+  }
+}
