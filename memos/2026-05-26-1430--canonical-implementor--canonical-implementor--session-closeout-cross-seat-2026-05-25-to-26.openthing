@@ -1,0 +1,51 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "canonical-implementor",
+  "to": "canonical-implementor",
+
+  "subject": "Session closeout 2026-05-25 → 2026-05-26: one continuous session crossed two seats; catdef-maintainer chair shipped CA-008/009/010 governance bundle as PR #40 (admin-merged to catdef-spec main); canonical-implementor chair shipped catdef-plugin v1.4.0 repo (Track A) + catdef.org/mcp v0.1 in production (CA-008 Dir 3) + applied D1 migration 0002 + minted two elevated keys into production for strategist + maintainer seats; three status memos already filed (2026-05-25-2300, 2026-05-26-0100); this closeout adds institutional capture of the session arc + cross-cuts not in those memos",
+
+  "sent": "2026-05-26T14:30:00-04:00",
+  "action_required": false,
+
+  "body": "Session closeout for the 2026-05-25 evening → 2026-05-26 mid-day session. One continuous session arc staffed two seats sequentially (catdef-maintainer first, then canonical-implementor) per explicit PO authorization at each handoff. **What was drafted (with paths):** (1) [proposals/catdef-org-mcp-canonical-surface.md](../proposals/catdef-org-mcp-canonical-surface.md) — the canonical surface design; (2) governance-text updates folded into [CLAUDE.md](../CLAUDE.md), [CONTRIBUTING.md](../CONTRIBUTING.md), [MCP_REFERENCE.md](../MCP_REFERENCE.md) per CA-008 D2 + CA-009 D1 + CA-010 D1; (3) [github.com/catdef/catdef-plugin](https://github.com/catdef/catdef-plugin) v1.4.0 — new repo, public, MIT, three skills + .mcp.json + vendored spec snapshot + README from Director-locked listing copy; (4) catdef.org/mcp v0.1 production server at https://catdef.org/mcp — modules at [github.com/catdef/catdef.org/tree/main/src/mcp](https://github.com/catdef/catdef.org/tree/main/src/mcp) (server.ts, auth.ts, tools.ts, resources.ts, counter.ts, types.ts); legacy POST /feedback retargeted to mint CA-NNN per CA-009; migration 0002 applied to production D1; admin helper at [scripts/issue-api-key.mjs](https://github.com/catdef/catdef.org/blob/main/scripts/issue-api-key.mjs); (5) two elevated api-keys minted and inserted into production D1 (one per seat). **What was decided:** strategist-side decisions were not in this session's scope. Maintainer-side decisions were execution-level (proposal version targeting 1.4.x patch; descriptive-not-prescriptive surface; resource URI sub-path extension of `catdef://spec`; provisional canonical-implementor bot identity following CA-001/007/008 → CA-009 ratification precedent). Implementer-side tactical choices documented in [memos/2026-05-25-2300...](2026-05-25-2300--canonical-implementor--catdef-strategist--plugin-packaging-complete-pending-po-marketplace-submission.openthing) and [memos/2026-05-26-0100...](2026-05-26-0100--canonical-implementor--catdef-strategist--catdef-org-mcp-v0-1-live.openthing). **What's in flight (started but didn't land):** nothing material. v0.1 of the server is operational and the plugin repo is shippable. Plugin marketplace submission is PO web-form action (not in-session work). **What's open (items surfaced but not addressed):** (a) GitHub-issue auto-creation asymmetry on legacy POST /feedback (public-by-default) vs MCP catdef_report_feedback (private-by-default per CA-008) — flagged in 01:00 memo; strategist call; (b) deploy-automation gap — PO mentioned push-to-deploy is wired up but the catdef.org repo has no .github/workflows and the push of 5d3e453 did not auto-trigger a deploy; manual `wrangler deploy` used; PO + strategist call; (c) provisional canonical-implementor@catdef.org bot identity used across two repos; ratification consideration flagged for a future CA-NNN housekeeping decision; (d) v0.2 follow-on work queued for this seat (feedback_audit table; pytest port for catdef_validate; Durable Object for CA-NNN allocation under load; self-serve api-key issuance endpoint); none blocking. **Cross-seat handoff observations (the part not captured in the seat-specific status memos):** the catdef-maintainer seat work completed cleanly and merged to catdef-spec main as fast-forward rebase via `gh pr merge --admin --rebase` (PR #40, Scott-authenticated, behavior consistent with bounded-authority model: AI drafts, AI executes the merge under PO authorization, GitHub records Director's identity as merger). The canonical-implementor handoff was clean — substantive new repo (catdef-plugin) created plus extension of existing repo (catdef.org). Both repos accept commits under the provisional canonical-implementor@catdef.org identity; both use a hand-Crafted commit-message format that mirrors the strategist's style on catdef-spec. **What future incumbents of either seat should know on next onboarding:** (i) the catdef.org/mcp server is live; the elevated-tier tools are accessible to whoever holds the seat's bearer key (PO holds both seat keys post-this-session); the canonical-implementor seat for v0.2+ work doesn't need a seat key — implementer work is local-repo + git-push + wrangler-deploy, not MCP-tool-call; (ii) the legacy POST /feedback still creates GitHub issues; flag any submissions there as potentially being treated as immediately-public during triage; (iii) D1 migration history is 0001_feedback.sql (legacy CDF-NNNN) + 0002_mcp_canonical_surface.sql (this session); future migrations number from 0003; (iv) the catdef-plugin repo is independent of catdef.org and catdef-spec; vendor-snapshot is the design (spec content lives in plugin's spec/ at release time); next vendor refresh happens at plugin v1.4.1 or v1.5.0; (v) PR #40 set the precedent that maintainer-side governance bundles get admin-merged via gh CLI under PO's auth; if branch protections tighten later, this workflow needs revisiting.",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-26 canonical-implementor chair (continuing from 2026-05-25 evening seat-of-arrival under provisional canonical-implementor@catdef.org identity). Working directory s:/Projects/catdef-spec; additional working directories included s:/Projects/catdef.org",
+    "scope_check": "Closeout memo from canonical-implementor (session-ending seat) to itself, capturing this session's institutional record for the seat's next incumbent. The catdef-maintainer arc of the same session is referenced for cross-seat continuity; that seat's incumbent-history is durably captured in catdef-spec PR #40's commits + commit messages + the CA-008/009/010 decision artifacts themselves",
+    "session_arc": {
+      "started": "2026-05-25 late afternoon — onboarded fresh via /oagp-onboard; staffed catdef-maintainer by PO authorization",
+      "midpoint": "2026-05-25 evening — catdef-maintainer work shipped (PR #40 admin-merged); switched seat to canonical-implementor by PO authorization",
+      "ended": "2026-05-26 ~14:30 — Track A + server v0.1 + two elevated keys all live; closeout invoked"
+    },
+    "artifacts_summary": {
+      "catdef_maintainer_arc": {
+        "pr": "https://github.com/catdef/catdef-spec/pull/40 (admin-merged via gh CLI under PO auth; rebase strategy)",
+        "commits_on_main": ["c50c1b8 (CA-008/009 governance bundle)", "72e7d5e (CA-010 fold)"],
+        "scope": "proposals/catdef-org-mcp-canonical-surface.md + CLAUDE.md + CONTRIBUTING.md + MCP_REFERENCE.md updates"
+      },
+      "canonical_implementor_arc": {
+        "plugin_repo": "https://github.com/catdef/catdef-plugin (new; initial commit e641be2)",
+        "server_repo_commit": "https://github.com/catdef/catdef.org/commit/5d3e453",
+        "d1_migration": "migrations/0002_mcp_canonical_surface.sql applied to production catdef-feedback",
+        "production_url": "https://catdef.org/mcp (verified live: 5/5 paths green)",
+        "elevated_keys": "2 minted; held by PO; D1 contains hashes only"
+      },
+      "status_memos_filed": [
+        "memos/2026-05-25-2300--canonical-implementor--catdef-strategist--plugin-packaging-complete-pending-po-marketplace-submission.openthing",
+        "memos/2026-05-26-0100--canonical-implementor--catdef-strategist--catdef-org-mcp-v0-1-live.openthing"
+      ]
+    },
+    "applies_principles": [
+      "seat-vs-incumbent — closeout is for the seat's history, not this session's narrative; future incumbents read it on their onboard",
+      "AI drafts, Director ratifies — PR #40 was admin-merged under PO authorization; closeout memo itself remains a draft until PO commits to main",
+      "feedback_substrate_is_workplace_not_documentation — this memo is workplace continuity for the seat, not a session retrospective"
+    ],
+    "follows_pattern_of": [
+      "(no direct precedent in this org for a multi-seat session closeout; filing under the session-ending seat per /oagp-closeout default for staffed-seat working sessions)"
+    ]
+  }
+}
