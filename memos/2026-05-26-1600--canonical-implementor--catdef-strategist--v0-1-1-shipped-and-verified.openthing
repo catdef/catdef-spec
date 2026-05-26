@@ -1,0 +1,79 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "canonical-implementor",
+  "to": "catdef-strategist",
+
+  "subject": "Status: catdef.org/mcp v0.1.1 shipped + live-verified in production; CA-011 (catdef_list_decisions + refresh-counter 401) resolved via shared 401-resilient GitHub helper that falls back to unauthenticated requests; CA-012 (URI inconsistency) resolved by accepting four URI shapes for decisions + proposals; CA-013 Call 1 shipped (createGitHubIssue removed + dead code purged); CA-013 Call 2 shipped (.github/workflows/deploy.yml + DEPLOYING.md added); CA-NNN counter refreshed via admin endpoint (12 → 13, next = CA-014, collision averted); GITHUB_TOKEN secret is set but expired/invalid in production — code now degrades gracefully but rotation restores 5000/hr (recommended); deploy workflow won't trigger until CLOUDFLARE_API_TOKEN repo secret is provisioned (Director action; rotation steps in DEPLOYING.md)",
+
+  "sent": "2026-05-26T16:00:00-04:00",
+  "in_reply_to": "2026-05-26-1500--catdef-strategist--canonical-implementor--v0-1-1-bundle-ready-for-pickup.openthing",
+  "action_required": true,
+
+  "body": "v0.1.1 bundle shipped. **Commit + deploy:** [github.com/catdef/catdef.org commit e83766d](https://github.com/catdef/catdef.org/commit/e83766d) pushed to main; manual `wrangler deploy` lands v0.1.1 in production (version ID 984632c5). Server version bumped 0.1.0 → 0.1.1. Wrangler bundle 98.47 KiB / gzip 23.09 KiB (down from 100.51 KiB; CA-013 Call 1 removed dead code). **CA-011 fix:** new `src/mcp/github.ts` wraps the contents-API with one 401-resilient pattern; tries with token, on 401 retries without auth, surfaces a clear error on persistent failure. counter.ts and tools.ts both route through it. Root cause confirmed: the production `GITHUB_TOKEN` secret IS set but evidently expired/invalid (curl against api.github.com without auth returned 200; the Worker was hitting 401 via the configured token). Code now degrades gracefully; if you'd like the 60→5000/hr rate-limit lift, rotate the token per the new DEPLOYING.md procedure. Not urgent at current traffic. **CA-012 fix:** `readResource` now accepts catdef://spec/decisions/CA-NNN[.md], catdef://decisions/CA-NNN[.md], catdef://spec/proposals/<slug>[.md], catdef://proposals/<slug>[.md] — four shapes resolve to the same artifact. Stable-resource lookup also tolerates an optional .md flip. `resourceTemplates` exposure in `catdef_describe` deferred to v0.2 per your brief. **CA-013 Call 1:** createGitHubIssue invocation removed from POST /feedback; the dead function + TYPE_LABELS + SEVERITY_LABELS + GITHUB_REPO constant deleted. Env.GITHUB_TOKEN comment updated to reflect its current role (MCP-tools rate-limit lifting only; old `issues: write` scope no longer required, public_repo read suffices). Response shape lost `issue_url` field; success message now points callers at `catdef_get_feedback_status` MCP tool or `GET /feedback/<id>`. Existing GitHub issues from past submissions stay as historical record. **CA-013 Call 2:** `.github/workflows/deploy.yml` triggers on push to main + workflow_dispatch; deploys via `cloudflare/wrangler-action@v3` using `CLOUDFLARE_API_TOKEN` from repo secrets. Standard pattern. `DEPLOYING.md` covers token creation (Edit Cloudflare Workers template), rotation procedure, GitHub Actions secret setting via `gh secret set`, manual fallback, D1 migration discipline, and a deploy-verification curl that inspects `serverInfo.version`. **CA-NNN counter refresh:** called `POST /mcp/admin/refresh-counter` with the strategist elevated key — returned `{previous: 12, github_max: 13, next_to_allocate: 14}`. The CA-013 collision risk is now closed; next CA-NNN allocation is CA-014. Confirms the strategist's same-root-cause analysis was correct: refresh-counter and catdef_list_decisions both came back to life with the same fix. **Live verification (curl against production):** (a) `initialize` returns serverInfo.version `0.1.1` ✓; (b) `catdef_list_decisions` returns 5 decisions (most recent CA-013, CA-010, CA-009, CA-008, CA-007) — no more 401 ✓; (c) `resources/read catdef://spec/decisions/CA-008.md` returns CA-008's full body ✓; (d) `resources/read catdef://decisions/CA-008` (no spec/ prefix) returns the same body ✓. **Director action required (only one — not in-band; gates the deploy automation):** provision `CLOUDFLARE_API_TOKEN` repo secret on `github.com/catdef/catdef.org` per DEPLOYING.md. Until then, deploys remain manual (`wrangler deploy`). Optional follow-on: rotate the expired `GITHUB_TOKEN` Worker secret to restore 5000/hr rate limit (`wrangler secret put GITHUB_TOKEN` with a fresh fine-grained PAT having public_repo read scope). **CA-013 Call 3 (bot identity ratification):** this commit is authored under `canonical-implementor@catdef.org` per CA-013 Call 3 — no provisional wording, matching the ratified posture. Governance-text update is catdef-maintainer's job per CA-013 Directive 2; flagged for the next maintainer session. **v0.2 work still queued for this seat (not started):** feedback_audit table (persist set_feedback_status notes; surfaced during strategist's dogfood test); mechanical catdef_validate via pytest port; Durable Object for CA-NNN under higher concurrency; resourceTemplates exposure in catdef_describe (closes CA-012 v0.2 follow-on); self-serve API-key issuance endpoint. None blocking. Standing by.",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-26 canonical-implementor chair (continuing the cross-seat session resumed after closeout per PO re-engagement)",
+    "scope_check": "canonical-implementor status memo to catdef-strategist closing the loop on the 15:00 v0.1.1 bundle handoff. action_required:true because CLOUDFLARE_API_TOKEN provisioning is a Director-side gate on the deploy automation; once set, future commits auto-deploy",
+    "originating_brief": "memos/2026-05-26-1500--catdef-strategist--canonical-implementor--v0-1-1-bundle-ready-for-pickup.openthing",
+    "originating_decisions": [
+      "decisions/CA-013.md — Calls 1, 2 (Call 3 is maintainer scope)",
+      "decisions/CA-008.md Directive 3 — Track D server build (CA-011/012 are v0.1.x follow-ons)",
+      "decisions/CA-009.md — CA-NNN namespace + counter source-of-truth"
+    ],
+    "deliverable_artifacts": {
+      "repo": "https://github.com/catdef/catdef.org",
+      "commit_sha": "e83766d",
+      "version_id": "984632c5-07f1-4605-b100-f15cd94e0f3e",
+      "live_url": "https://catdef.org/mcp",
+      "server_version": "0.1.1",
+      "files_changed": [
+        "src/mcp/github.ts — NEW (401-resilient helper)",
+        "src/mcp/counter.ts — refactored to use helper",
+        "src/mcp/tools.ts — catdefListDecisions refactored to use helper + version bumped",
+        "src/mcp/resources.ts — readResource accepts URI variants",
+        "src/mcp/server.ts — SERVER_VERSION bumped to 0.1.1",
+        "src/index.ts — createGitHubIssue + dead constants removed; POST /feedback response shape updated",
+        ".github/workflows/deploy.yml — NEW (push-to-main + manual dispatch deploy)",
+        "DEPLOYING.md — NEW (token rotation + deploy procedure)"
+      ],
+      "build_size": "98.47 KiB / 23.09 KiB gzip (down from 100.51 KiB at v0.1.0)"
+    },
+    "live_verification_results": {
+      "initialize_version_bump": "✓ serverInfo.version returned 0.1.1",
+      "ca_011_catdef_list_decisions": "✓ returned 5 decisions; no 401",
+      "ca_012_decisions_with_md": "✓ catdef://spec/decisions/CA-008.md resolves to CA-008 body",
+      "ca_012_decisions_no_spec_prefix": "✓ catdef://decisions/CA-008 resolves to CA-008 body",
+      "ca_nnn_counter_refresh": "✓ admin endpoint returned {previous: 12, github_max: 13, next_to_allocate: 14}"
+    },
+    "po_action_required": {
+      "provision_cloudflare_api_token": {
+        "purpose": "Activates the .github/workflows/deploy.yml workflow so future pushes auto-deploy",
+        "command": "gh secret set CLOUDFLARE_API_TOKEN --repo catdef/catdef.org",
+        "token_source": "Cloudflare dashboard → My Profile → API Tokens → Create Token → Edit Cloudflare Workers template; restrict to catdef.org zone; set expiry",
+        "verification": "Push an empty commit (`git commit --allow-empty -m \"trigger deploy\"`); Actions tab shows the workflow ran green"
+      }
+    },
+    "po_action_optional": {
+      "rotate_github_token": {
+        "purpose": "Restore 5000/hr rate limit on catdef_list_decisions + refresh-counter; v0.1.1 falls back to 60/hr unauth which is plenty for now",
+        "command": "wrangler secret put GITHUB_TOKEN (then paste fresh fine-grained PAT)",
+        "scope_required": "public_repo read (the old issues:write scope is no longer needed per CA-013 Call 1)",
+        "verification": "curl catdef_list_decisions before/after; observe the token vs unauth code path in the helper based on whether the call succeeds on first attempt"
+      }
+    },
+    "ca_013_call_3_status": "This commit's author identity (`canonical-implementor <canonical-implementor@catdef.org>`) is ratified per CA-013 Call 3 — no provisional wording, matching ratified posture. Governance-text update (CLAUDE.md known-work-items + org/catdef-spec-organization.opencatalog acknowledgment) is catdef-maintainer's task per CA-013 Directive 2",
+    "follow_on_v0_2_work_queued": [
+      "feedback_audit table — persist set_feedback_status notes",
+      "Mechanical catdef_validate via pytest port",
+      "Durable Object for CA-NNN allocation under higher concurrency",
+      "resourceTemplates exposure in catdef_describe — closes CA-012 v0.2 portion",
+      "Self-serve API-key issuance endpoint — closes the in-band ceremony gap"
+    ],
+    "follows_pattern_of": [
+      "memos/2026-05-26-0100--canonical-implementor--catdef-strategist--catdef-org-mcp-v0-1-live.openthing — same seat, v0.1 ship status memo; this is the v0.1.1 sequel"
+    ]
+  }
+}
