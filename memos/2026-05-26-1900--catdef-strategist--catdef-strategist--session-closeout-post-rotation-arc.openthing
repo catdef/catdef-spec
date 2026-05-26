@@ -1,0 +1,57 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "catdef-strategist",
+  "to": "catdef-strategist",
+
+  "subject": "Session closeout: post-rotation arc, 2026-05-26 afternoon — resumed catdef-strategist seat after PO re-engagement following the chat-exposure incident and v0.1.1 ship; triaged CA-011 + CA-012 to shipped via the new ~/.claude.json MCP integration (first session to use the doctrine end-to-end; bearer never crossed into context); filed CA-015 codifying the security handoff doctrine; filed cross-spec memo to oagp-strategist surfacing the /oagp-closeout secret-redaction-hook recommendation; filed disposition memo back to canonical-implementor closing the loop on both 1700-memo consideration items; queue clean at session end",
+
+  "sent": "2026-05-26T19:00:00-04:00",
+  "action_required": false,
+
+  "body": "Session closeout for the post-rotation arc, 2026-05-26 afternoon. Second session occupying the catdef-strategist seat under the ratified identity; opened by PO re-engagement after the canonical-implementor's rotation work landed and two inbound memos arrived. **What was drafted (with paths):** (1) [decisions/CA-015.md](../decisions/CA-015.md) — security handoff doctrine for elevated MCP keys; codifies ~/.claude.json as canonical delivery channel; build directive for next maintainer cycle to add a CLAUDE.md or SECURITY.md acknowledgment; (2) [memos/2026-05-26-1800--catdef-strategist--oagp-strategist--secret-redaction-hook-for-oagp-closeout-skill.openthing](2026-05-26-1800--catdef-strategist--oagp-strategist--secret-redaction-hook-for-oagp-closeout-skill.openthing) — cross-spec coordination memo surfacing the /oagp-closeout secret-redaction-hook recommendation as universal OAGP doctrine, with empirical motivation from the chat-exposure incident, and authorizing canonical-implementor to draft the upstream PR if oagp-strategist signals interest; (3) [memos/2026-05-26-1800--catdef-strategist--canonical-implementor--disposition-on-key-rotation-consideration-items.openthing](2026-05-26-1800--catdef-strategist--canonical-implementor--disposition-on-key-rotation-consideration-items.openthing) — disposition memo back to canonical-implementor closing the loop on both consideration items from the 1700 key-rotation memo. **What was decided:** strategist-level dispositions captured in CA-015 (handoff doctrine codified) and the cross-spec memo (universal OAGP recommendation surfaced to oagp-strategist, not unilaterally amended); CA-011 + CA-012 transitioned to `shipped` in the MCP queue per v0.1.1 verification report. **What's in flight (started but didn't fully land):** (a) catdef-maintainer governance text updates for CA-013 Call 3 + CA-015 Directive 1 — both bundle into the next maintainer cycle (no urgency increase); (b) Director action items from the 1600 memo — provision CLOUDFLARE_API_TOKEN repo secret (gates deploy automation) + optional rotate expired GITHUB_TOKEN Worker secret (restores 5000/hr rate limit); both PO-side gates, not strategist work. **What's open (items surfaced but not addressed):** (a) oagp-strategist disposition on the redaction-hook cross-spec memo — that seat may be informal/unstaffed; waits if vacant; (b) canonical-implementor upstream PR (conditional on oagp-strategist signaling interest) — authorized but not directive; (c) CA-014 (schema-vocabulary translation) still triaged for v0.1.2/v0.2 — unchanged from prior session. **Notable observations worth carrying forward in seat history:** (1) First catdef-strategist session to use the ~/.claude.json MCP integration end-to-end. The doctrine works as designed: the catdef-strategist + catdef-maintainer MCP servers appeared in tool surface as `mcp__catdef-strategist__*` and `mcp__catdef-maintainer__*` after the deferred-tool surface loaded; calls to elevated tools succeeded; bearer never crossed into model context or tool output. CA-015's empirical foundation is this session's own usage. (2) The transition from session 1 (chat-exposure pattern) to session 2 (config-layer pattern) was clean and required no friction beyond the implementor's rotation work — strong validation that the doctrine is operationally sound. (3) Queue-state-as-substrate worked end-to-end: prior session triaged CA-011 + CA-012; canonical-implementor shipped fixes verified independently; this session transitioned both to `shipped` via the queue itself. The MCP queue IS the workplace, not metadata about the workplace. (4) The rotation incident produced two distinct artifacts (CA-015 for local doctrine + cross-spec memo for upstream pattern) cleanly — clean scope separation between substrate doctrine and consumer-pattern doctrine. (5) Continuation pattern: a prior closeout (2110007) marked the end of an arc; PO re-engaged opening a new arc on the same seat. Closeouts bracket sessions, not seat occupations — the seat persists across multiple closeouts within a session-week. **What future incumbents of this seat should know:** (i) ~/.claude.json holds the seat's bearer; the runtime configures MCP access automatically; never request the key value from PO via chat. (ii) Use the deferred MCP tools (mcp__catdef-strategist__*) for queue operations; don't curl with manual bearer headers. (iii) The CA-015 doctrine governs both immediate operations and how to draft seat-handoff memos — never include or hint at key values in memo bodies, commit messages, or chat output. (iv) Cross-spec memos to oagp-strategist follow the same pattern as inbound memos from thingalog-strategist did to this seat: file in catdef-spec/memos/ addressed FROM here TO the external seat. (v) The canonical-implementor seat is closed-out and will pick up future v0.1.2+ work when re-staffed; their queue includes feedback_audit table, mechanical catdef_validate, Durable Object for CA-NNN allocation, resourceTemplates exposure, and self-serve API-key issuance.",
+  "body_ref": "2026-05-26-1900--catdef-strategist--catdef-strategist--session-closeout-post-rotation-arc.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-05-26 catdef-strategist chair (post-rotation arc; second strategist session of the week; working directory s:/Projects/catdef-spec)",
+    "scope_check": "Closeout memo from catdef-strategist to itself, capturing this session's institutional record for the seat's next incumbent. Per /oagp-closeout discipline: institutional, not narrative; only this session's work; durable context for next-incumbent onboard",
+    "session_arc": {
+      "started": "2026-05-26 mid-afternoon — PO re-engaged with 'got to the bottom of the key problem. Memos waiting for you'; resumed catdef-strategist seat; verified new MCP integration via mcp__catdef-strategist__catdef_describe (server 0.1.1, tier elevated)",
+      "midpoint_1": "Read two inbound memos (2026-05-26-1600 v0.1.1 ship; 2026-05-26-1700 key rotation); triaged CA-011 + CA-012 to shipped via MCP",
+      "midpoint_2": "Surfaced proposed disposition shape to PO; got approval; filed CA-015 + cross-spec memo + disposition memo",
+      "ended": "2026-05-26 late afternoon — three artifacts committed and pushed (1e1625c); /oagp-closeout invoked"
+    },
+    "artifacts_summary": {
+      "decisions_filed": [
+        "decisions/CA-015.md — security handoff doctrine for elevated MCP keys"
+      ],
+      "outbound_memos": [
+        "memos/2026-05-26-1800--catdef-strategist--oagp-strategist--secret-redaction-hook-for-oagp-closeout-skill.openthing (cross-spec; action_required:false)",
+        "memos/2026-05-26-1800--catdef-strategist--canonical-implementor--disposition-on-key-rotation-consideration-items.openthing (disposition; action_required:false)",
+        "memos/2026-05-26-1900--catdef-strategist--catdef-strategist--session-closeout-post-rotation-arc.openthing (this memo)"
+      ],
+      "mcp_queue_transitions": [
+        "CA-011 (catdef_list_decisions + refresh-counter GitHub 401): triaged → shipped (v0.1.1 commit e83766d)",
+        "CA-012 (dynamic resource URI inconsistency): triaged → shipped (v0.1.1 commit e83766d)",
+        "CA-014 (schema-vocabulary translation): unchanged at triaged (queued for v0.1.2/v0.2)"
+      ],
+      "no_repo_text_changes_this_session": "All work was in decisions/ and memos/; no spec text edits, no README updates, no governance text changes (those bundle into next maintainer cycle)"
+    },
+    "session_admin_observations": {
+      "mcp_integration_first_use": "This was the first catdef-strategist session to use the ~/.claude.json MCP integration end-to-end. The doctrine (bearer in config layer; AI sees MCP server as available but never sees raw token) verified empirically. CA-015's confidence comes from this session's actual experience using the pattern.",
+      "transition_from_prior_session_doctrine": "Prior session (closeout 2110007) used the now-retired pattern (PO printed key in chat; AI used in curl Bash calls). This session used the new pattern (mcp__catdef-strategist__* tools). The transition required zero friction in this session beyond the implementor's rotation work; strong validation.",
+      "git_workflow": "Three artifacts committed in one logical group (1e1625c); standard direct-commit-to-main with rule bypass under Director auth, per established strategist convention"
+    },
+    "applies_principles": [
+      "seat-vs-incumbent — closeout is for the seat's history, not this session's narrative; future incumbents read it on their onboard",
+      "feedback_substrate_is_workplace_not_documentation — MCP queue state IS the work product; this session moved CA-011 + CA-012 through the lifecycle (triaged → shipped) via the queue itself",
+      "AI drafts, Director ratifies — CA-015 and both memos filed under the established direct-commit-to-main pattern with Director authorization",
+      "doctrine-grounded-in-empirical-incident — CA-015 codifies a pattern that was tested by an actual exposure event, not a hypothetical risk; the doctrine inherits the confidence of empirical validation"
+    ],
+    "follows_pattern_of": [
+      "memos/2026-05-26-1700--catdef-strategist--catdef-strategist--session-closeout-2026-05-25-to-26.openthing — same seat's prior closeout, established the self-addressed pattern for the catdef-strategist seat history"
+    ]
+  }
+}
