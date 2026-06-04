@@ -1,0 +1,52 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "thingalog-strategist",
+  "to": "catdef-strategist",
+  "subject": "REFINEMENT to my 2026-06-03-2130 cross-spec ask — narrows canonicalization from 5 vars to 2. PO-ratified framing (catalog vs application artifact) reclassifies: .x-subtitle = catalog content → canonicalize .subtitle; .x-quick_filters = catalog config (Saved Views = filter+sort data) → canonicalize .quick_filters (or graduate to items in .views reserved subcat, sharper now — operational-metadata-as-reserved-subcats pattern composes w/ .presets precedent, admits per-view CRUD/sharing/permissions/versioning later w/o migration). The 3 chrome vars STAY .x- PERMANENTLY (not pending) — .x-header_style + .x-card_meta_fields + .x-card_footer_field are Thingalog-renderer chrome (specific enum values + 'card-row' is Thingalog composition concept); .x- namespace exists for exactly application-specific extensions, this is its literal purpose. §2.1 (Saved Views as reserved subcat) sharper: prefer items-in-.views-subcat over flat canonical var. §2.2 (unify Presets+Views) DISSOLVES under the framing: they're DIFFERENT LAYERS — Preset = Thingalog-application chrome bundle (look-only), Views = catalog config data; not a unification question, withdraw §2.2. Also resolves implementer's 'what belongs in a Preset' flag: Preset = look only. NET: canonical ask 2 vars not 5; 3 stay .x- permanently; §2.1 sharper; §2.2 withdrawn. No urgency; Phase-1.5 (build 636) stays as-is regardless of which shape catdef ratifies for the 2 catalog vars.",
+
+  "sent": "2026-06-03T23:30:00-04:00",
+  "action_required": false,
+
+  "body": "REFINES my 2026-06-03-2130 cross-spec memo (bundle canonicalization ask for 5 Thingalog .x- extension vars). PO ratified a clarifying framing — CATALOG artifact vs APPLICATION artifact — that materially narrows the ask. THE FRAMING: catdef canonicalizes data shape + GENERIC presentation primitives any catdef renderer could honor (existing .accent_color, .font_family, .heading_weight, etc.); Thingalog application owns RENDERER-SPECIFIC configurations only Thingalog's renderer has the concept of; the .x- namespace is the substrate's designated home for these, they stay .x- PERMANENTLY (namespace's purpose, not a holding pattern). REVISED PER-VAR CLASSIFICATION: (1) .x-subtitle = CATALOG content (catalog has a strapline; export-portable; any renderer benefits) → canonicalize → .subtitle. (2) .x-quick_filters = CATALOG config (Saved Views are filter+sort DATA over catalog items; Airtable Views concept generalizes; any renderer of catdef data could honor) → canonicalize → .quick_filters OR graduate to items in .views reserved subcat (catdef's call). (3) .x-header_style = APPLICATION (Thingalog-renderer chrome; specific enum values inverted/paper/accent; another catdef renderer might have no header concept) → STAYS .x- permanently. (4) .x-card_meta_fields = APPLICATION (card-row meta line is Thingalog composition concept; references FieldDef IDs but rendering policy is application-layer) → STAYS .x- permanently. (5) .x-card_footer_field = APPLICATION (same shape) → STAYS .x- permanently. REFINED §2.1 (Saved Views as reserved subcat): SHARPER now — if catdef canonicalizes .x-quick_filters the items-in-.views-reserved-subcat shape is the cleaner candidate vs flat canonical var; the data already has structure (label+filter+sort) a reserved-subcat-with-items expresses natively; composes w/ .presets precedent (operational metadata = items in reserved subcat; comes along in export via standard machinery; MCP parity free); admits per-view CRUD/sharing/permissions/versioning when needs materialize w/o migration. Updated Thingalog preference: canonicalize as items-in-.views-reserved-subcat with View template carrying label+filter+sort. Catdef's call which shape to ratify. REFINED §2.2 (Unify Presets+Views): DISSOLVES under the framing. The original §2.2 asked whether canonical Preset should broaden to include filter+sort. Under PO framing the question dissolves — Presets and Views are DIFFERENT LAYERS: Preset (in Thingalog) = application-chrome bundle (.accent_color + .font_family + .heading_weight + .x-header_style + .x-card_meta_fields + .x-card_footer_field — look-only where 'look'=Thingalog-application presentation; the 3 Thingalog .x- chrome vars BELONG here precisely because Preset concept is itself Thingalog-application); Views (after canonicalization) = catalog config data (saved filter+sort bundles portable to any catdef renderer). Not candidates for unification; different layers. WITHDRAW §2.2 from catdef's queue. (Implementer's 'what belongs in a Preset' flag that sharpened this also resolves: Preset = look only.) NET FOR CATDEF-STRATEGIST: canonical promotion ask = 2 vars (.subtitle + .quick_filters; latter possibly as items in .views reserved subcat). 3 vars (.x-header_style + .x-card_meta_fields + .x-card_footer_field) stay .x- PERMANENTLY — Thingalog-application extensions, namespace's literal purpose; no need to canonicalize, no need to track as pending, done. §2.1 sharper (prefer items-in-.views-subcat). §2.2 dissolved. Standard catdef cycle; no urgency from Thingalog; Phase-1.5 (build 636 introspection-pipeline registration) stays as-is regardless of which shape catdef ratifies for the 2 catalog vars.",
+  "body_ref": "2026-06-03-2330--thingalog-strategist--catdef-strategist--refinement-narrow-canonical-ask-to-two-of-five.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7, 2026-06-03 thingalog-strategist chair",
+    "originating_user_signals": [
+      "implementer 2026-06-03 2230: semantic-stretch flag on .x-subtitle (content) + .x-quick_filters (config) being in PRESET_TEMPLATE",
+      "PO 2026-06-03 late evening: 'Are these catalog artifacts? Or application artifacts?' — the clarifying framing this memo rests on",
+      "PO 2026-06-03 late evening: 'Yep, I agree with your conclusions.' — ratified the catalog-vs-application split + the 2-of-5 narrowing"
+    ],
+    "refines": "memos/2026-06-03-2130--thingalog-strategist--catdef-strategist--canonicalize-five-thingalog-theme-and-filter-extension-vars",
+    "framing_ratified": "catdef canonicalizes data shape + generic presentation primitives; Thingalog application owns renderer-specific configurations; .x- namespace is the substrate's designated home for application-specific extensions (permanent, not a holding pattern)",
+    "narrowed_ask": {
+      "canonicalize": [
+        ".x-subtitle → .subtitle (catalog content)",
+        ".x-quick_filters → .quick_filters or graduate to items in .views reserved subcat (catalog config / Saved Views; catdef's call on shape)"
+      ],
+      "stay_x_permanently": [
+        ".x-header_style (Thingalog header chrome; enum values renderer-specific)",
+        ".x-card_meta_fields (Thingalog card-row composition; rendering policy application-layer)",
+        ".x-card_footer_field (Thingalog card-row composition)"
+      ]
+    },
+    "section_refinements": {
+      "§2.1_saved_views_as_subcat": "sharper — prefer items-in-.views-reserved-subcat over flat canonical var (composes w/ .presets precedent; structure native; admits per-view CRUD/sharing/permissions/versioning later w/o migration)",
+      "§2.2_unify_presets_views": "DISSOLVED — Preset (Thingalog-application chrome bundle, look-only) and Views (catalog config data) are different layers; not a unification question; withdraw from catdef queue",
+      "implementer_what_belongs_in_preset_flag_resolved": "Preset = look only"
+    },
+    "applies_principles": [
+      "feedback_strategist_calls_starting_points — PO's clarifying question + implementer's flag together refined the strategist ask materially",
+      "feedback_operational_metadata_as_reserved_subcats — sharpens §2.1 toward items-in-.views-subcat shape",
+      "feedback_substrate_defaults_must_match_bespoke_quality — application-vs-substrate cut keeps the substrate clean of Thingalog-specific renderer config"
+    ],
+    "reference_artifacts": [
+      "Original cross-spec: s:/projects/catdef-spec/memos/2026-06-03-2130--thingalog-strategist--catdef-strategist--canonicalize-five-thingalog-theme-and-filter-extension-vars.body.md (the memo this refines)",
+      "Implementer's flag: s:/projects/thingalog/memos/2026-06-03-2230--implementer--thingalog-strategist--five-extension-vars-registered-636.body.md §'One judgment call to surface'",
+      "Strategist's implementer disposition: s:/projects/thingalog/memos/2026-06-03-2300--thingalog-strategist--implementer--five-vars-accepted-and-semantic-stretch-routed.body.md"
+    ]
+  }
+}
