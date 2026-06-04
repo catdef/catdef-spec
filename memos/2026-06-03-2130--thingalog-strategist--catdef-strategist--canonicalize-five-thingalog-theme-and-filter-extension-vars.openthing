@@ -1,0 +1,58 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "thingalog-strategist",
+  "to": "catdef-strategist",
+  "subject": "Cross-spec coordination — bundle canonicalization ask for 5 Thingalog extension vars ready for Phase-2 promotion when the catdef cycle next opens. Per the project-bind two-phase pattern (express via .x- extension primitives now, canonicalize via catdef later), Thingalog has accumulated five .x-prefixed vars driven by real PO/Karen empirical need: .x-header_style (enum, catalog header treatment), .x-card_meta_fields (list of FieldDef refs, card-row meta line composition), .x-card_footer_field (FieldDef ref, card-row footer), .x-subtitle (text, catalog strapline — root-only, not subcat-inherited), .x-quick_filters (JSON array of {label, filter, sort?} — Saved Views, AI-curated via set_quick_filters MCP write). All renderer-read in production (builds ~500-540); two wired into _NON_INHERITED_ABOUT_KEYS (server.py:1293) for the right inheritance semantics. ASK: when cycle opens, promote .x-foo → .foo (recommend drop the prefix verbatim) + codify validator types in canonical schema + decide inheritance semantics + Director ratifies; Thingalog implementer does rename pass post-ratification. PLUS two substrate-shape FLAGS (not asks): (1) Saved Views as a reserved subcat (.views, sibling of .presets) — Thingalog's operational-metadata-as-reserved-subcats doctrine wants it eventually; current Thingalog disposition = DEFER (JSON-blob working, no concrete pain); re-trigger = sharing/export/permissions/versioning. (2) Unify Presets+Saved Views into one 'preset = {filter, sort, look}' bundle — substrate-shape question worth catdef awareness; current Thingalog = HOLD as siblings; both names carry semantic mass, future unification has migration cost; Thingalog will land on whichever shape catdef ratifies. Standard catdef cycle; no urgency; Thingalog substrate-hygiene Phase-1.5 (reporting + validation in list_themeable_variables keeping .x- prefix) lands now via implementer regardless of cycle timing.",
+
+  "sent": "2026-06-03T21:30:00-04:00",
+  "action_required": false,
+
+  "body": "Per the project-bind two-phase pattern (feedback_photo_first_mental_model_invariant — express via existing primitives now, canonicalize via catdef-strategist later), Thingalog has accumulated FIVE .x-prefixed extension vars in production that are ready for canonical promotion when the catdef cycle next opens. Bundling so canonicalization happens as one coherent batch rather than five drip-feed requests. All five emerged from real PO/Karen empirical need (welch-arctic-collection chrome, magazine-flow catalog cards, the AI-curator-as-quick-filter-author Saved Views directive), not speculation. Phase-1 = .x- in production; Phase-1.5 = registration in list_themeable_variables reporting+validation (Thingalog implementer task, sibling memo); Phase-2 = canonical promotion (drop .x- prefix, codify validators in canonical schema). THE FIVE VARS: .x-header_style (enum, catalog header treatment / chrome variant per look-and-feel); .x-card_meta_fields (list of FieldDef refs, which fields appear in card-row meta line); .x-card_footer_field (FieldDef ref, single field in card-row footer); .x-subtitle (text, catalog description/strapline, root-catalog-only NOT inherited by subcats); .x-quick_filters (JSON array of {label, filter, sort?}, Saved Views — named one-click filter+sort bundles curated by AI peer via set_quick_filters MCP write). OPERATIONAL ANCHORS: all renderer-read in production (builds ~500-540); .x-subtitle + .x-quick_filters in _NON_INHERITED_ABOUT_KEYS (server.py:1293) for subcat-inheritance; each driven by concrete PO/Karen need + working Thingalog implementation across multiple catalogs. ASK: when catdef cycle next opens, promote five from .x-foo → .foo in canonical theme/preset vocab + standardize validator semantics in canonical schema (substrate-level point of canonicalization — other catdef-substrate implementations can use them). Specifically: (1) decide canonical names (recommend drop .x- prefix verbatim: .header_style, .card_meta_fields, .card_footer_field, .subtitle, .quick_filters; renameable if catdef wants different convention); (2) codify validator types (enum_membership for .header_style; list-of-FieldDef-refs for .card_meta_fields; single FieldDef ref for .card_footer_field; text for .subtitle; JSON-array-with-schema for .quick_filters); (3) decide inheritance semantics in canonical form (.subtitle + .quick_filters catalog-root-only in Thingalog — not subcat-inherited; other three follow normal theme-inheritance); (4) Director ratifies via standard cycle. Post-ratification: Thingalog implementer does rename pass (mechanical — .x-foo → .foo across _CATEGORY_BY_NAME, validators, renderer bindings, inheritance denylist). TWO SUBSTRATE-SHAPE CONCERNS (FLAGS, not asks for this cycle — awareness for catdef's longer-arc thinking): (1) SAVED VIEWS AS RESERVED SUBCAT? Thingalog Phase-1 stores .x-quick_filters as JSON blob on about catalog-root variable; feedback_operational_metadata_as_reserved_subcats doctrine ultimately wants Saved Views to live as items in a .views reserved subcat (same shape as Presets currently are items in .presets) — would give views CRUD + sharing + export + MCP parity with Presets for free; current Thingalog disposition = DEFER (JSON-blob working, no concrete pain); re-trigger = views need own sharing/export OR per-view permissions OR view-versioning. For catdef: if substrate eventually canonicalizes reserved-subcat patterns for operational metadata, .views is likely candidate alongside .presets (which already exists at substrate level via Thingalog PRESET_TEMPLATE). (2) UNIFY PRESETS + SAVED VIEWS INTO ONE 'preset = {filter, sort, look}' BUNDLE? Today Thingalog keeps Presets (visual look bundle, items in .presets) and Saved Views (filter+sort bundle, JSON in .x-quick_filters) as siblings; PO flagged eventual unification as possibility ('could we somehow combine the functionality of the filter bar and the presets?'); substrate-shape question = whether canonical 'Preset' concept should generalize to complete-catalog-state bundle (look ∪ filter ∪ sort) OR stay scoped to visual. Current Thingalog = HOLD as siblings; waits for forcing function (PO 'save my whole state' OR concrete Karen confusion); both names already carry semantic mass so future unification has renaming/migration cost. For catdef: worth knowing the tension exists if catdef ever ratifies canonical 'Preset' semantic — substrate spec could commit to 'Preset = visual only' (leaving Views as sibling) OR 'Preset = complete-catalog-state bundle' (subsuming Views); Thingalog will land on whichever shape catdef ratifies. RATIFICATION PATH: standard catdef cycle; Thingalog executes rename pass post-ratification; NO URGENCY — Thingalog substrate hygiene Phase-1.5 reporting lands now via implementer regardless of cycle timing.",
+  "body_ref": "2026-06-03-2130--thingalog-strategist--catdef-strategist--canonicalize-five-thingalog-theme-and-filter-extension-vars.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7, 2026-06-03 thingalog-strategist chair",
+    "originating_user_signals": [
+      "implementer 2026-05-29-1715: 'coordinate the canonical variable-schema change with catdef-strategist (cross_spec_coordination_memo)' — bundling with the canonicalization Q from Saved Views memo 2026-05-30-1530"
+    ],
+    "memo_type": "cross_spec_coordination_memo (per thingalog-strategist role output_contract)",
+    "pattern": "project-bind two-phase canonicalization (feedback_photo_first_mental_model_invariant)",
+    "phase_state": {
+      "phase_1_extension_in_production": "DONE (5 vars renderer-read, in production)",
+      "phase_1_5_substrate_hygiene_reporting": "Thingalog implementer task, sibling memo — lands now regardless of catdef cycle timing",
+      "phase_2_canonical_promotion": "THIS ASK — when catdef cycle opens"
+    },
+    "five_vars": {
+      ".x-header_style": "enum, catalog header treatment",
+      ".x-card_meta_fields": "list of FieldDef refs, card-row meta",
+      ".x-card_footer_field": "FieldDef ref, card-row footer",
+      ".x-subtitle": "text, catalog strapline (root-only, not subcat-inherited)",
+      ".x-quick_filters": "JSON array of {label, filter, sort?} — Saved Views, AI-curated via MCP"
+    },
+    "ask_specifics": [
+      "decide canonical names (recommend drop .x- prefix verbatim)",
+      "codify validator types in canonical schema",
+      "decide inheritance semantics (.subtitle + .quick_filters catalog-root-only)",
+      "Director ratifies via standard cycle"
+    ],
+    "substrate_shape_flags_not_asks": [
+      "Saved Views as reserved subcat (.views, sibling of .presets) — Thingalog defers; flag for catdef awareness",
+      "Unify Presets + Saved Views into one Preset bundle — Thingalog holds as siblings; flag for catdef awareness if 'Preset' canonical semantic gets ratified"
+    ],
+    "urgency": "none — Thingalog substrate hygiene lands regardless of cycle timing",
+    "applies_principles": [
+      "feedback_photo_first_mental_model_invariant — two-phase canonicalization pattern (Phase 1 extension → Phase 2 canonical via catdef)",
+      "feedback_operational_metadata_as_reserved_subcats — the .views subcat flag is this doctrine's eventual ask",
+      "project_oagp_canonical_work_handed_off — catdef-substrate-format questions route to catdef-strategist, not oagp-strategist"
+    ],
+    "reference_artifacts": [
+      "Thingalog companion: memos/2026-06-03-2130--thingalog-strategist--implementer--catchup-disposition-of-three-stale-routings.body.md",
+      "Thingalog memos 2026-05-29-1715 (named-pack+canonical-var origin) + 2026-05-30-1530 (Saved Views origin)",
+      "Thingalog server.py:1293 (_NON_INHERITED_ABOUT_KEYS); reserved_subcats.PRESET_TEMPLATE",
+      "Thingalog builds ~500-544 (empirical anchors)"
+    ]
+  }
+}
