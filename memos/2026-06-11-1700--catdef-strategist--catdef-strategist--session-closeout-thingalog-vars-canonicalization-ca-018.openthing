@@ -1,0 +1,65 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "catdef-strategist",
+  "to": "catdef-strategist",
+
+  "subject": "Session closeout: substrate-touching-variable routing channel fired end-to-end for the first time — disposed of the 2026-06-03 2130+2330 thingalog-strategist 2-of-5 narrowed canonicalization ask via CA-018 (catalog-vs-application framing adopted as catdef-canonical guidance; .x-subtitle promoted to canonical .subtitle; .x-quick_filters promoted as items in .views reserved subcat over flat var; 3 chrome vars confirmed permanent .x-; §2.2 unification withdrawal concurred; filter grammar deferred to its own cycle); v1.5 activation surfaced for Director with Path A recommendation; PO bumped meta.ca_nnn_counter 17→18 post-commit to preempt the same collision pattern that materialized 2026-05-26; channel pattern validated; CA-010 reference-user demand bar applied cleanly",
+
+  "sent": "2026-06-11T17:00:00-04:00",
+  "action_required": false,
+
+  "body": "Session closeout for the thingalog-vars-canonicalization arc. Opened by PO 'could you check for memos' which surfaced two new inbound memos from thingalog-strategist (2026-06-03-2130 and 2026-06-03-2330) — the substrate-touching-variable routing channel established by the 2026-05-27T2216 thingalog-ux-engineer CC memo had fired with its first concrete ask. **What was drafted (with paths):** (1) [decisions/CA-018.md](../decisions/CA-018.md) — three-call disposition: catalog-vs-application framing adopted as catdef-canonical guidance (Call 1); .x-subtitle → canonical .subtitle on Catalog root with root-only inheritance (Call 2); .x-quick_filters → items in .views reserved subcat with View template (label/filter/sort), root-only inheritance, subcat shape chosen over flat var (Call 3); 3 chrome vars (.x-header_style + .x-card_meta_fields + .x-card_footer_field) confirmed permanent .x- per the framing; §2.2 Presets+Views unification withdrawal concurred; filter grammar deferred to its own cycle. Four build directives: maintainer proposal artifacts (Directive 1); conformance tests (Directive 2); framing addendum to CONTRIBUTING.md or CLAUDE.md (Directive 3); v1.5 activation surfaced for Director (Directive 4 — recommends Path A bundled v1.5 over Path B incremental v1.4.x minor). (2) [memos/2026-06-04-1000--catdef-strategist--thingalog-strategist--acceptance-of-narrowed-canonicalization-ask-ca-018.openthing](2026-06-04-1000--catdef-strategist--thingalog-strategist--acceptance-of-narrowed-canonicalization-ask-ca-018.openthing) — cross-spec acceptance memo closing the loop on the 2-of-5 ask; informational; CA-018 is the formal authority. (3) This closeout. **What was decided:** CA-018 — the substantive strategist call. Subordinate design calls captured within: subcat-over-flat-for-quick_filters (five-reason justification — .presets precedent + native structure + future-proofing + MCP parity + operational-metadata-as-reserved-subcats doctrine); filter opaque-string-for-now (defers filter grammar work); translatable .subtitle (per v1.4 polymorphic-translatable-field pattern); root-only inheritance for both new fields (matches Thingalog's _NON_INHERITED_ABOUT_KEYS precedent). **What's in flight (started but didn't land):** (a) Plugin remains under Anthropic review ('Submitted and pending review' as of last check; no review-decision memo yet); milestone memo filed when status changes. (b) catdef-maintainer queue now carries four bundled items: CA-013 Call 3 (canonical-implementor identity acknowledgment) + CA-015 Directive 1 (security doctrine in CLAUDE.md or SECURITY.md) + CA-016 Directive 2 (renderer/ row in repo-table; CONTRIBUTING + CLAUDE.md mentions) + CA-018 Directives 1+2+3 (.subtitle and .views proposal artifacts + conformance tests + framing addendum). No urgency increase; all bundle into next maintainer session. (c) canonical-implementor v0.2 backlog unchanged (feedback_audit table, mechanical catdef_validate, Durable Object for CA-NNN, resourceTemplates exposure, self-serve key issuance). (d) v1.5 cycle remains Director-triggered; CA-018 is the empirical activator surfaced for that trigger. **What's open (surfaced but not addressed):** (a) CA-014 + CA-017 in MCP queue at triaged-for-v0.2; D1↔MCP column mapping for CA-014 fix concrete (from prior session). (b) CA-015 negative-space amendment (don't grep ~/.claude.json for bearer) — flagged in prior session; not yet filed. (c) refresh-counter behavior verification (max vs overwrite) — still owed; canonical-implementor task. (d) Filter grammar codification — CA-018 explicitly defers; CLAUDE.md §Known Work Items flags as natural next deliverable; awaits its own cycle. (e) Future thingalog substrate-touching variable asks — channel works end-to-end now; expect more arrivals over time. (f) generative-lens thread — thingalog-strategist's primary; this seat holds the through-line for any substrate-touching aspects. **Notable observations worth carrying forward in seat history:** (1) The substrate-touching-variable routing channel established by the 2026-05-27T2216 thingalog-ux-engineer CC memo has now produced its first concrete strategist disposition. End-to-end validation: thingalog-ux-engineer flagged routing pattern → thingalog-strategist did design thinking + bundled ask + refinement → catdef-strategist disposed via CA-018 → maintainer drafts proposals → Director ratifies → spec text merges in v1.5 (or v1.4.x if Path B). Pattern works as designed. (2) The catalog-vs-application framing PO ratified on the thingalog side is sharp enough to apply retrospectively to all future .x- vars without re-deriving each time. CA-018 Call 1 formalized it as catdef-canonical guidance. The cut: 'is the concept renderer-portable?' Yes → canonical; No → permanent .x-. This pre-positions future strategist sessions for consistent calls. (3) Subcat shape over flat var for operational metadata is the established pattern (.presets precedent + now .views per CA-018 Call 3). Future operational metadata candidates default to subcat shape unless flat-var-only is clearly indicated. (4) The CA-NNN collision pattern that materialized 2026-05-26 was preempted this session via proactive counter bump (UPDATE meta SET value = '18' WHERE key = 'ca_nnn_counter'). Lesson from prior session applied: when filing a strategist-initiated decision that doesn't have a paired feedback item, bump the counter immediately post-commit to prevent the next feedback submission collision. (5) CA-010 reference-user demand bar applied cleanly to CA-018 — Thingalog's empirical demand across multiple production catalogs (welch-arctic-collection chrome work, magazine-flow catalog cards, AI-curator-as-quick-filter-author Saved Views) satisfied value #4 without needing a second non-Thingalog implementer. Channel + CA-010 + standard pipeline produced a coherent disposition. **What future incumbents of this seat should know:** (i) The substrate-touching-variable channel is operational; future thingalog asks land in catdef-spec/memos/ addressed to catdef-strategist; disposition via CA-NNN; CA-010 makes the demand bar straightforward. (ii) The catalog-vs-application framing (CA-018 Call 1) is the established test for promotion calls; check renderer-portability before deciding. (iii) Subcat shape over flat var for operational metadata is the established pattern; .presets + .views are precedents; flat var only when the data has no internal structure. (iv) Counter-bump after strategist-initiated CA-NNN commits is the established pattern; UPDATE meta SET value WHERE key = 'ca_nnn_counter' via wrangler (PO holds D1 auth). (v) v1.5 cycle remains queued; CA-018 is now its empirical activator; Director's trigger gate is unchanged. (vi) Plugin review is still pending at claude-community marketplace; status memo when review-decision arrives. (vii) Five closeouts now in this seat's chain (2026-05-26-1100, 2026-05-26-1900, 2026-05-29-1730, and this 2026-06-11); read the chain on fresh onboard.",
+  "body_ref": "2026-06-11-1700--catdef-strategist--catdef-strategist--session-closeout-thingalog-vars-canonicalization-ca-018.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-4-7-1m, 2026-06-11 catdef-strategist chair; working directory s:/Projects/catdef-spec",
+    "scope_check": "Closeout memo from catdef-strategist to itself; institutional capture for the seat's next incumbent; only this arc's work (CA-018 disposition + thingalog-vars channel firing + counter-bump preemption); prior arcs covered by their own closeouts",
+    "session_arc": {
+      "started": "2026-06-11 — PO 'could you check for memos' opened the arc; surfaced 2026-06-03-2130 + 2026-06-03-2330 thingalog-strategist memos in the catdef-spec/memos/ directory",
+      "midpoint": "Read both memos; understood the catalog-vs-application framing PO ratified on thingalog side; designed CA-018 three-call disposition with subcat-over-flat shape choice for quick_filters",
+      "ended": "CA-018 + acceptance memo committed and pushed (8e22a77); PO bumped meta.ca_nnn_counter 17 → 18 to preempt collision; closeout invoked"
+    },
+    "artifacts_summary": {
+      "decisions_filed": ["decisions/CA-018.md — thingalog 2-of-5 narrowed canonicalization ask disposition; catalog-vs-application framing; .subtitle + .views promotions"],
+      "outbound_memos": [
+        "memos/2026-06-04-1000--catdef-strategist--thingalog-strategist--acceptance-of-narrowed-canonicalization-ask-ca-018.openthing — cross-spec acceptance",
+        "memos/2026-06-11-1700--catdef-strategist--catdef-strategist--session-closeout-thingalog-vars-canonicalization-ca-018.openthing — this memo"
+      ],
+      "mcp_queue_operations": ["No new MCP queue submissions or status changes this arc; received-bucket remains empty; counter advanced 17 → 18 via direct D1 UPDATE with PO"],
+      "no_spec_text_changes": "No CATDEF_SPEC / CATIO_SPEC changes this arc; spec text additions for CA-018 routed to maintainer via Directive 1+2; governance text addendum (Directive 3) bundles with prior queued items"
+    },
+    "key_design_calls_made_within_ca_018": {
+      "framing_adoption": "Catalog-vs-application as catdef-canonical guidance — Call 1; codified via Directive 3 maintainer addendum",
+      "subcat_over_flat_for_saved_views": "Five-reason justification (.presets precedent + native structure + future-proofing + MCP parity + operational-metadata-as-reserved-subcats doctrine alignment) — Call 3",
+      "filter_grammar_deferral": "View.filter starts opaque-string; filter grammar codification gets its own cycle per CLAUDE.md §Known Work Items",
+      "translatable_subtitle": "Per v1.4 polymorphic-translatable-field pattern; .subtitle accepts plain string OR locale-keyed object",
+      "root_only_inheritance": "Both .subtitle and .views match Thingalog's empirical _NON_INHERITED_ABOUT_KEYS precedent",
+      "three_chrome_vars_permanent_x": "Confirmed per framing; no tracking owed",
+      "v1_5_path_recommendation": "Path A (bundled v1.5) over Path B (incremental v1.4.x); Director's call"
+    },
+    "open_items_for_next_session": {
+      "plugin_review_outcome": "Still pending at claude-community marketplace; status memo when decision arrives",
+      "maintainer_governance_text_bundle": "CA-013 Call 3 + CA-015 Dir 1 + CA-016 Dir 2 + CA-018 Dirs 1/2/3 — four bundled items for next maintainer session",
+      "canonical_implementor_v0_2_backlog": "Unchanged",
+      "v1_5_cycle_trigger": "Director's call; CA-018 is empirical activator; Primary-index Phase 2 leads when triggered",
+      "ca_015_negative_space_amendment": "Flagged in prior session; not yet filed",
+      "refresh_counter_behavior_verification": "Still owed; canonical-implementor task",
+      "ca_014_ca_017_v0_2_queue": "schema-vocabulary unification (concrete D1 mapping target known) + /fetch+ZIP gap",
+      "filter_grammar_codification": "Deferred per CA-018; awaits its own cycle",
+      "future_thingalog_substrate_var_asks": "Channel operational; expect more arrivals",
+      "generative_lens_thread": "thingalog-strategist's primary; this seat holds through-line for substrate-touching aspects"
+    },
+    "applies_principles": [
+      "seat-vs-incumbent — closeout is for the seat's history; future incumbents inherit the canonical-vs-application framing + subcat-over-flat default + counter-bump-on-decision pattern",
+      "feedback_substrate_is_workplace_not_documentation — the substrate-touching-var routing channel + MCP queue ARE the workplace; CA-018 is its first canonical output",
+      "doctrine-grounded-in-empirical-incident — CA-018 Call 1 framing emerged from a real implementer's classification need + PO ratification, not a thought experiment",
+      "lessons-applied — counter-bump-after-strategist-CA pattern from 2026-05-26's collision arc was preempted this session"
+    ],
+    "follows_pattern_of": [
+      "memos/2026-05-29-1730--catdef-strategist--catdef-strategist--session-closeout-plugin-submission-renderer-move-arc.openthing — prior closeout in this seat's chain"
+    ]
+  }
+}
