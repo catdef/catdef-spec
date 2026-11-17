@@ -8,7 +8,17 @@ A single self-contained `index.html` file — HTML structure, CSS in `<style>`, 
 
 The hosted instance at [render.catdef.org](https://render.catdef.org) serves this file via Cloudflare Workers. The Worker also provides a server-side `/fetch?url=` proxy that the page uses for the `?url=` bootstrap (SSRF-guarded; not included here — it requires a runtime). The Worker source lives in the private `catdef.org` operations repo (per [decisions/CA-015.md](../decisions/CA-015.md) and [decisions/CA-016.md](../decisions/CA-016.md): hosting + deploy + secret-handling stay private; spec content + reference artifacts stay public).
 
-When the canonical renderer changes here, the hosted instance picks it up automatically — `catdef.org`'s Worker fetches `index.html` from `raw.githubusercontent.com/catdef/catdef-spec/main/renderer/index.html` at request time with edge caching (5-minute TTL).
+### What `render.catdef.org` serves — `release`, not `main`
+
+`catdef.org`'s Worker fetches `index.html` at request time with edge caching (5-minute TTL), from the **`release`** branch of this repo:
+
+```
+raw.githubusercontent.com/catdef/catdef-spec/refs/heads/release/renderer/index.html
+```
+
+**Landing a renderer change on `main` does not deploy it.** `release` is fast-forwarded to `main` as a separate, deliberate act, and *that* act is the deploy. So `main` is the canonical source and may be ahead of what is live; `release` is what is live.
+
+This replaces the original arrangement, under which the Worker pinned `main` directly and any push touching `renderer/` reached production within five minutes with no staging step. See [decisions/CA-019.md](../decisions/CA-019.md), which amends [CA-016](../decisions/CA-016.md) on this point only — the renderer's placement here and the runtime-fetch mechanism itself are unchanged.
 
 ## Conformance scope
 
@@ -34,6 +44,8 @@ open catdef-renderer.html  # macOS; Linux: xdg-open, Windows: start
 ```
 
 Drop a `.opencatalog` / `.openthing` / `.catdef` file on the picker. No `?url=` bootstrap (no fetch proxy in this mode).
+
+That URL pulls from `main`, which is the canonical source and is what you want in almost every case. If you specifically need the build currently live at render.catdef.org, substitute `refs/heads/release` for `main` — see [above](#what-rendercatdeforg-serves--release-not-main). Either ref gives you a complete, working renderer; this path does not depend on which one you pick.
 
 ### 2. Static hosting (no fetch proxy)
 

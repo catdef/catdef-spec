@@ -41,6 +41,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .drop-zone input[type=file]{display:none}
 .powered{text-align:center;padding:20px;font-size:12px;color:var(--muted)}
 .powered a{color:var(--accent);text-decoration:none}
+.build-number{text-align:center;padding:0 20px 16px;font-size:11px;color:var(--muted)}
+/* Bundled-photo display (CATIO §Bundled Transport). .card-img keeps its
+   emoji-placeholder sizing; an <img> inside it covers the frame. */
+.card-img img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px}
+.gallery figure{flex:0 0 auto;width:160px}
+.gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--border);background:var(--border)}
+.gallery figcaption{font-size:11px;color:var(--muted);margin-top:4px}
+.photo-warn{font-size:12px;color:var(--muted);margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -56,6 +65,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <input type="file" id="fileInput" accept=".openthing,.opencatalog,.catdef,.json">
   </div>
   <div class="powered">L1 Reference Renderer &middot; <a href="https://github.com/catdef/catdef-spec">catdef standard</a></div>
+  <div class="build-number">build 001</div>
 </div>
 <div id="app" style="display:none">
   <div class="header" id="appHeader"></div>
@@ -69,6 +79,194 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
   <div class="modal" id="modal"></div>
 </div>
 <script>
+// ==== CATIO-LOADER-BEGIN ====
+// CATIO bundled-transport reader — CATIO_SPEC.md §Bundled Transport (ZIP).
+//
+// Accepting ZIP-packaged catdef files is a MUST, and content-sniffing is the
+// authoritative discriminator: "Importers that reject outer-extension
+// mismatches are non-conformant." Nothing here looks at a filename.
+//
+// This block is PURE: no DOM, no network, no globals beyond TextDecoder and
+// DecompressionStream. conformance/test_renderer_catio.py extracts everything
+// between the BEGIN/END markers and executes it under Node, so these are the
+// shipped bytes under test rather than a re-implementation. Keep it DOM-free
+// or that test stops working — and keep the markers, or it fails loudly.
+//
+// Scope: ZIP methods 0 (stored) and 8 (deflate). ZIP64 is out of scope and is
+// reported rather than mis-parsed.
+
+const CATDEF_EXTS_PREFERENCE = ['.opencatalog', '.openthing', '.catdef'];
+
+// PK signature. Two bytes is the whole test: the spec says "a PK ZIP
+// signature indicates a ZIP bundle to unpack; any other prefix indicates raw
+// JSON", and empty-archive/spanned variants differ only in the third byte.
+function catioIsZip(bytes) {
+  return bytes.length >= 2 && bytes[0] === 0x50 && bytes[1] === 0x4b;
+}
+
+function catioU16(b, o) { return b[o] | (b[o + 1] << 8); }
+function catioU32(b, o) {
+  // >>> 0 keeps the high bit unsigned; ZIP offsets near 4 GB would otherwise
+  // come back negative.
+  return ((b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0);
+}
+
+async function catioInflateRaw(bytes) {
+  if (typeof DecompressionStream === 'undefined') {
+    throw new Error(
+      'This browser cannot decompress bundled catdef files: it has no ' +
+      'DecompressionStream. Needs Chrome 103+, Firefox 113+, or Safari 16.4+.');
+  }
+  let ds;
+  try {
+    // ZIP method 8 stores RAW deflate — no zlib header, no trailing adler32 —
+    // so 'deflate-raw' is required and 'deflate' would fail. Chrome 80-102
+    // has the constructor but not this format, and throws TypeError here.
+    ds = new DecompressionStream('deflate-raw');
+  } catch (err) {
+    throw new Error(
+      "This browser lacks DecompressionStream('deflate-raw'), which bundled " +
+      'catdef files need for compressed members. Needs Chrome 103+, ' +
+      'Firefox 113+, or Safari 16.4+.');
+  }
+  const writer = ds.writable.getWriter();
+  // Deliberately not awaited before reading: a member larger than the
+  // stream's internal queue would deadlock if we waited for the write to
+  // settle first.
+  writer.write(bytes).then(() => writer.close(), () => {});
+  const reader = ds.readable.getReader();
+  const chunks = [];
+  let total = 0;
+  for (;;) {
+    const step = await reader.read();
+    if (step.done) break;
+    chunks.push(step.value);
+    total += step.value.length;
+  }
+  const out = new Uint8Array(total);
+  let at = 0;
+  for (const chunk of chunks) { out.set(chunk, at); at += chunk.length; }
+  return out;
+}
+
+// Locate the End Of Central Directory record. Scanned backwards because a ZIP
+// may carry a trailing comment of up to 65535 bytes.
+function catioFindEocd(bytes) {
+  const minFrom = Math.max(0, bytes.length - (22 + 0xffff));
+  for (let i = bytes.length - 22; i >= minFrom; i--) {
+    if (catioU32(bytes, i) === 0x06054b50) return i;
+  }
+  return -1;
+}
+
+// Parse the central directory. It is authoritative for sizes and methods:
+// stream-written ZIPs are permitted to write zeros in the local header and
+// put the real values in a trailing data descriptor, so trusting local
+// headers would read empty members from exactly the archives most likely to
+// be produced by an exporter.
+function catioReadCentralDirectory(bytes) {
+  const eocd = catioFindEocd(bytes);
+  if (eocd < 0) {
+    throw new Error('Not a readable ZIP bundle: no end-of-central-directory record found.');
+  }
+  const count = catioU16(bytes, eocd + 10);
+  const cdOffset = catioU32(bytes, eocd + 16);
+  const cdSize = catioU32(bytes, eocd + 12);
+  if (count === 0xffff || cdOffset === 0xffffffff || cdSize === 0xffffffff) {
+    throw new Error('ZIP64 bundles are not supported by this renderer (CA-017 scope).');
+  }
+  const entries = [];
+  let p = cdOffset;
+  const decoder = new TextDecoder('utf-8');
+  for (let i = 0; i < count; i++) {
+    if (catioU32(bytes, p) !== 0x02014b50) {
+      throw new Error('Corrupt ZIP bundle: bad central-directory signature at entry ' + i + '.');
+    }
+    const method = catioU16(bytes, p + 10);
+    const compressedSize = catioU32(bytes, p + 20);
+    const uncompressedSize = catioU32(bytes, p + 24);
+    const nameLen = catioU16(bytes, p + 28);
+    const extraLen = catioU16(bytes, p + 30);
+    const commentLen = catioU16(bytes, p + 32);
+    const localOffset = catioU32(bytes, p + 42);
+    const name = decoder.decode(bytes.subarray(p + 46, p + 46 + nameLen));
+    entries.push({ name, method, compressedSize, uncompressedSize, localOffset });
+    p += 46 + nameLen + extraLen + commentLen;
+  }
+  return entries;
+}
+
+async function catioReadEntry(bytes, entry) {
+  const lh = entry.localOffset;
+  if (catioU32(bytes, lh) !== 0x04034b50) {
+    throw new Error('Corrupt ZIP bundle: bad local header for "' + entry.name + '".');
+  }
+  // The local header's own name/extra lengths locate the data; its size
+  // fields are ignored in favour of the central directory's.
+  const dataStart = lh + 30 + catioU16(bytes, lh + 26) + catioU16(bytes, lh + 28);
+  const raw = bytes.subarray(dataStart, dataStart + entry.compressedSize);
+  if (entry.method === 0) return raw;
+  if (entry.method === 8) return catioInflateRaw(raw);
+  throw new Error('Unsupported ZIP compression method ' + entry.method + ' for "' + entry.name + '".');
+}
+
+// Rule 1: the catdef JSON document MUST be at the ZIP root. With several
+// present, prefer .opencatalog, then .openthing, then .catdef.
+function catioPickRootDocument(entries) {
+  const roots = entries.filter(e => e.name.indexOf('/') === -1 && !e.name.endsWith('/'));
+  for (const ext of CATDEF_EXTS_PREFERENCE) {
+    const hit = roots.find(e => e.name.toLowerCase().endsWith(ext));
+    if (hit) return hit;
+  }
+  return null;
+}
+
+// Unpack a CATIO bundle into its JSON document and its media members.
+// Returns { json, media } where media maps the BARE FILENAME to bytes —
+// Rule 2 ("Photo references in the JSON use the filename only") and Rule 4
+// (filenames are unique within the bundle) make the basename the correct key.
+async function catioUnpack(bytes) {
+  const entries = catioReadCentralDirectory(bytes);
+  const docEntry = catioPickRootDocument(entries);
+  if (!docEntry) {
+    throw new Error(
+      'This ZIP is not a CATIO bundle: no .opencatalog, .openthing, or ' +
+      '.catdef document at the archive root.');
+  }
+  const docBytes = await catioReadEntry(bytes, docEntry);
+  let json;
+  try {
+    json = JSON.parse(new TextDecoder('utf-8').decode(docBytes));
+  } catch (err) {
+    throw new Error('Bundle member "' + docEntry.name + '" is not valid JSON: ' + err.message);
+  }
+  const media = new Map();
+  for (const entry of entries) {
+    if (entry.name.endsWith('/')) continue;
+    // photos/ per Rule 2, files/ per Rule 3.
+    if (!/^(photos|files)\//i.test(entry.name)) continue;
+    const base = entry.name.slice(entry.name.lastIndexOf('/') + 1);
+    if (!base) continue;
+    media.set(base, await catioReadEntry(bytes, entry));
+  }
+  return { json, media, documentName: docEntry.name };
+}
+
+// Read any catdef byte stream — bundle or raw JSON — by content-sniffing.
+async function catioRead(bytes) {
+  if (catioIsZip(bytes)) return catioUnpack(bytes);
+  return {
+    json: JSON.parse(new TextDecoder('utf-8').decode(bytes)),
+    media: new Map(),
+    documentName: null
+  };
+}
+
+if (typeof module === 'object' && module && module.exports) {
+  module.exports = { catioIsZip, catioUnpack, catioRead, catioReadCentralDirectory };
+}
+// ==== CATIO-LOADER-END ====
+
 const $ = s => document.querySelector(s);
 const dropZone = $('#dropZone');
 const fileInput = $('#fileInput');
@@ -87,17 +285,126 @@ dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover
 dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]); });
 fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 
+// Bundled media for the currently loaded document: bare filename → blob URL.
+// Empty for raw-JSON documents.
+let MEDIA = new Map();
+// Photo references the document asked for but the bundle did not carry.
+// CATIO §Import Behavior 2c: "skip the photo and log a warning (do not fail
+// the import)" — surfaced in the modal rather than thrown.
+let MISSING_MEDIA = [];
+
+function setBundleMedia(media) {
+  releaseBundleMedia();
+  for (const [name, bytes] of media) {
+    MEDIA.set(name, URL.createObjectURL(new Blob([bytes])));
+  }
+}
+
+function releaseBundleMedia() {
+  for (const url of MEDIA.values()) URL.revokeObjectURL(url);
+  MEDIA = new Map();
+  MISSING_MEDIA = [];
+}
+
+// Read bytes from either load path. Content-sniffs, so a raw-JSON document
+// behaves exactly as it did before bundles were supported.
+async function loadCatdefBytes(bytes, sourceUrl) {
+  if (sourceUrl) CATALOG_SOURCE_URL = sourceUrl;
+  const result = await catioRead(bytes);
+  setBundleMedia(result.media);
+  loadCatdef(result.json);
+}
+
 function handleFile(file) {
+  // Read as bytes, not text: a bundle is binary, and readAsText would mangle
+  // it before the PK sniff ever ran.
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = async e => {
     try {
-      const json = JSON.parse(e.target.result);
-      loadCatdef(json);
+      await loadCatdefBytes(new Uint8Array(e.target.result), null);
     } catch (err) {
-      alert('Invalid JSON: ' + err.message);
+      showPickerError(err, file && file.name ? file.name : 'the selected file');
     }
   };
-  reader.readAsText(file);
+  reader.onerror = () => showPickerError(reader.error || new Error('read failed'), file && file.name);
+  reader.readAsArrayBuffer(file);
+}
+
+// Parse/transport diagnostics surface in the picker, separate from render
+// errors (acceptance criterion on #45).
+function showPickerError(err, what) {
+  const msg = err && err.message ? err.message : String(err);
+  dropZone.innerHTML =
+    '<h2 style="color:#dc2626">Could not read this file</h2>' +
+    '<p style="margin-top:8px">' + esc(msg) + '</p>' +
+    (what ? '<p class="formats" style="margin-top:12px;word-break:break-all">File: <code>' + esc(what) + '</code></p>' : '') +
+    '<p class="formats" style="margin-top:12px"><a href="' + esc(window.location.pathname) + '" style="color:var(--accent)">Try another file</a></p>';
+}
+
+// ── Bundled photos (CATIO Rules 2 and 5) ─────────────────────
+function photosOf(item) {
+  const src = fieldSource(item) || {};
+  for (const key of Object.keys(src)) {
+    const k = key.toLowerCase();
+    if (k !== 'photos' && k !== 'photo') continue;
+    const v = src[key];
+    if (Array.isArray(v)) return v;
+    if (v && typeof v === 'object') return [v];
+    if (typeof v === 'string') return [{ filename: v }];
+  }
+  return [];
+}
+
+function isPhotoField(fd) {
+  if (!fd) return false;
+  if (fd.type === 'Photo') return true;
+  const l = String(fd.label || '').toLowerCase();
+  return l === 'photos' || l === 'photo';
+}
+
+// Rule 5: filename-only or filename+url, and "when both are present, the
+// importer SHOULD prefer the local file from the ZIP."
+function photoSrc(ref) {
+  if (!ref) return null;
+  if (typeof ref === 'string') return MEDIA.get(ref) || null;
+  const local = ref.filename ? MEDIA.get(ref.filename) : null;
+  if (local) return local;
+  if (ref.url) return ref.url;
+  if (ref.filename) {
+    if (MISSING_MEDIA.indexOf(ref.filename) === -1) MISSING_MEDIA.push(ref.filename);
+  }
+  return null;
+}
+
+function primaryPhoto(photos) {
+  if (!Array.isArray(photos) || !photos.length) return null;
+  const ordered = photos.slice().sort((a, b) => (Number(a && a.slot) || 0) - (Number(b && b.slot) || 0));
+  return ordered.find(p => p && p.is_primary) || ordered[0];
+}
+
+// Rotation is honoured because it is a discrete, lossless transform.
+// crop_mode/deskew are NOT applied — see the status memo; applying them
+// needs real geometry work and is out of CA-017's scope.
+function photoStyle(ref) {
+  const rot = Number(ref && ref.rotation) || 0;
+  if (!rot) return '';
+  return 'transform:rotate(' + (((rot % 360) + 360) % 360) + 'deg)';
+}
+
+function photoGalleryHtml(item) {
+  const photos = photosOf(item);
+  if (!photos.length) return '';
+  const ordered = photos.slice().sort((a, b) => (Number(a && a.slot) || 0) - (Number(b && b.slot) || 0));
+  const figures = ordered.map(ref => {
+    const src = photoSrc(ref);
+    if (!src) return '';
+    const style = photoStyle(ref);
+    const caption = ref && ref.caption ? '<figcaption>' + esc(ref.caption) + '</figcaption>' : '';
+    return '<figure><img src="' + esc(src) + '" alt="' + esc((ref && ref.caption) || 'Photo') + '"' +
+      (style ? ' style="' + style + '"' : '') + '>' + caption + '</figure>';
+  }).filter(Boolean).join('');
+  if (!figures) return '';
+  return '<div class="gallery">' + figures + '</div>';
 }
 
 // ── catdef-family shape helpers (additive) ──────────────────
@@ -358,7 +665,15 @@ function renderGrid(items) {
     }
     const card = document.createElement('div');
     card.className = 'card';
-    card.innerHTML = '<div class="card-img">📷</div><div class="card-body"><div class="card-title">' + esc(title) + '</div><div class="card-sub">' + subHtml + '</div></div>';
+    // Hero photo from the bundle when there is one; the emoji placeholder
+    // otherwise, so raw-JSON documents look exactly as they did before.
+    const hero = primaryPhoto(photosOf(item));
+    const heroSrc = hero ? photoSrc(hero) : null;
+    const heroStyle = heroSrc ? photoStyle(hero) : '';
+    const imgHtml = heroSrc
+      ? '<img src="' + esc(heroSrc) + '" alt="' + esc(title) + '"' + (heroStyle ? ' style="' + heroStyle + '"' : '') + '>'
+      : '📷';
+    card.innerHTML = '<div class="card-img">' + imgHtml + '</div><div class="card-body"><div class="card-title">' + esc(title) + '</div><div class="card-sub">' + subHtml + '</div></div>';
     card.onclick = () => showModal(item);
     grid.appendChild(card);
   });
@@ -378,7 +693,15 @@ function showModal(item) {
     || 'Item';
   html += '<h2>' + esc(headTitle) + '</h2>';
 
+  // Photos render as images, not as a JSON dump of their transform records.
+  html += photoGalleryHtml(item);
+  if (MISSING_MEDIA.length) {
+    html += '<p class="photo-warn">' + MISSING_MEDIA.length +
+      ' photo reference(s) not present in this bundle and skipped.</p>';
+  }
+
   template.field_defs.forEach(fd => {
+    if (isPhotoField(fd)) return;
     const val = fieldOf(item, fd.label);
     if (val === undefined || val === null || val === '') return;
     html += '<div class="field"><div class="field-label">' + esc(fd.label) + '</div><div class="field-value">';
@@ -402,6 +725,7 @@ function showModal(item) {
   const extras = fieldSource(item);
   Object.entries(extras).forEach(([k,v]) => {
     if (template.field_defs.some(fd => fd.label === k)) return;
+    if (isPhotoField({ label: k })) return;
     if (v === undefined || v === null || v === '') return;
     let valHtml;
     if (Array.isArray(v)) {
@@ -454,9 +778,15 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s; re
     // turn relative paths (e.g. "roledefs/x.openthing") into absolute URLs.
     // Prefer the upstream's final URL after redirects when /fetch surfaced
     // it, otherwise use what the user requested.
-    CATALOG_SOURCE_URL = resp.headers.get('X-Upstream-Url') || remoteUrl;
-    const json = await resp.json();
-    loadCatdef(json);
+    // Read BYTES, not .json(): the upstream artifact may be a CATIO ZIP
+    // bundle. Content-sniffing in catioRead() handles both, so this path
+    // works against the proxy as it behaves today (JSON passed through
+    // verbatim) and once it stops decoding and passes bundle bytes through
+    // (catdef/catdef.org#8). The client owns unpacking in both cases, which
+    // is what keeps the file:// and proxy paths identical — value #1.
+    const sourceUrl = resp.headers.get('X-Upstream-Url') || remoteUrl;
+    const bytes = new Uint8Array(await resp.arrayBuffer());
+    await loadCatdefBytes(bytes, sourceUrl);
   } catch (err) {
     dropZone.innerHTML =
       '<h2 style="color:#dc2626">Could not load</h2>' +

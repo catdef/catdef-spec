@@ -76,6 +76,20 @@ The test suite in [conformance/](conformance/) is the practical expression of th
 
 **The test suite is the standard.**
 
+## The reference renderer
+
+The canonical L1 reference renderer lives at [renderer/](renderer/) — a single self-contained `index.html`. It is a reference artifact under the same governance as the spec text and the conformance suite: changes affecting L1 conformance behavior need a proposal artifact and test coverage. See [renderer/README.md](renderer/README.md).
+
+**Merging a renderer change to `main` does not deploy it.** The hosted instance at [render.catdef.org](https://render.catdef.org) is served by runtime fetch from the **`release`** branch, not from `main`. Deployment is a separate, deliberate fast-forward of `release` to `main`.
+
+So for a renderer contribution:
+
+- Open your PR against `main` as usual. Nothing you push to a branch or land on `main` reaches production.
+- `main` is canonical and may be ahead of what is live. `release` is what is live.
+- Promotion to `release` is a maintainer act on its own clock, not an automatic consequence of your merge. A merged renderer fix is not yet a shipped renderer fix.
+
+This arrangement exists because the earlier one pinned the hosted instance to `main` directly, making every push touching `renderer/` a production deploy with no staging step — a structural hazard that only procedural care was holding back. See [decisions/CA-019.md](decisions/CA-019.md), which amends [CA-016](decisions/CA-016.md) on that point.
+
 ## Implementer roles
 
 If you're building a catdef runtime, you're welcome to:
