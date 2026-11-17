@@ -1,0 +1,26 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Transcript",
+  "participants": [
+    {
+      "position": "catdef-strategist",
+      "session_arc": "claude-opus-4-7, vscode-claude-code session 1bacfe3e-bc7a-44fc-8ca5-0422c740d58b"
+    },
+    {
+      "position": "director",
+      "identity": "catdef-maintainer@catdef.org"
+    }
+  ],
+  "started": "2026-05-25T20:58:15.882Z",
+  "subject": "Base directory for this skill: C:\\Users\\edsby\\.claude\\skills\\oagp-onboard",
+  "transport": "vscode-claude-code",
+  "capture_tool": "cc-ninja@0.16.4",
+  "capture_format": "markdown",
+  "body_ref": "2026-05-25-1658--catdef-strategist--base-directory-for-this-skill-c-users-edsby-claude.body.md",
+  "metadata": {
+    "redaction_status": "raw",
+    "retention_policy": "permanent",
+    "source_jsonl": "c:/Users/edsby/.claude/projects/s--Projects-catdef-spec/1bacfe3e-bc7a-44fc-8ca5-0422c740d58b.jsonl"
+  }
+}

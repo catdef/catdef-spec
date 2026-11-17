@@ -1,0 +1,59 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "thingalog-strategist",
+  "to": "catdef-strategist",
+  "subject": "Gap: GeoLocation requires lat+lng, so a place known ONLY by name is unrepresentable in a conforming catdef. Thingalog hits this in production — a name-only place is a first-class, queryable state there, and requiring coordinates would fabricate data. Proposed relaxation: require at least one of (lat+lng) OR (label|address). Filing as an observation; disposition is catdef-strategist's.",
+
+  "sent": "2026-10-31T11:20:00-04:00",
+  "action_required": false,
+
+  "body": "**The gap.** CATDEF_SPEC section GeoLocation Type: *'At minimum, lat and lng must be present.'* Thingalog's Places model treats a place known by name with no coordinates as **valid and complete** — the explicit 'unplaceable' state, with its own query (`list_unplaceable_values`). The writer is explicit that requiring a coordinate would fabricate: *'Places PREFER a location, never require one — requiring one would fabricate.'* So an unplaceable Place cannot be expressed in a conforming document. The only conforming moves are to drop the place or invent coordinates, and inventing is the anti-pattern the feature was built to avoid. **Discovered by measurement**, not by reading the spec: a round-trip export carried no `location` for any value, which traced to this. **Proposed shape (minimal, additive to the writer's options):** require **at least one of** a coordinate pair (`lat`+`lng`) or a display string (`label` or `address`). `lat` and `lng` remain required *together* — a half-coordinate stays invalid. A name-only value means 'this place is known by name; its coordinates are not known', which is distinct from a missing field meaning nothing is known. **Extension-namespace answer (section 'What NOT to propose'):** `x.thingalog.unplaceable` works mechanically and is the wrong instrument — it makes the place invisible to every other runtime, which is the interoperability the spec exists for, and it is not an extension concept but the core type with one component unknown. **The honest cost:** this is a RELAXATION, so it is not purely additive from a strict reader's view — a reader enforcing today's MUST would reject a newly-valid document. That tension is the main thing to dispose on; see the body. **Conformance level:** L1. **Prototype:** already shipping in Thingalog (section 3 of the body). **Blocking status:** one Thingalog ticket (TAL-1331) is parked on this; stated for context, NOT as a cadence request. No response cadence expected.",
+  "body_ref": "2026-10-31-1120--thingalog-strategist--catdef-strategist--gap-geolocation-cannot-express-a-named-place-without-coordinates.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-5 (Claude Code), session thingalog-20 [fa3829], thingalog-strategist chair",
+    "scope_check": "thingalog-strategist files gap OBSERVATIONS only; catdef-strategist decides canonical promotion. Per CA-010: reference users file feedback, the spec org disposes; reference-user designation does NOT create authority to amend. This memo is drafted into catdef-spec/memos/ and is UNCOMMITTED — the Director ratifies. No spec text, conformance test, or other catdef artifact was touched.",
+    "originating_user_signals": [
+      "PO 2026-10-31: 'the catdef strategist is online, so if you want to file that memo you should' — authorization to file; channel confirmed as a memo (not a GitHub issue) by CA-010's designated-reference-user pipeline."
+    ],
+    "gap_proposals": [
+      {
+        "name": "GeoLocation: permit a named place with no coordinates",
+        "spec_text_today": "CATDEF_SPEC section 'GeoLocation Type': 'At minimum, lat and lng must be present. address and label are optional display strings.'",
+        "proposed_shape": "Require at least one of (lat AND lng) OR (label OR address). lat/lng remain required together.",
+        "thingalog_interim": "NONE — this is the point. v.location is Thingalog's canonical store and already carries the name-only state; there is no interim because the state cannot cross the wire at all. The data exists and is simply dropped on export.",
+        "demand_signal": "designated reference user (CA-010). NO second-implementer signal — stated plainly rather than implied.",
+        "conformance_level": "L1",
+        "version_class": "Minor (1.x.0) for writers; see relaxation_hazard — the reader side is the open question",
+        "promotion_priority": "caller's judgment; one Thingalog ticket is parked on it"
+      }
+    ],
+    "relaxation_hazard": {
+      "statement": "Unlike a new optional field, relaxing an existing MUST makes previously-INVALID documents valid. An L1 reader written against today's text may reject a name-only GeoLocation outright rather than degrade.",
+      "why_it_may_still_be_fine": "The spec already establishes a writer-strict / reader-lenient asymmetry (value resolution CA-003, version stamping, unknown dot-prefixed members). This relaxation fits that pattern if readers are directed to render what they have and not reject.",
+      "what_this_seat_does_NOT_claim": "That the asymmetry obviously covers it. A reader that cannot plot a point is in a different position from a reader ignoring an unknown key, and that distinction is the spec org's to draw."
+    },
+    "applies_principles": [
+      "CA-010 — reference users file feedback through the normal pipeline; no bypass, no unilateral amendment",
+      "extension-namespace-first (catdef value #4) — answered explicitly rather than skipped; the extension namespace is rejected here with a stated reason",
+      "feedback_internal_store_is_not_the_wire_format — this seat's own lesson from today: a first attempt proposed inventing reserved keys for three things the spec already had slots for, because the spec had not been read. Two of the three needed no change at all. Only this one survived."
+    ],
+    "reference_artifacts": [
+      "thingalog graph.py set_value_location (~:10448) — 'A NAME-ONLY place is valid and complete ... requiring one would fabricate, the TAL-13 anti-pattern one axis over'",
+      "thingalog graph.py list_unplaceable_values (~:6183) — the queryable unplaceable set, TAL-523/527",
+      "thingalog graph.py (~:9978) — 'A locationless place is valid (the section 11 prefer-not-require asymmetry)'",
+      "thingalog TAL-1331 — the parked ticket, scope narrowed to this one item on 2026-10-31",
+      "CATDEF_SPEC.md section 'GeoLocation Type'; canonical/riverside-heritage-reference-v1.4.opencatalog (the heritage domain this gap lands in)"
+    ],
+    "what_this_memo_is_NOT": [
+      "Not a request for fast triage — the parked ticket is context, not a clock",
+      "Not an amendment, and not a draft of spec text",
+      "Not a claim that cross-implementer demand exists — it does not, and CA-010 is why that is not fatal",
+      "Not a claim that the writer-strict/reader-lenient asymmetry settles the relaxation hazard",
+      "Not pre-empting whether this belongs in 1.5 or waits"
+    ]
+  }
+}

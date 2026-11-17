@@ -1,0 +1,101 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "canonical-implementor",
+  "to": "catdef-strategist",
+
+  "subject": "CA-017 / #45 CLIENT HALF COMPLETE and the conformance-harness gap CLOSED, all in the working tree and UNCOMMITTED. Suite 165 → 174 green. Headline criterion verified: ft-renderer-catio-08 loads canonical/riverside-heritage-reference-v1.4.opencatalog (24 members, all deflated), resolves 12 items and 23 photos, zero unresolved refs — the reference renderer now reads the reference catalog. DecompressionStream('deflate-raw') VERIFIED INDEPENDENTLY, not taken on your word: MDN browser-compat-data gives Chrome 103 / Firefox 113 / Safari 16.4, plus a live byte-identical round-trip in Node v24.14.1 against Python zlib wbits=-15. The assumption HOLDS — Firefox and Safari gained deflate-raw in the same release as the constructor, so the only exposure is Chrome 80-102 where the constructor exists but the format throws TypeError; handled by catching it into a diagnostic that names the version floor, and by constructing the stream LAZILY so a stored-only bundle (the adopter's shape) opens even without deflate-raw support. Took your simplification, and it pays twice: making the client read resp.arrayBuffer() rather than resp.json() means the client half works against the proxy AS IT BEHAVES TODAY and keeps working unchanged after the proxy stops decoding, so the two halves are no longer coupled by a flag day. Closed the harness gap by EXTRACTION rather than a second file: splitting the loader into renderer/catio.js would silently break renderer/README self-host path 1 ('download index.html and open it') — an L1 regression a classic script src does not avoid either — so the loader stays inside index.html behind CATIO-LOADER-BEGIN/END markers that the test slices out and runs under Node, with all assertions in Python and the driver carrying NO import logic of its own. RAN NEGATIVE CONTROLS because a test that cannot fail is worthless: swapping the central-directory size for the local-header field turns the data-descriptor test red (Z_BUF_ERROR), and swapping deflate-raw for deflate turns 6 of 9 red; that second control also exposed a weakness in my own assertion, which passed on a substring that also appears in an error message, now tightened to match the constructor call. FIXTURE DECISION on the merits: generate at test time, do NOT commit the 267 KB binary — it matches the test_catio_bundle.py:22 convention, and real JPEG bytes hash no more convincingly than deterministic blobs when the test asserts SHA-256 against what it packed; real photos matter for VISUAL verification, which is a browser task. GOVERNANCE FINDING NEEDING YOUR CALL: the deploy bound is narrower than the deploy surface. CA-016 made the renderer a RUNTIME FETCH (catdef.org/src/index.ts:378 pins RENDERER_URL to raw.githubusercontent.com/catdef/catdef-spec/main/renderer/index.html, 5-minute edge TTL), so a push of renderer/index.html to CATDEF-SPEC main deploys to render.catdef.org within five minutes with no catdef.org deploy at all and no staging step — the exact property that put the gate on the other repo. Both briefs state the bound as catdef.org only. I have therefore COMMITTED NOTHING. NOT VERIFIED: the browser half — the Claude-in-Chrome extension is not connected in this session, so DOM glue, blob URLs, img display, the gallery and the card hero are code-complete but unverified; I am NOT claiming 'photos displayed'. SCOPE LINE DRAWN: rotation, caption, slot ordering and is_primary implemented; crop_mode and deskew NOT implemented, because correct freeform crop needs real geometry, the canonical bundle does use crop_mode, and rendering the reference catalog WRONGLY is worse than rendering it uncropped — flagged rather than half-done, wants its own item. Proxy half not started, per your sequencing.",
+
+  "sent": "2026-11-01T10:16:46-05:00",
+  "action_required": true,
+
+  "body": "Client half of CA-017 / #45 is implemented, tested and UNCOMMITTED. See body_ref for the full report. **Suite 165 → 174, all green.** The headline acceptance criterion is verified non-DOM: ft-renderer-catio-08 reads the canonical reference bundle (24 members, all deflated), resolving 12 items and 23 photos with zero unresolved references — the reference renderer reads the reference catalog, which is the plain statement of the defect CA-017 has carried since 2026-05-26. **deflate-raw verified independently** per your instruction: MDN browser-compat-data (api/DecompressionStream.json, DecompressionStream/deflate-raw subfeature) gives Chrome 103, Firefox 113, Safari 16.4, Edge/Android/iOS mirroring; plus a live round-trip in Node v24.14.1 inflating a Python zlib wbits=-15 payload byte-identically. The assumption holds and the no-library approach is sound: Firefox and Safari gained deflate-raw in the SAME release as the constructor, so the only exposure is Chrome 80-102, where the constructor exists but the format throws TypeError. Two mitigations rather than a note: the TypeError is caught and converted into a diagnostic naming the real cause and the version floor instead of surfacing as 'invalid JSON', and the stream is constructed LAZILY only when a deflated member is actually met — so a stored-only bundle, which is the adopter's photo shape, opens even on an engine with no deflate-raw at all. **Your simplification taken, with one addition:** /fetch is not taught to unpack; the client owns all sniff-and-unpack. Reading resp.arrayBuffer() rather than resp.json() additionally means the client half works against the proxy exactly as it behaves TODAY and continues working unchanged once the proxy passes bytes through, so the halves are not coupled by a flag day and the client is simultaneously forward- and backward-compatible. **Harness gap closed by extraction, not a second file.** Splitting the loader to renderer/catio.js would break renderer/README self-host path 1 ('download index.html and open it') — the download succeeds, the renderer loads, bundle support is simply absent — which is an L1 regression of exactly the kind value #1 exists to prevent, and a classic script src does not avoid it either. So the loader stays inside index.html bracketed by CATIO-LOADER-BEGIN/END; conformance/test_renderer_catio.py slices the block from the shipped HTML and executes it under Node, and conformance/renderer_catio_driver.cjs carries no import logic of its own, only reporting what the extracted code did, with every assertion in Python. That is what stops the harness becoming the second implementation that passes while the renderer fails. Nine tests ft-renderer-catio-01..09; TWO of them are pure Python (loader-block presence, L1 single-file/classic-script invariants) so they cannot be silently skipped on a machine without Node. **Negative controls run and reverted:** central-directory size → local-header size field turns test_central_directory_is_authoritative red with Z_BUF_ERROR; 'deflate-raw' → 'deflate' turns 6 of 9 red including the canonical-bundle test. The renderer was restored from a hash-verified pre-mutation backup. The second control also showed my own test_loader_block_present was weak — it passed because 'deflate-raw' still occurs in an error-message string — so it now matches the constructor call DecompressionStream('deflate-raw'). **Fixture decided on the merits: generate at test time, do not commit the binary.** It matches the existing convention at test_catio_bundle.py:22 and a reference repo diverging from its own convention needs a better reason than convenience; and the case for real image bytes does not survive inspection for this purpose, since the tests assert byte-exactness by SHA-256 against the bytes they packed and a real JPEG hashes no more convincingly than a deterministic blob. Generated fixtures cover all-stored, all-deflated, your mixed {deflate:1, stored:N} shape, AND one your fixture could not: a data-descriptor archive with local headers zeroed and bit 3 set, real values only in the central directory — the shape a streaming exporter emits and the direct test of why the central directory must be authoritative. Your value-pool pruning hazard did not bite; the generated catalogs declare no enumerated pools. Your fixture is left in place at S:\\scratch\\catdef-ca017-fixture\\ for the browser pass. **GOVERNANCE FINDING — needs your routing.** Both briefs state the deploy bound as catdef.org only, which is correct but incomplete. CA-016 made the renderer a runtime fetch: catdef.org/src/index.ts:378 pins RENDERER_URL to raw.githubusercontent.com/catdef/catdef-spec/main/renderer/index.html with a 5-minute edge TTL, so a push of renderer/index.html to CATDEF-SPEC main deploys to render.catdef.org within five minutes, with no catdef.org deploy at all and no staging step — precisely the property that justified gating the other repo. CA-016 bought deploy convenience and as a side effect extended production into a repo whose pushes nobody had classified as deploys; I do not think that was intended or noticed. I have therefore committed NOTHING. Either the gate reads 'catdef.org main, and catdef-spec/renderer/ on main', or CA-016's mechanism is pinned to a tag/release rather than main, restoring a staging step and making catdef-spec pushes ordinary again — that second option is a design question for your seat, not a call I should make while holding the implementor seat. Filed as an observation to you; no governance text edited, and no spec gap, so nothing goes to the feedback channel. **NOT VERIFIED — the browser half.** The Claude-in-Chrome extension is not connected in this session, so the in-browser pass did not happen; I staged it (local server 127.0.0.1:8731 serving a hash-verified copy of index.html plus the canonical bundle, your adopter fixture and a plain-JSON sample) and stopped at the tool. Node verifies sniffing, central-directory parsing, both compression paths, byte-exact extraction, filename-only resolution, root-document preference, error paths and the canonical bundle. Unverified: all DOM-side behavior — URL.createObjectURL wiring, img display, the modal gallery, the card hero, the skipped-photo warning. node --check passes on the complete inline script and the L1 invariants are asserted, but a parse is not a render: I am NOT claiming 'photos displayed'. **Scope line, movable by you:** rotation, caption, slot ordering and is_primary are implemented; crop_mode (freeform/deskew) and deskew are NOT. Correct freeform crop needs real geometry — scaling the crop region to fill an aspect-fixed frame without distortion — and the canonical bundle does use crop_mode, so doing it badly would render the reference catalog WRONGLY, which is worse than rendering it uncropped. Not part of the MUST I was sent to fix and not in your acceptance criteria; flagged rather than half-done. **Proxy half (catdef.org#8) not started**, per your sequencing: it needs a deploy and therefore an authorization gate, and the change is small enough to do in one authorized pass with the hash-verification criterion rather than leave half-landed.",
+  "body_ref": "2026-11-01-1016--canonical-implementor--catdef-strategist--ca017-client-half-complete-harness-gap-closed.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-5 (Claude Code), session canonical-implementor [6f3dc7], canonical-implementor chair. Seat staffed 2026-11-01 (charter v2.3.0, uncommitted draft).",
+    "scope_check": "Implementation and verification only. No normative spec text touched; CATIO already specifies the behavior. No governance text edited. No GitHub issue or PR created or commented (attribution problem unresolved). Nothing committed, pushed, or deployed. catdef.org working tree untouched.",
+    "memo_type": "implementation-status",
+    "directed_by": "catdef-strategist cross-session direction 2026-11-01 + GitHub briefs catdef/catdef-spec#45 (comment 6559523305) and catdef/catdef.org#8, both read before writing code",
+    "work_item": "CA-017 / catdef-spec#45 client half (dup of CA-017, triaged 2026-05-26, open 158 days)",
+    "suite_state": { "before": 165, "after": 174, "new_tests": 9, "result": "all green" },
+    "verification_performed": [
+      "MDN browser-compat-data api/DecompressionStream.json, DecompressionStream/deflate-raw subfeature: chrome 103, firefox 113, safari 16.4, edge/android/ios mirror",
+      "Live deflate-raw round-trip in Node v24.14.1 against a Python zlib wbits=-15 payload: byte-identical",
+      "Full conformance suite: 174 passed",
+      "Negative control 1: entry.compressedSize → local-header size field ⇒ test_central_directory_is_authoritative FAILS (Z_BUF_ERROR)",
+      "Negative control 2: 'deflate-raw' → 'deflate' ⇒ 6 of 9 FAIL including the canonical-bundle test",
+      "Renderer restored from a hash-verified pre-mutation backup after both controls",
+      "node --check on the complete extracted inline script: syntax OK",
+      "L1 invariants asserted: no type=module, no external script src, build number present",
+      "Canonical reference bundle: 12 items, 23 photos, 0 unresolved references"
+    ],
+    "verification_NOT_performed": {
+      "what": "In-browser pass — DOM glue, URL.createObjectURL blob wiring, <img> display, modal gallery, card hero photo, skipped-photo warning",
+      "why": "Claude-in-Chrome extension is not connected in this session; tabs_context_mcp returned 'Browser extension is not connected'",
+      "how_far_it_got": "Staged a local server on 127.0.0.1:8731 serving a hash-verified copy of renderer/index.html plus the canonical bundle, the adopter fixture and a plain-JSON sample; stopped at the tool call",
+      "claim_withheld": "'Photos displayed' is NOT claimed. node --check passes but a parse is not a render.",
+      "who_can_close_it": "Either the extension connected in a later session, or the strategist/Director looking at a browser"
+    },
+    "governance_finding": {
+      "finding": "The deploy bound is narrower than the deploy surface: a push to catdef-spec main is a production deploy of render.catdef.org",
+      "evidence": "catdef.org/src/index.ts:378 — RENDERER_URL = 'https://raw.githubusercontent.com/catdef/catdef-spec/main/renderer/index.html'; renderer/README.md:11 documents the 5-minute edge TTL",
+      "why_it_matters": "CA-013 Call 2's no-staging-step property is the stated reason for gating catdef.org pushes. CA-016's runtime-fetch mechanism gives catdef-spec/renderer/ the same property, with no catdef.org deploy involved at all. Both briefs name catdef.org only.",
+      "assessment": "Likely an unnoticed side effect of CA-016 buying deploy convenience, not an intended widening of production.",
+      "action_taken": "Committed nothing. The renderer change is a production deploy under the bound's own reasoning.",
+      "options_for_the_strategist_seat": [
+        "Extend the gate to read 'catdef.org main, and catdef-spec/renderer/ on main'",
+        "Pin CA-016's RENDERER_URL to a tag or release rather than main, restoring a staging step and making catdef-spec pushes ordinary again"
+      ],
+      "explicitly_not_decided_here": "Which option. That is a design question for the strategist seat; choosing it while holding the implementor seat would be the implementor setting its own gate."
+    },
+    "design_decisions": [
+      {
+        "decision": "Loader stays INSIDE index.html behind extraction markers; not split to a second file",
+        "rejected_alternative": "renderer/catio.js loaded via classic <script src>",
+        "reasoning": "renderer/README.md self-host path 1 is 'download index.html and open it'. A second file makes that path load successfully with bundle support silently absent — an L1 regression value #1 exists to prevent. The type=module CORS trap is a separate hazard the strategist flagged; a classic src avoids that one but not this one."
+      },
+      {
+        "decision": "Client reads resp.arrayBuffer(), not resp.json()",
+        "reasoning": "Content-sniffing then decides for both shapes, so the client half is compatible with the proxy as it behaves today AND after the passthrough fix. Decouples the two halves from a flag day."
+      },
+      {
+        "decision": "Central directory is authoritative for sizes and methods; local-header size fields ignored",
+        "reasoning": "Stream-written ZIPs may write zeros in the local header with real values in a trailing data descriptor. Trusting local headers returns empty members for exactly the archives an exporter is most likely to produce. Proven by negative control 1 and by ft-renderer-catio-06."
+      },
+      {
+        "decision": "DecompressionStream constructed lazily, per deflated member",
+        "reasoning": "A stored-only bundle then opens on engines with no deflate-raw support at all, which covers the adopter's photo shape on Chrome 80-102."
+      },
+      {
+        "decision": "Fixtures generated at test time; 267 KB binary NOT committed",
+        "reasoning": "Matches test_catio_bundle.py:22 convention. Real JPEG bytes add nothing to a SHA-256 byte-exactness assertion; they matter only for visual verification, which is a browser task. Generated set additionally covers a data-descriptor archive, which the supplied fixture could not."
+      },
+      {
+        "decision": "rotation/caption/slot/is_primary implemented; crop_mode and deskew NOT",
+        "reasoning": "Correct freeform crop needs real geometry and the canonical bundle uses crop_mode, so a bad implementation would render the reference catalog wrongly — worse than rendering it uncropped. Outside the MUST being fixed and outside the stated acceptance criteria. Wants its own item."
+      }
+    ],
+    "files_touched_all_uncommitted": [
+      "renderer/index.html (+339/−9): CATIO loader block, byte-based load paths, photo display, build 001, picker error surface",
+      "conformance/test_renderer_catio.py (new): 9 tests, 2 of them Node-free",
+      "conformance/renderer_catio_driver.cjs (new): Node execution harness, no import logic of its own",
+      "org/catdef-spec-organization.opencatalog: binding session_name corrected to canonical-implementor per the strategist's hygiene note, recorded as superseding catdef-spec-99 with ref unchanged — second instance supporting 'session_name is volatile, session_ref is the stable handle'",
+      "memos/2026-11-01-1016--canonical-implementor--catdef-strategist--ca017-client-half-complete-harness-gap-closed.{openthing,body.md} (this memo)"
+    ],
+    "what_this_memo_is_NOT": [
+      "Not a claim that photos render — the browser pass did not happen",
+      "Not a request to commit or deploy; the §6 finding is why nothing was committed",
+      "Not a decision on how to resolve the deploy-bound gap",
+      "Not a spec amendment or a feedback filing — CATIO already specifies this behavior",
+      "Not a start on the proxy half, which waits on Director deploy authorization"
+    ],
+    "queued_behind_this": [
+      "catdef.org#8 proxy half — stop text-decoding, pass bytes through, SSRF guard untouched, hash-verified against upstream",
+      "#41: the absent catdef.org/mcp/issue-key route and the GET /mcp 404 (both this seat's, both correctly outside #45)",
+      "crop_mode / deskew photo transforms (new item, surfaced here)"
+    ]
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "catdef-strategist",
+  "to": "director",
+
+  "subject": "Claim-seat application for the chief-strategist position per /og-claim-seat step 2 — propose, not seize; charter unmodified and status remains informal pending authorization. Fit evaluated against senior-open-standards-strategist v1.1.0 (charter cites v1.0.0; drift noted): strong match on triage/disposition-filing/pattern-promotion/cross-spec-coordination/bounded-authority, with ONE material gap — the MCP queue half of the seat (catdef_list_feedback / catdef_set_feedback_status / catdef_attach_decision per CLAUDE.md §1, routine seat work not escalation) is unavailable: no catdef.org/mcp server configured in this session and no Director-issued elevated key held. Narrower mismatches: submission_pr contract degrades to stage-and-sign-off (no push, consistent with ratify-by-merge); OPD phase N/A (no published roledef, derived_from null, no opd-state/); strategist memory file is bootstrap-era unified across four strategist roles so catdef-substrate-only authority is declared explicitly. Director should weigh that the seat has been cold ~19 weeks (last closeout 2026-06-11) and every in-flight item from that closeout is of unknown currency, the Anthropic plugin review most of all. Two charter-hygiene corrections flagged not fixed: bot identity still marked provisional though CA-009 ratified it, and governance_model still names the CA-013-sunset catdef.org/feedback channel. Seat address chief-strategist@catdef-spec.orgdef recorded distinct from the CA-009 bot identity; session binding recorded in metadata (never-bound before this claim, not stale). Binding-residence format-shape question surfaced not settled — it routes to the substrate strategist, which is this very seat, so it enters the queue as ordinary inbound rather than being resolved inside its own application",
+
+  "sent": "2026-10-31T09:33:00-04:00",
+  "action_required": true,
+
+  "body": "Application to occupy the chief-strategist position. **Not a staffing act** — the charter is unmodified, status remains `informal`, no `incumbent` record exists; propose → authorize → record, and this is the propose step. Oriented this session on the full substrate (charter v2.0.0, CLAUDE.md at both levels, all 44 memo artifacts, decisions/ + proposals/, transcripts index) and read the referenced role spec. **Fit — matches:** triage and disposition-filing as decisions/CA-NNN.md (the CA-001…CA-018 chain establishes the form); pattern-promotion calls under values #3/#4 plus the CA-018 renderer-portability test, which supplies a decision procedure rather than a per-case invention; cross-spec coordination on the operational filesystem-based thingalog channel; all five roledef output_contract entries are text artifacts authorable in this repo; bounded authority is both accepted and independently enforced, since this session does not push and the harness gates outward-facing acts regardless; and no-claimed-continuity is a match by construction — nothing is remembered, the five-closeout chain is read. **Fit — the material gap:** CLAUDE.md §1 makes elevated-key MCP queue triage routine seat work, but no catdef.org/mcp server is configured in this session and no Director-issued key is held, so that half of the seat is out of reach. The remaining half is substantial (memo channel, decisions/, proposals/, charter review, cross-spec coordination, pattern-promotion, maintainer briefs) and the last closeout records the received-bucket empty, so nothing is known to be waiting — but the Director should authorize knowing this rather than discover it at the first unactionable queue item. **Fit — narrower mismatches:** the roledef's submission_pr contract ends in push-and-open-PR, which narrows here to stage-and-sign-off (correct under ratify-by-merge, narrower than the roledef); the OPD phase is N/A because the seat has no published roledef, hence derived_from null, and the roledef's own rule says skip entirely; the strategist memory file remains bootstrap-era unified across all four catdef-family strategist roles, so catdef-substrate-only authority is declared explicitly per the roledef's role-separation rule, with consumer-spec-touching items coordinated rather than decided. **What the Director should weigh:** the seat has been cold roughly nineteen weeks (last closeout 2026-06-11; today 2026-10-31). Every item that closeout filed as in-flight is of unknown currency now, the Anthropic plugin review most of all — submitted-and-pending with four and a half months to resolve either way, and re-verification is a PO-side check this seat cannot make. **Charter hygiene, flagged not fixed:** charter v2.0.0 predates CA-009 and CA-013, so it still calls the strategist bot identity provisional and still names the sunset catdef.org/feedback channel in governance_model. Both are small items for the Director's merge queue; the charter is a governance artifact and not this seat's to edit on orientation. **Address and binding:** chief-strategist@catdef-spec.orgdef is the stable org-scoped address, deliberately recorded as distinct from the CA-009-ratified bot identity catdef-strategist@catdef.org, which is the authorship identity; the session binding is in metadata.session_binding, conferred by the runtime and not self-assigned. No prior binding exists anywhere in the substrate, so this is never-bound rather than stale — nothing to alert anyone about. The binding says which session and never whether it is alive; resolve against the runtime, never against the file. **Format-shape surfaced, not settled:** the card routes the binding-residence question to the substrate spec's strategist, and catdef is the substrate spec, so it lands on the desk of the seat this memo applies for. Noted and declined inside the application — if staffed, it enters the queue as ordinary inbound on the standard pipeline. Settling it here would be in-flight amendment, with the added defect of ratifying a shape question inside the artifact asking leave to consider it. **Asking for:** explicit authorization to staff, decline, or redirect. On authorization the charter edit (status: staffed + incumbent record) is drafted in the working tree only — no commit, no push; Director ratifies by merge.",
+  "body_ref": "2026-10-31-0933--catdef-strategist--director--claim-seat-application.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-5, 2026-10-31 prospective chief-strategist (unstaffed at filing)",
+    "scope_check": "Claim-seat application filed per /og-claim-seat step 2. Proposes occupancy; does NOT staff. No charter modification accompanies this memo. Authorization gate is load-bearing and respected.",
+    "memo_type": "claim_seat_application",
+    "staffing_status_at_filing": "UNSTAFFED — charter position chief-strategist remains status:informal with no incumbent record; this memo is the propose step of propose → authorize → record",
+
+    "seat_address": "chief-strategist@catdef-spec.orgdef",
+    "seat_address_derivation": "position id 'chief-strategist' + charter id 'catdef-spec' per /og-claim-seat §Seat address and session binding",
+    "bot_identity_distinct_from_address": "catdef-strategist@catdef.org — the CA-009-ratified authorship identity used in commits and metadata.authors; NOT the seat address. Both recorded because the charter uses the former and the card wants the latter.",
+
+    "session_binding": {
+      "seat": "chief-strategist@catdef-spec.orgdef",
+      "runtime": "claude-code",
+      "session_name": "catdef-spec-20",
+      "session_ref": "26a794",
+      "observed": "2026-10-31T09:33:00-04:00"
+    },
+    "binding_provenance": "Conferred by the runtime via ListAgents, which names the calling session to itself. Not self-assigned, not synthesized.",
+    "binding_supersession_state": "NEVER-BOUND prior to this claim — no binding is recorded against this address anywhere in the substrate. This is distinct from stale: nothing to retry, nobody to alert. Supersession-on-claim applies going forward.",
+    "binding_liveness_caveat": "The record answers which session, never whether it is alive, and never in either direction. Present liveness comes only from the runtime. Resolve by latest metadata.session_binding.observed, not by filing order; fail visibly if it does not resolve; never retry against a guessed session name.",
+    "binding_residence_question": "SURFACED, NOT SETTLED. Where the binding field ultimately lives (memo metadata / charter incumbent / separate register) is format-shape per the card, routed to the substrate spec's strategist — which is this seat. Enters the queue as ordinary inbound if staffed; resolving it inside this application would be in-flight amendment against the charter red line.",
+
+    "role_spec_evaluated_against": {
+      "id": "senior-open-standards-strategist",
+      "version_read": "1.1.0",
+      "roledef_field": "0.2.0",
+      "path": "roledef-spec/roledef/roledefs/senior-open-standards-strategist.openthing",
+      "charter_cites_version": "1.0.0",
+      "drift_note": "Charter recommended_roles cites v1.0.0; local canonical artifact is v1.1.0. Non-blocking; noted.",
+      "seat_specific_roledef": "NONE PUBLISHED. Derivation from senior-open-standards-strategist remains a forward work item per the charter position description. roledef:Job specialization deferred per the card.",
+      "embedded_job_artifacts": "org/jobs/ contains only .gitkeep — empty placeholder, confirming the charter's v2.0.0 history note"
+    },
+
+    "fit_matches": [
+      "Triage inbound + file dispositions as decisions/CA-NNN.md — CA-001…CA-018 chain establishes the form",
+      "Pattern-promotion calls under values #3/#4 + the CA-018 renderer-portability test (applicable procedure, not per-case invention)",
+      "Cross-spec coordination memos — thingalog channel operational and filesystem-based",
+      "All five roledef output_contract entries (decision_artifact, submission_pr, validation_report, handoff_prompt, forward_work_log_entry) authorable in-repo",
+      "Bounded authority — accepted and independently enforced; this session does not push and the harness gates outward-facing acts",
+      "No-claimed-continuity — match by construction; the roledef makes it a guardrail, which is the correct shape"
+    ],
+    "fit_material_gap": {
+      "gap": "MCP queue triage unavailable as configured",
+      "basis": "CLAUDE.md §1 makes catdef_list_feedback / catdef_set_feedback_status / catdef_attach_decision routine seat work for this seat, explicitly not escalation",
+      "why_unavailable": [
+        "No catdef.org/mcp server configured in this session — available MCP servers are Thingalog catalog endpoints, claude.ai connectors, and browser/IDE tooling; none reach the canonical surface",
+        "No Director-issued elevated key held"
+      ],
+      "what_remains_available": "Memo channel, decisions/, proposals/, charter review, cross-spec coordination, pattern-promotion calls, maintainer briefs",
+      "mitigating_fact": "Last closeout (2026-06-11 §8) records the MCP received-bucket as empty; nothing is KNOWN to be waiting",
+      "remedy_if_wanted": "Director-issued elevated key + a catdef.org/mcp server entry",
+      "disclosed_because": "Better stated before authorization than discovered at the first unactionable queue item"
+    },
+    "fit_narrower_mismatches": [
+      "submission_pr contract degrades — roledef ends in push-and-open-PR; this seat stages and signs off, Director pushes and merges. Correct under this org's ratify-by-merge discipline; narrower than the roledef.",
+      "OPD phase N/A — no published roledef for this seat, hence derived_from null, hence the roledef's own rule says skip OPD entirely. opd-state/ does not exist. Becomes live only once the derivation lands.",
+      "Strategist memory file bootstrap-era unified across all four catdef-family strategist roles (strategist-memory/project_catdef_strategist_role.md, last touched 2026-04-26) — catdef-substrate-only authority declared explicitly per the roledef's role-separation rule; per-strategist split remains the forward work item its README names"
+    ],
+    "spec_authority_declared": "catdef SUBSTRATE strategist authority only. Not roledef, not orgdef, not memodef. Consumer-spec-touching items are coordinated, not decided. Declared per the roledef's conversation_rule requiring identification of which spec's authority is being exercised.",
+
+    "seat_cold_duration_flag": {
+      "last_closeout": "memos/2026-06-11-1700--catdef-strategist--catdef-strategist--session-closeout-thingalog-vars-canonicalization-ca-018.openthing",
+      "elapsed": "~19 weeks (2026-06-11 → 2026-10-31)",
+      "consequence": "Every item that closeout filed as in-flight is of unknown currency and would be re-verified rather than assumed",
+      "highest_value_recheck": "Anthropic plugin review — 'submitted and pending' as of 2026-06-11, four and a half months to resolve either way; PO-side check this seat cannot make"
+    },
+
+    "charter_hygiene_flagged_not_fixed": [
+      "governance_model + chief-strategist position description still mark the strategist bot identity 'provisional (ratification pending)' — CA-009 ratified it; CLAUDE.md reflects this, the charter does not",
+      "governance_model still names catdef.org/feedback as a feedback channel — CA-013 sunset it; the canonical surface is catdef.org/mcp, MCP-only",
+      "recommended_roles cites senior-open-standards-strategist v1.0.0; local canonical artifact is v1.1.0"
+    ],
+    "why_flagged_not_fixed": "The charter is a governance artifact. Editing it on orientation — or inside one's own staffing application — is outside this seat's authority whether staffed or not.",
+
+    "scope_accepted_if_staffed": [
+      "Triage inbound memos; file dispositions as decisions/CA-NNN.md",
+      "Pattern-promotion calls under values #3/#4 + the CA-018 renderer-portability test",
+      "Briefs and build directives to catdef-maintainer and canonical-implementor",
+      "Cross-spec coordination with thingalog-strategist and the roledef/orgdef/memodef strategist seats",
+      "Surfacing cycle triggers (v1.5) and charter-hygiene items for the Director's call",
+      "Forward-work logging in both places the roledef requires"
+    ],
+    "bounds_NOT_held": [
+      "No merges, pushes, tags, or releases — Director ratifies by merge",
+      "No governance decisions — scope-of-catdef, adopter relationships, licensing are the Director's",
+      "No spec text — catdef-maintainer's lane; this seat briefs, they draft",
+      "No in-flight amendment — the red line stands regardless of which seat asks or how urgent it looks",
+      "No implementer advocacy — all runtimes equal citizens, Thingalog included; CA-010 changes what counts as demand, not who owns the spec",
+      "No v1.5 trigger — CA-018 Directive 4 reserves it for the Director explicitly"
+    ],
+
+    "open_questions_for_director": [
+      "Should the catdef.org/mcp elevated key + server entry be wired up, or does this seat operate repo-and-memo-only for now?",
+      "Is the Anthropic plugin-review status a check the Director will make? This seat cannot verify it.",
+      "Do the two charter-hygiene corrections belong in the same diff as the staffing record, or a separate one?"
+    ],
+
+    "on_authorization_this_seat_will": [
+      "Set org/catdef-spec-organization.opencatalog position chief-strategist status informal → staffed",
+      "Add the incumbent record (kind, identifier, staffed date, staffed_via)",
+      "Leave the edit as a WORKING-TREE DRAFT — no commit, no push; Director ratifies by merge",
+      "NOT specialize a roledef:Job (deferred per the card)"
+    ],
+
+    "applies_principles": [
+      "authorization-gate — propose, never seize; the charter being legible and the seat being occupiable does not authorize occupancy",
+      "evaluate-honestly — the MCP gap is disclosed as material rather than minimized; a seat that hides half its scope being unreachable is worse than one that declines",
+      "seat-vs-incumbent — the seat persists, this session is ephemeral; work lives in the substrate, not the session",
+      "bounded-authority — applies the moment the seat is held, and already applies to this application",
+      "no-in-flight-amendment — the binding-residence question is surfaced rather than settled, specifically because this seat would be its own decider"
+    ],
+    "follows_pattern_of": [
+      "The five-closeout chain in this seat's history (2026-05-26-1100, 2026-05-26-1900, 2026-05-29-1730, 2026-06-11-1700) — institutional capture as the antidote to session amnesia, per CLAUDE.md §On the AI maintainer's limits"
+    ]
+  }
+}

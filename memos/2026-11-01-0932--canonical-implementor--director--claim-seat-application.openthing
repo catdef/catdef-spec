@@ -1,0 +1,114 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "canonical-implementor",
+  "to": "director",
+
+  "subject": "Claim-seat application for canonical-implementor (currently status:informal, NO incumbent record — this would be the first recorded incumbent, same informal→staffed shape as chief-strategist on 2026-10-31). Fit: GOOD, and better than it looks for three reasons — the seat's bot identity canonical-implementor@catdef.org is ALREADY RATIFIED by CA-013 Call 3 (no provisional wording needed, unlike the strategist seat's CA-001/007/008 path); this seat does NOT need an MCP key per the explicit 2026-05-26-1500 brief, so the credential gap that renders the strategist's queue-triage half inert does not gate this seat; and CA-013 Call 2's deploy pipeline is live and working (CLOUDFLARE_API_TOKEN set 2026-05-26T16:38:35Z, last push-triggered run succeeded in 24s), closing the Director-action item from the 2026-05-26-1600 ship memo. TWO FINDINGS from reading the worker source during fit evaluation: (1) catdef.org/mcp/issue-key is ADVERTISED in src/mcp/server.ts:53 but has NO route handler — the self-serve standard-key path an external agent needs to file feedback at all was never built; strategist's §3.1 listed this 'not verified', now verified ABSENT, bears directly on #41 and plugin #1; (2) GET /mcp 404 confirmed at source — /mcp is POST-only with no GET handler or fallthrough pointer, so the observed 404 is the source as written, not misconfiguration. Also confirmed: no ZIP/inflate logic anywhere in catdef.org/src/, so CA-017/#45 is unhandled on the PROXY side as well as the client side. FOUR PRECONDITIONS disclosed, all access-shaped not capability-shaped: catdef.org is outside this session's working directories (reads verified, writes will prompt per-call; the 2026-05-26 incumbent had it configured, this session does not); a push to catdef.org main IS a production deploy with no staging step, so push/deploy is treated as requiring explicit per-act Director authorization and NOT a standing seat privilege; local git identity is set to the WRONG seat (catdef-maintainer) and must be changed before any commit; GitHub issue attribution stays blocked on the §2.1 problem though commit attribution does not, since commit authorship can carry the bot identity while the push uses the Director's token per the e641be2/5d3e453 precedent. Awaiting authorization — no seat recorded, no charter edit, nothing built, nothing pushed.",
+
+  "sent": "2026-11-01T09:32:48-05:00",
+  "action_required": true,
+
+  "body": "Application to occupy canonical-implementor. **Oriented first** via /og-orient this session against the charter, both CLAUDE.md levels, CONTRIBUTING.md, the CA-001…CA-018 chain, all 50 memo artifacts, and proposals/ — this card rests on that read rather than honouring it on the honour system. **Fit: good.** The position scopes this seat to the render.catdef.org L1 reference renderer, the /fetch SSRF-guarded proxy, catdef-family namespaced-type rendering, and MCP-tool integration, operating from the catdef.org repo. That is implementation work — code, conformance suite, git/gh, curl verification against deployed behavior — and it matches what this session can do. Rather than assume the surface, I read it: see the two findings below. **Three things make the fit stronger than the position description alone suggests.** (1) The bot identity `canonical-implementor <canonical-implementor@catdef.org>` is already RATIFIED by CA-013 Call 3 — used provisionally on catdef-plugin e641be2 and catdef.org 5d3e453, then ratified with 'no provisional wording, matching the ratified posture'. This seat needs no identity ratification to proceed, unlike the strategist seat's CA-001/007/008 → CA-009 path. (2) This seat does not need an MCP key: the 2026-05-26-1500 pickup brief states outright that 'the canonical-implementor seat for v0.2+ work doesn't need a seat key — implementer work is local-repo + git-push + wrangler-deploy, not MCP-tool-call.' The elevated-key gap that currently makes the strategist seat's queue-triage half inert does not gate this one. (3) The deploy pipeline works: CLOUDFLARE_API_TOKEN is set on catdef/catdef.org (2026-05-26T16:38:35Z) and the latest push-triggered run succeeded in 24s, which closes the 'Director action required' item left open by the 2026-05-26-1600 ship memo. **Prior occupancy:** operated 2026-05-25 evening → 2026-05-26 by claude-opus-4-7-1m (shipped catdef-plugin v1.4.0, catdef.org/mcp v0.1 and v0.1.1, the CA-016 renderer move). Those sessions recorded only drafted_by_session prose, predating the 2026-08-25 binding convention, so there is NO prior binding on this address to supersede — the occupancies are noted as dated facts, not as bindings. **Two findings from the fit read, filed because they are this seat's to own and NOT as a start of work.** Finding 1: catdef.org/mcp/issue-key does not exist. src/mcp/server.ts:53 tells callers 'Standard keys (cdfk_<random>) are self-serve; ask the Director or check catdef.org/mcp/issue-key' and that string is the ONLY occurrence in the source. The complete route table is GET /, GET /render, GET /fetch, GET /spec, POST /feedback, GET /feedback, POST /mcp, POST /mcp/admin/refresh-counter — no issue-key handler. The server advertises a self-serve key path that was never built, which means the route to a standard key (what an external agent needs to file feedback at all) is absent. The strategist's §3.1 listed this as 'not verified'; it is now verified absent, and it bears directly on #41's acceptance criterion and on plugin #1. Finding 2: the GET /mcp 404 is confirmed at source — /mcp is POST-only, no GET handler, no fallthrough pointer, so the observed 404 is the source behaving as written rather than a misconfiguration. Also confirmed consistent with the strategist's report: no ZIP, inflate, or decompression logic anywhere in catdef.org/src/, so CA-017 / #45 is unhandled on the PROXY side as well as the client side, matching the 502 'Upstream body is not valid UTF-8' exactly. Two patch-level items alongside: renderer/index.html carries no build number (shared project principles mandate one on every page), and renderer/README.md calls catdef.org 'the private catdef.org operations repo' while gh reports it PUBLIC — stale either way, and worth knowing which of the two is wrong. **Preconditions, disclosed rather than minimized.** (a) The seat's stated workspace is outside this session's working directories: the clone at s:/projects-personal/catdef.org is readable (verified) but not configured, so cd is reset on exit and writes will prompt per call; the 2026-05-26 incumbent recorded having it as an additional working directory and this session does not. Remedy: add it, or accept per-call prompts. (b) A push to catdef.org main IS a production deploy — CA-013 Call 2's workflow leaves no staging step between commit and catdef.org/render.catdef.org, so push and deploy are treated here as outward-facing acts requiring explicit per-act Director authorization, never a standing seat privilege; the 2026-05-26 precedent pushed and ran wrangler deploy under PO authorization given at the time, and that is not read as a grant to this session. (c) Local git identity is the WRONG seat — user.name/user.email are catdef-maintainer/catdef-maintainer@catdef.org, so any commit now would mis-attribute to a seat holding no incumbent; must be set to the ratified canonical-implementor identity before this seat commits. (d) GitHub issue attribution is unresolved but commit attribution is not: the §2.1 problem applies to issues and comments (which would land under scottconfusedgorilla) and NOT to commits, since commit authorship can carry the bot identity while the push uses the Director's token — exactly the e641be2 / 5d3e453 precedent. (e) No published roledef and no embedded roledef:Job (recommended_roles cites canonical-implementor as a bare string with no URL; org/jobs/ holds only .gitkeep), so specialization is deferred per the card. (f) This seat is directed, not self-directing — chief-strategist directs it, it reports_to director, and the strategist seat is LIVE and reachable as catdef-strategist [75e16c]; priorities come from the Director or that seat, not from this session's own reading of the backlog. **Scope accepted:** implementation and verification of the L1 renderer (catdef-spec/renderer/), the catdef.org worker (/fetch proxy, /render, MCP server surface), catdef-family namespaced-type rendering, conformance runs against own changes, status memos to the strategist seat per milestone — steady-state catdef-substrate concerns only per x.position.lifecycle. **Bounds NOT held:** no ratification, no governance decisions, no normative spec-text edits (CATDEF_SPEC.md / CATIO_SPEC.md / MCP_REFERENCE.md are the maintainer's draft and the Director's ratification), no merge, no push or deploy without per-act authorization, and the no-in-flight-amendment red line applies to this seat as to any implementer — a spec gap met during implementation gets filed as feedback, not edited into the spec. Issue and PR creation stays blocked on (d). **Queue inherited, listed and NOT started:** from the 2026-05-26-1430 closeout — feedback_audit table, mechanical catdef_validate pytest port, Durable Object for CA-NNN under concurrency, resourceTemplates in catdef_describe (CA-012 v0.2 follow-on), self-serve API-key issuance endpoint (which Finding 1 shows is advertised and absent); from the strategist's 2026-11-01 report — CATIO ZIP support in /fetch and the client loader (CA-017/#45, both sides now confirmed unhandled), the renderer build number, the GET /mcp pointer and issue-key work for #41; plus CA-016 Directive 2, still bundled for a maintainer cycle that has not run. Sequencing is the Director's and the strategist's. **Not done:** seat not taken, charter not edited, no file in catdef.org touched, nothing committed/pushed/deployed, no GitHub issue created or commented, no spec text modified, no queue item started.",
+  "body_ref": "2026-11-01-0932--canonical-implementor--director--claim-seat-application.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-5 (Claude Code), session catdef-spec-99 [6f3dc7], proposing to occupy the canonical-implementor seat. Oriented via /og-orient earlier in the same session before this card ran.",
+    "scope_check": "This memo is an APPLICATION, not a staffing record. No charter edit was made; org/catdef-spec-organization.opencatalog is untouched by this card. The authorization gate per /og-claim-seat is explicit: propose → authorize → record. The seat being informal-with-no-incumbent does not authorize occupying it. Filed UNCOMMITTED — the Director ratifies by merge.",
+    "memo_type": "claim-seat-application",
+    "staffing_status_at_filing": "status:informal with NO incumbent record. Proposed transition informal → staffed, first recorded incumbent. Mirrors the chief-strategist transition of 2026-10-31 (charter v2.1.0).",
+    "seat_address": "canonical-implementor@catdef-spec.orgdef",
+    "seat_address_derivation": "<seat>@<charter-id>.orgdef, where seat = the orgdef:Position id 'canonical-implementor' and charter-id = the charter's top-level id 'catdef-spec'. Address is stable and org-scoped; it is not conferred by this memo and not self-assigned.",
+    "bot_identity_distinct_from_address": "The seat ADDRESS (canonical-implementor@catdef-spec.orgdef) is the org-scoped routing identity. The seat's BOT IDENTITY for git authorship is canonical-implementor <canonical-implementor@catdef.org>, RATIFIED by CA-013 Call 3. These are different things and both are recorded deliberately. The bot identity is NOT currently set in this repo's git config — see git_identity_mismatch.",
+    "session_binding": {
+      "seat": "canonical-implementor@catdef-spec.orgdef",
+      "runtime": "claude-code",
+      "session_name": "catdef-spec-99",
+      "session_ref": "6f3dc7",
+      "observed": "2026-11-01T09:32:48-05:00"
+    },
+    "binding_provenance": "Runtime ListAgents self-report, which names the calling session to itself and is authoritative for the messaging name / reachability. Not synthesized. This seat is reachable as catdef-spec-99.",
+    "binding_supersession_state": "NOTHING TO SUPERSEDE. No prior session_binding has ever been recorded against canonical-implementor@catdef-spec.orgdef. The two prior occupancies (2026-05-25 evening → 2026-05-26, claude-opus-4-7-1m) recorded only drafted_by_session prose and predate the 2026-08-25 binding convention; they are kept as dated facts about who operated the seat, NOT as bindings. Supersession-on-claim therefore has no prior claim to displace here.",
+    "binding_liveness_caveat": "A binding answers WHICH session, never whether it is alive, in either direction. Present liveness comes only from the runtime, never from this record. Reachability is best-effort and unreachability is reportable.",
+    "binding_residence_question": "Where session_binding ultimately lives (memo metadata vs charter incumbent vs separate register) is FORMAT-SHAPE and is not settled here. Recorded in memo metadata because it works today inside existing structure and needs nothing minted, following the 2026-08-25 thingalog precedent. The question is ALREADY QUEUED as ordinary inbound at this org's chief-strategist seat per the charter's session_binding.note — not re-raised by this memo.",
+    "role_spec_evaluated_against": {
+      "id": "none-published",
+      "roledef_field": "absent",
+      "path": "n/a",
+      "charter_cites_version": "recommended_roles cites 'canonical-implementor' as a BARE STRING with no roledef id/version/url, unlike senior-open-standards-strategist which carries all three",
+      "seat_specific_roledef": "NONE EXISTS. Fit was evaluated against the orgdef:Position description, its x.position.lifecycle marker, the two reports_to/directs relationships naming the seat, and the substrate record of the seat's prior work (memos 2026-05-25-2300, 2026-05-26-0100, 2026-05-26-1430, 2026-05-26-1500, 2026-05-26-1600, 2026-05-26-2200).",
+      "embedded_job_artifacts": "NONE. org/jobs/ contains only .gitkeep, consistent with the charter v2.0.0 history note that it was an empty placeholder. roledef:Job specialization is DEFERRED per the card.",
+      "drift_note": "The absence of a published roledef for this seat is a forward work item of the same kind the chief-strategist seat carries (portable: false, portable_via: NONE YET), and is flagged, not fixed, by this memo."
+    },
+    "fit_material_gaps": [
+      {
+        "gap": "The seat's stated workspace (catdef.org repo) is outside this session's configured working directories",
+        "basis": "Position description: 'Operates from the catdef.org repo.' Clone exists at s:/projects-personal/catdef.org and reads are VERIFIED working; it is not among this session's additional working directories, so cd into it is reset on exit and writes will raise an approval prompt per call.",
+        "precedent_contrast": "The 2026-05-26 incumbent explicitly recorded 'additional working directories included s:/Projects/catdef.org' in memo 2026-05-26-1430. This session does not have that.",
+        "what_remains_available": "Full read access to the repo, which is what the fit evaluation and the two findings in this memo rest on. The catdef-spec-side half of the seat's scope (renderer/, conformance/) is inside the primary working directory and unaffected.",
+        "remedy_if_wanted": "Add s:/projects-personal/catdef.org as an additional working directory, or accept per-call approval prompts.",
+        "disclosed_because": "A seat that evaluates its fit against a workspace it cannot write is guessing about half its scope. Stated rather than discovered later."
+      },
+      {
+        "gap": "A push to catdef.org main IS a production deploy — there is no staging step",
+        "basis": "CA-013 Call 2's .github/workflows/deploy.yml triggers on push to main and deploys via wrangler. Verified live: CLOUDFLARE_API_TOKEN set 2026-05-26T16:38:35Z; most recent push-triggered run succeeded in 24s. Commit and production are the same act for catdef.org and render.catdef.org.",
+        "posture_taken": "Push and deploy on that repo are treated as outward-facing acts requiring EXPLICIT PER-ACT Director authorization, never a standing privilege of the seat.",
+        "precedent_not_read_as_grant": "The 2026-05-26 incumbent pushed commits and ran wrangler deploy directly, under PO authorization given at that time. That is not read as authorization for this session.",
+        "disclosed_because": "Bounded authority is cheap to state and expensive to discover after a production deploy nobody asked for."
+      },
+      {
+        "gap": "Local git identity is set to the WRONG seat",
+        "basis": "git config user.name/user.email in catdef-spec are catdef-maintainer / catdef-maintainer@catdef.org — a seat that holds NO incumbent. Any commit from this session right now would mis-attribute.",
+        "remedy_if_wanted": "Set to the ratified canonical-implementor <canonical-implementor@catdef.org> before this seat commits anything. Not done by this card: the card does not commit, and changing identity before authorization would presume the seat.",
+        "disclosed_because": "Separately flagged during /og-orient as a hygiene item; it becomes load-bearing the moment this seat is authorized to commit."
+      },
+      {
+        "gap": "GitHub issue attribution unresolved; commit attribution is NOT",
+        "basis": "The strategist's 2026-11-01 §2.1 attribution problem: the only credential is the Director's personal account (scottconfusedgorilla), so issues and comments would sign as the Director. This DOES NOT extend to commits — commit authorship can carry the bot identity while the push uses the Director's token, which is exactly the established precedent on catdef-plugin e641be2 and catdef.org 5d3e453.",
+        "consequence": "This seat can be correctly attributed in the COMMIT record today and cannot be in the ISSUE record. Issue and PR creation therefore stays blocked pending the Director's call on blocker 3 of the 2026-11-01 readiness report.",
+        "disclosed_because": "The distinction is load-bearing and collapsing it would either over-block the seat or under-report the problem."
+      },
+      {
+        "gap": "This seat is directed, not self-directing",
+        "basis": "Charter relationships: chief-strategist directs canonical-implementor; canonical-implementor reports_to director. The strategist seat is LIVE and reachable as catdef-strategist [75e16c] per ListAgents at 2026-11-01T09:32.",
+        "consequence": "Work priorities for this seat come from the Director or from the strategist seat. The queue in §6 of the body is LISTED, not self-assigned, and nothing in it is started.",
+        "disclosed_because": "An implementer seat that sequences its own backlog has quietly taken the strategist's call."
+      }
+    ],
+    "findings_from_fit_read": [
+      {
+        "finding": "catdef.org/mcp/issue-key is ADVERTISED but NOT IMPLEMENTED",
+        "evidence": "src/mcp/server.ts:53 — 'Standard keys (cdfk_<random>) are self-serve; ask the Director or check catdef.org/mcp/issue-key.' That is the ONLY occurrence of issue-key in the source. Complete route table in src/index.ts: GET /, GET /render, GET /fetch, GET /spec, POST /feedback, GET /feedback, POST /mcp, POST /mcp/admin/refresh-counter. No issue-key handler exists.",
+        "status_change": "The strategist's 2026-11-01 §3.1 listed this path as 'not verified'. It is now VERIFIED ABSENT.",
+        "why_it_matters": "The self-serve route to a standard key is what an external agent needs in order to file feedback at all. Bears directly on #41's acceptance criterion ('a fresh agent given only the CatDef repository URL discovers feedback instructions') and on plugin #1. Also consistent with the 2026-05-26-1430 closeout listing 'self-serve API-key issuance endpoint' as queued v0.2 work never started.",
+        "owned_by": "this seat, once authorized. NOT started."
+      },
+      {
+        "finding": "GET /mcp 404 confirmed at source",
+        "evidence": "/mcp is registered for POST only in src/index.ts, with no GET handler and no fallthrough pointer.",
+        "status_change": "Confirms the strategist's over-the-wire observation is the source behaving as written, not a deployment or routing misconfiguration.",
+        "owned_by": "this seat, once authorized. NOT started."
+      },
+      {
+        "finding": "CA-017 / #45 is unhandled on the PROXY side too, not just the client side",
+        "evidence": "No ZIP, inflate, unzip, or DecompressionStream logic anywhere in catdef.org/src/. Matches the 502 'Upstream body is not valid UTF-8' exactly, and complements the strategist's finding that renderer/index.html carries no inflate logic either.",
+        "owned_by": "this seat, once authorized. NOT started."
+      },
+      {
+        "finding": "Two patch-level items in catdef-spec/renderer/",
+        "evidence": "(1) renderer/index.html has no build number, which the shared project principles mandate on every page specifically so a build is identifiable from a screen capture. (2) renderer/README.md describes catdef.org as 'the private catdef.org operations repo' while gh reports catdef/catdef.org as PUBLIC — one of the two is stale and it is worth knowing which.",
+        "owned_by": "this seat for (1); (2) may be a privacy-posture question for the Director rather than a doc fix, since CA-016 recorded the repo being SET private as part of its motivation."
+      }
+    ],
+    "authority_declared": "If authorized: read, write code, run the conformance suite, verify deployed behavior. NOT: ratify, decide governance, edit normative spec text, merge, push, deploy, or create GitHub issues/PRs. Push and deploy require explicit per-act Director authorization per fit_material_gaps. The no-in-flight-amendment red line applies to this seat as to any other implementer — a spec gap met during implementation is FILED as feedback, never edited into the spec.",
+    "what_this_memo_is_NOT": [
+      "Not a staffing record — the charter is untouched by this card",
+      "Not a start of work — every queue item is listed and none is started",
+      "Not a claim on the strategist's sequencing call",
+      "Not an assertion that the prior occupancies' push/deploy practice authorizes this session",
+      "Not a settlement of the binding-residence question, which is already queued at the strategist seat"
+    ]
+  }
+}

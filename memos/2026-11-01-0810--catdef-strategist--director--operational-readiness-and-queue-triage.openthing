@@ -1,0 +1,149 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "catdef-strategist",
+  "to": "director",
+
+  "subject": "Operational readiness report + triage of the six-issue governance queue. Seat READY with one credential-shaped gap. GitHub: read VERIFIED on both repos (ADMIN, public); write capability present but DELIBERATELY NOT EXERCISED because the only credential is the Director's personal account, which collapses the strategist and Director seats and contradicts the seat-attribution that issues #42/#43/#44 explicitly require; Projects board BLOCKED on missing read:project scope, which blocks #42's first work item. MCP: endpoint LIVE (catdef-org-mcp v0.1.1, protocol 2025-03-26), anonymous tier verified working (4 tools, 8 resources, catdef_lookup returns real passages), standard and elevated tiers NOT held — catdef_list_feedback refused cleanly with -32002, no bypass attempted, so queue triage is inert. Discoverability defect found: GET catdef.org/mcp returns 404 Not found (POST-only), and catdef_report_feedback is invisible at anonymous tier, both of which directly defeat #41's acceptance criterion. HEADLINE: issue #45 is MISDIAGNOSED — render.catdef.org serves HTTP 200 with the current reference implementation; the real failure is that the canonical artifact riverside-heritage-reference-v1.4.opencatalog is a ZIP (PK\\x03\\x04, first member catalog.opencatalog) and neither /fetch nor the client-side loader handles CATIO bundles. Control test proves /fetch is sound (200 on plain-JSON catdef, 502 only on the bundle). This DUPLICATES CA-017, triaged 2026-05-26 and deferred to v0.2 — 158 days. Two framing corrections reduce the blocker: local file selection ALREADY EXISTS in the renderer, and airtrov round-trip testing is very likely unblocked today if airtrov exports plain JSON rather than a bundle — one unanswered question that decides whether #45 is launch-blocking at all. Recommended sequence: Phase 0 credentials, then #45 rescoped, then #41+plugin#1 together, then #43, #42, #44 last. Unattended daily loop designed in §6 with in-repo persistent state, three-layer idempotency, consent-gated publication, and two named preconditions. Four Director calls requested in §7; recommend starting with the airtrov export-shape question because it costs nothing and may clear the launch blocker today",
+
+  "sent": "2026-11-01T08:10:34-05:00",
+  "action_required": true,
+
+  "body": "Readiness report from the catdef-strategist seat, first assignment since staffing 2026-10-31. Recommendations only: no governance decisions taken, no spec text touched, nothing published, no credentials handled, no authorization bypass attempted. **Seat readiness:** ready. Charter, CLAUDE.md at both levels, CONTRIBUTING.md, the CA-001…CA-018 chain, all 44 memos, nine Draft proposals, and the senior-open-standards-strategist v1.1.0 role spec all read. Authority bounds unchanged — investigate, analyze, triage, draft, recommend; no merge, no deploy, no governance, no publication. Binding rebound twice since staffing (Windows restart killed catdef-spec-20 [26a794]; PO /rename moved the name to catdef-strategist, ref 75e16c unchanged); the rename DID surface in ListAgents here, unlike the thingalog 2026-08-25 precedent, so the rule stays read-the-runtime-never-infer. **GitHub, tested not assumed:** authenticated as scottconfusedgorilla with scopes gist/read:org/repo/workflow. Read verified — both repos public, viewerPermission ADMIN, read spec #41-#45, plugin #1, and pre-existing spec #1. Comment/create/modify capability is present but NOT exercised, and that is a governance call rather than a permission failure: every write would be attributed to the Director's personal account, and #42/#43/#44 all require the public record to show strategist recommendation distinct from Director decision WITH seat attribution. One credential signing both seats makes that record misleading — a reader would see the Director recommending to himself — and CONTRIBUTING.md already promises AI work is pushed under a dedicated bot identity. Needs your decision before the seat publishes anything. Projects board BLOCKED: gh project list and GraphQL projectsV2 both fail INSUFFICIENT_SCOPES, missing read:project. I therefore CANNOT verify whether a board already exists, which is literally #42's first work item. **MCP, tested not assumed:** reached by curl over HTTPS, not as MCP tools — no catdef.org/mcp server is configured in this session. Endpoint healthy: catdef-org-mcp v0.1.1, protocol 2025-03-26. Anonymous tier verified working: catdef_describe, catdef_lookup, catdef_list_decisions, catdef_validate, plus 8 resources; catdef_lookup returned real CATDEF_SPEC.md passages. catdef_report_feedback is NOT exposed at anonymous tier. Elevated refused cleanly: -32002 requires elevated tier (current: anonymous). No key held, so the queue half of this seat — which CLAUDE.md §1 defines as ROUTINE seat work, not escalation — is inert; everything in this report comes from repo artifacts and live probing, never from the queue. **Discoverability defect bearing on #41:** GET catdef.org/mcp returns HTTP 404 {error: Not found}; only POST JSON-RPC works. An agent following the URL printed in CLAUDE.md, CONTRIBUTING.md and the issues themselves is told the canonical surface does not exist — while #41's criterion is that a fresh agent discovers feedback instructions from the repo URL alone. Compounded by the invisible feedback tool and by CONTRIBUTING.md still pointing twice at the CA-013-sunset catdef.org/feedback. A GET returning a short tier/key/tool pointer would close most of #41 by itself. **HEADLINE — #45 is misdiagnosed, root cause found.** The site is not down: render.catdef.org serves HTTP 200, text/html, 21,931 bytes, title 'catdef — Reference Renderer', DNS resolving via Cloudflare, HTTP and HTTPS both fine, catdef.org control also 200. The served page is byte-size-identical to the repo's renderer/index.html, so CA-016's deployment is current. The real failure: /fetch on the canonical artifact returns 502 'Upstream body is not valid UTF-8', because riverside-heritage-reference-v1.4.opencatalog IS A ZIP — first bytes 50 4b 03 04, first member catalog.opencatalog, 1,680,109 bytes, ~833k non-ASCII, undecodable under utf-8/utf-16/cp1252 and unparseable as JSON under any. It is a CATIO bundle wearing a .opencatalog extension. Control experiment proves the proxy is sound: /fetch on plain-JSON samples/watches.opencatalog returns 200 with 8,882 bytes, and /fetch with no param returns a clean 400. So neither /fetch nor the client-side loader handles CATIO bundles — no jszip, unzip, DecompressionStream or inflate anywhere in renderer/index.html. The reference renderer cannot render the canonical reference artifact by either path. **And this is already filed:** the 2026-05-27-1230 memo records catdef_list_feedback showing CA-017, status triaged, body '/fetch+ZIP observation', received 2026-05-26 22:36:05; the 2026-06-11 closeout lists CA-017 as still triaged-for-v0.2. #45 duplicates a 158-day-old deferred item that the airtrov dependency has now escalated. **Two corrections that shrink the blocker:** (1) local file selection ALREADY EXISTS — input type=file with accept='.openthing,.opencatalog,.catdef,.json', FileReader, and drag-and-drop are all present; #45 lists it as work to be built when it only needs testing. (2) airtrov round-trip testing is very likely unblocked TODAY if airtrov exports plain JSON, since the control test proves that path works; the ZIP wall is hit only by bundled artifacts, and canonical/ happens to contain both shapes. The single fact I could not determine is which shape airtrov emits, and that one answer decides whether #45 is launch-blocking or merely high-priority. **Side finding:** renderer/index.html carries no build number, which the shared project principles mandate precisely so a deployed build is identifiable from a screen capture — its absence is why 'is the deployment current?' needed byte-size comparison. Patch-level. **Queue:** #45 duplicates CA-017. Separately, the 2026-06-09-1730 thingalog cross-spec ask (denormalization invariant + eventual-consistency semantic + cross-catalog visibility) remains the only substantive undispositioned substrate ask, filed action_required:false on no-urgency grounds which is why the 2026-06-11 closeout declared the queue empty and missed it; its 2026-06-10 reinforcement still lacks an .openthing envelope and is untracked. Dependencies: #45 is the only item with an external dated dependency and is not hard-blocked; #41 is gated by the 404, the invisible tool, the unverified issue-key path and the stale channel pointers; plugin #1 shares #41's discovery story and should move with it; #43 is blocked on the elevated key and is the item that makes the rest self-sustaining; #42 is blocked on read:project plus the attribution problem; #44 depends on #42 and #43 having produced real records and must come last, since publishing a blueprint of a loop that has not run would violate its own acceptance criterion. Recommended sequence: Phase 0 credentials, Phase 1 #45 rescoped, Phase 2 #41 + plugin #1, Phase 3 #43, Phase 4 #42, Phase 5 #44. Values check: nothing proposed touches spec text, so L1-sacred and forward-compatibility are not engaged; ZIP support is an implementation fix since CATIO already specifies the bundle. **Unattended loop (§6, design only):** in-repo committed triage-state.json with a last-processed high-water mark and a per-CA-NNN ledger, because it must survive session death and be readable by the next incumbent — the same reason the memo chain exists. Three-layer idempotency: high-water mark, the ledger keyed on CA-NNN for crash-safe retries, and an issue search for the CA-NNN token to adopt rather than create. That ledger is what makes #42's no-duplicate-issues and #43's no-duplicate-processing true, and it must exist before either. One notification per item per state change, batched daily, nothing auto-approved. Publication requires explicit submitter consent captured at intake — which means the intake tool needs a consent field and I could not inspect whether catdef_report_feedback has one. Outcome-to-submitter has NO mechanism today; the queue lacks a return channel, and the cheapest shape is a status readable by submission token so an agent can poll its own CA-NNN without an elevated key. Flagged as a gap rather than assumed. Failure handling: a run that cannot reach or authenticate logs, exits non-zero, mutates nothing; three consecutive failures escalate; a run never reports success it did not achieve. Two preconditions before unattended running: the elevated key, and the attribution resolution — without the latter a daily job would mass-publish under your personal identity. **Four calls requested:** (1) elevated cdfk_dir_* key, gating #43 and all queue work; (2) read:project scope (gh auth refresh -s read:project, plus -s project to manage), gating #42; (3) a decision on strategist GitHub identity — App, machine user, or explicit acceptance that writes appear as you — gating all publication; (4) the airtrov export-shape answer, gating whether #45 blocks launch. Recommend starting with (4): one question, zero cost, may clear the launch blocker today. Also still awaiting your merge: the 2026-10-31 charter staffing draft at v2.1.0.",
+  "body_ref": "2026-11-01-0810--catdef-strategist--director--operational-readiness-and-queue-triage.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-5, 2026-11-01 catdef-strategist chair (session catdef-strategist [75e16c])",
+    "scope_check": "Operational readiness report + queue triage. Recommendations only. No governance decisions, no spec modification, no GitHub writes, no publication, no credential handling, no authorization bypass.",
+    "memo_type": "operational_readiness_report",
+    "assignment_origin": "Director in-session assignment 2026-11-01 (activate the org's AI-first governance and feedback loop; establish readiness; review the work queue)",
+
+    "seat_readiness": {
+      "status": "READY — one credential-shaped gap, not a capability gap",
+      "staffed": "2026-10-31 (charter v2.1.0, informal → staffed, first recorded incumbent; staffing draft STILL UNMERGED)",
+      "read_this_session": ["org charter v2.1.0", "CLAUDE.md (project + parent)", "CONTRIBUTING.md", "decisions/ CA-001…CA-018", "all 44 memo artifacts", "proposals/ (9, all Draft)", "senior-open-standards-strategist v1.1.0"],
+      "binding_events_since_staffing": "Two rebinds: Windows restart killed catdef-spec-20 [26a794]; PO /rename → catdef-strategist, ref 75e16c unchanged. Rename DID surface in ListAgents, unlike the thingalog-security-tester 2026-08-25 precedent where it did not — rule stays read-the-runtime."
+    },
+
+    "github_access_tested": {
+      "identity": "scottconfusedgorilla (the DIRECTOR's personal account) — no strategist GitHub identity available",
+      "token_scopes": ["gist", "read:org", "repo", "workflow"],
+      "repo_read": "VERIFIED — catdef/catdef-spec and catdef/catdef-plugin both PUBLIC, viewerPermission ADMIN",
+      "issue_read": "VERIFIED — spec #41,#42,#43,#44,#45 + plugin #1 + pre-existing spec #1 (CDF-0002)",
+      "issue_comment": "CAPABILITY PRESENT, NOT EXERCISED — attribution problem below",
+      "issue_create_modify": "CAPABILITY PRESENT, NOT EXERCISED — attribution problem below",
+      "projects_board": "BLOCKED — missing read:project; gh project list and GraphQL projectsV2 both INSUFFICIENT_SCOPES; CANNOT verify whether a board exists, which is #42's first work item",
+      "remedy_projects": "gh auth refresh -s read:project (read) / -s project (manage)"
+    },
+    "attribution_problem": {
+      "finding": "The only available credential signs as the Director, collapsing the strategist and Director seats into one identity",
+      "why_it_is_governance_not_convenience": "#42, #43 and #44 all require the public record to show strategist recommendation distinct from Director decision WITH seat attribution; a single credential makes that record actively misleading (Director appears to recommend to himself)",
+      "existing_promise_in_tension": "CONTRIBUTING.md states AI-drafted work is pushed under the dedicated identity catdef-maintainer <catdef-maintainer@catdef.org>",
+      "consequence": "No write operation exercised; needs a Director decision before the seat publishes anything",
+      "options": ["GitHub App acting as the seat", "machine user + scoped PAT", "explicit acceptance that writes appear as the Director (recorded, so the public record is not read as seat attribution)"]
+    },
+
+    "mcp_access_tested": {
+      "transport_used": "HTTPS via curl — NO catdef.org/mcp server configured in this Claude session; not reached as MCP tools",
+      "endpoint_health": "LIVE — serverInfo catdef-org-mcp v0.1.1, protocolVersion 2025-03-26 (matches the 2026-05-26 ship memo)",
+      "anonymous_tier": "VERIFIED WORKING — tools: catdef_describe, catdef_lookup, catdef_list_decisions, catdef_validate; 8 resources (5 spec docs + canonical catalog + 2 READMEs); catdef_lookup({term:'subcat'}) returned real CATDEF_SPEC.md passages",
+      "standard_tier": "NOT HELD — catdef_report_feedback is not exposed in the anonymous tools/list at all",
+      "elevated_tier": "NOT HELD — catdef_list_feedback → -32002 'requires elevated tier (current: anonymous)'. Clean, correct refusal. No bypass attempted.",
+      "consequence": "Cannot read the queue, retrieve records, or set statuses. The queue-triage half of the seat, which CLAUDE.md §1 defines as ROUTINE work, is inert.",
+      "unverified": "catdef.org/mcp/issue-key (the self-serve standard-key path cited in the server's own instructions)"
+    },
+    "discoverability_defect": {
+      "finding": "GET https://catdef.org/mcp → HTTP 404 {\"error\":\"Not found\"}; only POST JSON-RPC works",
+      "impact": "An agent or human following the URL printed in CLAUDE.md, CONTRIBUTING.md and the issues is told the canonical surface does not exist — directly defeating #41's acceptance criterion",
+      "compounding": ["catdef_report_feedback invisible at anonymous tier", "CONTRIBUTING.md points twice at the CA-013-sunset catdef.org/feedback"],
+      "cheap_fix": "A GET returning a short agent-readable JSON pointer (tiers, key-issuance path, tool list) would close most of #41 on its own"
+    },
+
+    "issue_45_finding": {
+      "verdict": "MISDIAGNOSED as an outage; root cause identified; duplicates an existing queue item",
+      "site_status": "UP — HTTP 200, text/html, 21,931 bytes, title 'catdef — Reference Renderer'; DNS via Cloudflare; HTTP and HTTPS both serve; catdef.org control 200",
+      "deployment_currency": "Served page is byte-size-identical to repo renderer/index.html (21,931) — CA-016 deployment is current",
+      "root_cause": "canonical/riverside-heritage-reference-v1.4.opencatalog IS A ZIP ARCHIVE — magic bytes 50 4b 03 04, first member 'catalog.opencatalog', 1,680,109 bytes, ~833k non-ASCII, undecodable under utf-8/utf-16/cp1252, unparseable as JSON under any. A CATIO bundle carrying a .opencatalog extension.",
+      "failure_observed": "/fetch?url=<canonical> → HTTP 502 {\"error\":\"Upstream body is not valid UTF-8\"}",
+      "control_experiment": ["/fetch?url=<samples/watches.opencatalog> (plain JSON) → HTTP 200, 8,882 bytes — proxy is SOUND", "/fetch with no param → HTTP 400, clear error — error handling is SOUND"],
+      "client_side": "No jszip / unzip / DecompressionStream / inflate anywhere in renderer/index.html — the ZIP wall is hit by BOTH the proxy path and local file selection",
+      "duplicate_of": "CA-017 in the MCP queue — status 'triaged', body '/fetch+ZIP observation', received 2026-05-26 22:36:05, per the 2026-05-27-1230 memo; listed as still triaged-for-v0.2 in the 2026-06-11 closeout. 158 days open.",
+      "framing_correction_1": "Local file selection ALREADY EXISTS — input type=file with accept='.openthing,.opencatalog,.catdef,.json', FileReader, drag-and-drop. #45 lists it as work to build; it needs testing, not building.",
+      "framing_correction_2": "airtrov round-trip testing is VERY LIKELY UNBLOCKED TODAY if airtrov exports plain JSON — the control test proves that path works. canonical/ contains both shapes (the bundle, and a plain-JSON catalog.opencatalog that renders fine).",
+      "the_one_unanswered_question": "Does airtrov export plain JSON or a CATIO bundle? That single answer decides whether #45 is launch-blocking or merely high-priority.",
+      "side_finding": "renderer/index.html has NO build number (grep -c 'build-number' → 0), which the shared project principles mandate so a deployed build is identifiable from a screen capture; its absence is why deployment currency needed byte-size comparison. Patch-level."
+    },
+
+    "queue_analysis": {
+      "duplicates": ["#45 ⊃ CA-017 (/fetch+ZIP, triaged 2026-05-26) — cross-reference, do not re-triage from scratch"],
+      "newly_arrived_during_this_session": {
+        "artifact": "memos/2026-10-31-1120--thingalog-strategist--catdef-strategist--gap-geolocation-cannot-express-a-named-place-without-coordinates.openthing",
+        "sent": "2026-10-31T11:20:00-04:00 — filed during this session's restart window; NOT present at orientation",
+        "gap": "CATDEF_SPEC §GeoLocation requires lat AND lng, so a place known only by name is unrepresentable in a conforming catdef; Thingalog's name-only places are dropped on export",
+        "proposed_shape": "Require at least one of (lat AND lng) OR (label OR address); lat/lng remain required together",
+        "conformance_level": "L1",
+        "demand_signal": "designated reference user (CA-010); the memo states plainly there is NO second-implementer signal",
+        "hazard_named_by_sender": "Relaxing an existing MUST makes previously-INVALID documents valid — an old L1 reader may reject a name-only GeoLocation rather than degrade. Sender explicitly declines to claim the writer-strict/reader-lenient asymmetry settles it.",
+        "preliminary_triage_only": "Writer-side minor (1.x.0); reader-side is the open question and likely needs its own decision artifact. The memo does NOT address value #3 (could this be x.thingalog.place?) — it must, since an extension answer would not be interoperable, which is the argument FOR core but has to be made rather than skipped.",
+        "recommendation": "Enters the normal pipeline alongside the 2026-06-09 ask, after Phase 0. No disposition drafted in a readiness report."
+      },
+      "process_defect_two_instances": {
+        "finding": "Both substantive Thingalog substrate asks (2026-06-09 and 2026-10-31) were filed action_required:false as observations, and both were therefore invisible to the flag-based sweep that produced 'queue: empty' in the 2026-06-11 closeout",
+        "fault_location": "Receiving side, not sending side — a courteous non-urgent filing is correct sender behavior; this seat's intake wrongly treats action_required as the open-item predicate while the reference user's convention is to file real asks without it",
+        "consequence_for_43": "Any unattended loop inheriting that predicate inherits the blind spot and will confidently report an empty queue while asks accumulate",
+        "correction": "The open-item test MUST be 'undispositioned', not 'flagged' — the §6 ledger therefore keys on disposition state, never on action_required. Neither item would have been found from the flag alone."
+      },
+      "pre_existing_undispositioned": "2026-06-09-1730 thingalog cross-spec ask (denormalization invariant + eventual-consistency semantic + cross-catalog visibility), reinforced 2026-06-10. Filed action_required:false on no-urgency grounds, which is why the 2026-06-11 closeout declared the queue empty and missed it. Its 2026-06-10 reinforcement memo still lacks an .openthing envelope and is untracked in git.",
+      "dependencies": {
+        "#45": "Only item with an external dated dependency (airtrov). Root cause now known. NOT hard-blocked.",
+        "#41": "Gated by the GET 404, the invisible feedback tool, the unverified issue-key path, and stale catdef.org/feedback pointers in CONTRIBUTING.md/README.md",
+        "plugin#1": "Depends on #41's discovery story + a working standard-key flow. Same work, different surface — move together.",
+        "#43": "Blocked on the elevated key. The item that makes the rest self-sustaining.",
+        "#42": "Blocked on read:project AND on the attribution problem",
+        "#44": "Depends on #42 + #43 having produced real records. Last by construction — publishing a blueprint of a loop that has not run would violate its own acceptance criterion ('no claims of autonomous actions unsupported by logs')."
+      },
+      "recommended_sequence": ["Phase 0 — credentials (Director; unblocks everything, cheap)", "Phase 1 — #45 rescoped from outage to CATIO-ZIP-unsupported (dup CA-017); ask airtrov the export-shape question first", "Phase 2 — #41 + plugin#1 together", "Phase 3 — #43 unattended triage", "Phase 4 — #42 board mapping + consent model", "Phase 5 — #44 blueprint, once real logs exist"],
+      "values_check": "Nothing proposed touches spec text, so value #1 (L1 sacred) and #5 (forward compatibility) are not engaged. ZIP support in the renderer is an implementation fix — CATIO already specifies the bundle. #44's blueprint is governance publication, which is the Director's."
+    },
+
+    "feedback_loop_design": {
+      "status": "DESIGN ONLY — not implemented, not authorized",
+      "lifecycle": "external agent → MCP intake (private by default) → scheduled strategist review → recommendation recorded → (if consented) public issue → Director decision → maintainer implementation → verified resolution → outcome to submitter",
+      "persistent_state": "strategist-state/triage-state.json, in-repo and committed: last-processed CA-NNN high-water mark + per-item ledger {ca_nnn, first_seen, last_action, disposition, issue_url, notified_at}. In-repo because it must survive session death, be auditable, and be readable by the next incumbent — the same reason the memo chain exists.",
+      "duplicate_prevention": "Three layers: (a) high-water mark so a run never re-reads settled items; (b) per-CA-NNN ledger making crash-retries idempotent; (c) issue search for the CA-NNN token to adopt rather than create. This ledger is the precondition for #42's no-duplicate-issues and #43's no-duplicate-processing.",
+      "director_notification": "One per item per state-change, gated on notified_at; batched into a single daily memo-plus-ping, not per-item alerts. Nothing auto-approves.",
+      "public_transparency": "Issue body carries sanitized request, strategist analysis with seat attribution, link to the CA-NNN record, Director decision, maintainer PRs, outcome. Append-only comments for state history.",
+      "privacy": "Private-by-default is the invariant. Publication requires explicit submitter consent captured AT INTAKE — which means the intake tool needs a consent field, and I could not inspect whether catdef_report_feedback has one. Absent consent the item stays queue-only; no raw body leaves the queue.",
+      "outcome_to_submitter": "NO MECHANISM TODAY — the queue has no return channel. Cheapest shape: a status readable by submission token so the submitting agent can poll its own CA-NNN without an elevated key. Flagged as a gap, not assumed.",
+      "failure_handling": "A run that cannot reach or authenticate logs, exits non-zero, mutates no state; three consecutive failures escalate to the Director; a run never reports success it did not achieve.",
+      "preconditions": ["the elevated MCP key", "resolution of the attribution problem — without it a daily job would mass-publish under the Director's personal identity"]
+    },
+
+    "blockers": [
+      { "id": 1, "blocker": "No elevated MCP key", "needed": "Director-issued cdfk_dir_*", "gates": "#43 + all queue triage + the seat's routine work" },
+      { "id": 2, "blocker": "No read:project scope", "needed": "gh auth refresh -s read:project (+ -s project to manage)", "gates": "#42" },
+      { "id": 3, "blocker": "No strategist GitHub identity", "needed": "Decision: GitHub App / machine user / explicit acceptance that writes appear as the Director", "gates": "#42, #44, any publication" },
+      { "id": 4, "blocker": "airtrov export shape unknown", "needed": "One answer: plain JSON or CATIO bundle?", "gates": "Whether #45 is launch-blocking" }
+    ],
+    "recommended_first_authorization": "Blocker 4 — one question, zero cost, may clear the launch blocker today. Then 1 (animates the seat), then 3 (must precede any publication), then 2.",
+    "also_awaiting_director": "The 2026-10-31 charter staffing draft (v2.1.0) is still an uncommitted working-tree change.",
+
+    "what_was_NOT_done": [
+      "No GitHub writes — no issues created, commented or modified; no labels; no board changes",
+      "No spec text touched",
+      "No governance decisions",
+      "No authorization bypass attempted; no credentials handled or exposed",
+      "No claim of autonomous action beyond what this report evidences",
+      "2026-06-09 cross-spec ask left undispositioned pending Director prioritization against the six issues"
+    ],
+    "applies_principles": [
+      "do-not-claim-untested-access — write capability reported as present-but-unexercised, with the reason, rather than as verified",
+      "bounded-authority — investigation and recommendation only; the four calls in §7 are the Director's",
+      "test-suite-as-standard / empirical-before-assertion — the #45 root cause rests on a control experiment, not on inference from the 502 alone",
+      "implementations-do-not-own-the-spec — the renderer ZIP gap is an implementation fix; CATIO already specifies the bundle, so no spec change is proposed",
+      "artifacts-over-session-memory — the triage-state ledger and this memo exist so the next incumbent inherits the findings"
+    ]
+  }
+}
