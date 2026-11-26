@@ -1,0 +1,42 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "catdef-strategist",
+  "to": "canonical-implementor",
+  "cc": ["director"],
+
+  "subject": "Queue re-routing by Director direction 2026-11-25: the four items the full-review handoff assigned to catdef-maintainer are re-addressed to canonical-implementor, that seat holding no incumbent. Priority unchanged at P1 catdef.org#8 then catdef-spec#45 client half, re-verified 502 cache-busted at this seat on day 183 with both controls at 200. New P2 work package: CATX reader-side obligations following the Director's 2026-11-25 reversal of CA-020 Q4. Three bundles were built and run against this repository's own read_catio, establishing that the hard break is NOT the envelope key but the bundle's inner member name — CATDEF_EXTS_PREFERENCE lacks .catx, so a fully CATX-compliant bundle is rejected outright, a case neither the rename memo nor CA-020's original text considered. The outer extension is safe by content-sniffing; the envelope key is a soft break producing silent misclassification of type:thing as type:catalog via CATIO_SPEC.md:119 rather than rejection. Sequencing trap flagged prominently: adding .catx to the preference tuple is normative CATIO Rules text, not a code change alone, so spec text lands first or together — never the code by itself. Six ft-catx-* conformance tests specified, one of which (key disagreement precedence) carries an open spec question for the Director rather than a ruling. Interim guidance already issued to airtrov was chosen so no change is required anywhere in our stack, which means there is no exporter-versus-renderer race and no clock set by their ship date. Verification discipline from CA-021 Call 5 restated against #8 specifically, since both its instances originated in this seat's own instructions. Bounds restated unchanged: CA-019 Call 1 deploy gate, Call 5 relay rule, no in-flight amendment.",
+
+  "sent": "2026-11-25T19:08:19-05:00",
+  "action_required": true,
+
+  "body": "Re-routing by Director direction 2026-11-25. The full-review handoff (memos/2026-11-25-full-review-handoff.md) §7 assigns four items to catdef-maintainer, a seat with no incumbent; the Director confirmed they belong to canonical-implementor. Queue: P1 catdef.org#8 then catdef-spec#45 client half, unchanged and re-verified at this seat cache-busted (502 'Upstream body is not valid UTF-8', controls at 200, day 183). P2 CATX reader-side work. P3 #41 AGENTS.md plus acceptance test, with catdef-plugin#1 after #49. P4 #44 forkability package. CATX findings established by test, not inferred: three bundles run against conformance.read_catio show the hard break is the bundle's INNER member name, not the envelope key — CATDEF_EXTS_PREFERENCE is ('.opencatalog','.openthing','.catdef') and a root JSON named catalog.catx is rejected with ValueError. The outer .catx extension is safe (PK sniffing, outer extension advisory); raw unzipped .catx is safe; a catx-only envelope parses but leaves pre-1.5 readers with no version stamp, so CATIO_SPEC.md:119 implies catio 1.0 / type catalog and a type:thing document is silently misclassified rather than rejected, since a reader MUST NOT reject a mis-stamped document. Sequencing trap: adding .catx to the preference tuple implements normative CATIO Rules text, so it is not a code change alone — the 1.5 spec text lands first or alongside, never the code by itself. Six ft-catx-* tests specified; ft-catx-05 (both keys disagreeing) carries an open spec question — this seat recommends catx wins, which is a recommendation needing the Director, not a ruling, and is the kind of gap you file rather than decide. Interim airtrov guidance was deliberately chosen to require no change in our stack (both envelope keys, legacy inner member name, .catx outer), so there is no exporter-versus-renderer race and no clock set by their ship date; whether the inner-member clause applies depends on #46 Blocker 4, unanswered. Verification: CA-021 Call 5 applies directly to #8 — catdef.org sends Cache-Control max-age=30 and caches ERROR responses, so cache-bust every sample or you will hash a stored answer; a 504 returning in 0.13s is a cached object, not a timeout; repeated identical samples are not corroboration when a cache can serve them. Both instances behind that call originated in this seat's instructions, not yours. Bounds unchanged: CA-019 Call 1 gates catdef.org pushes and catdef-spec/renderer/** on main, the renderer's deploying surface is advancing the release ref, a relayed authorization is not an authorization, and no spec text is amended in flight. This memo is direction and analysis only — it authorizes nothing and commits nothing.",
+  "body_ref": "2026-11-25-1908--catdef-strategist--canonical-implementor--queue-rerouting-and-catx-reader-obligations.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-5 (Claude Code), session catdef-strategist [e8c5fe], occupying chief-strategist@catdef-spec.orgdef per charter v2.7.0.",
+    "memo_type": "work-direction",
+    "directive_authority": "Sequencing direction from chief-strategist to canonical-implementor, which the charter's directs relationship supports, carrying a Director re-routing instruction given 2026-11-25. NOT a governance decision, NOT a ratification, and NOT an authorization to push or deploy.",
+    "why_memo_not_live_message": "canonical-implementor was seated but its session binding was lost to an unexpected Windows restart, and the seat did not appear in this session's peer list. A live message would have been undeliverable, and a message is not an artifact. Per CLAUDE.md's antidote-to-session-amnesia discipline the direction is recorded in the repo so the re-registered session recovers it on startup without depending on a binding that no longer exists. Seat address stable; binding disposable.",
+    "reroute_authority": "Director, 2026-11-25, in session, confirming this seat's finding that the full-review handoff §7 addressed four items to catdef-maintainer while that seat holds no incumbent.",
+    "testing_performed": {
+      "harness": "conformance.read_catio, unmodified repository code, imported directly.",
+      "bundles_built": 3,
+      "result_inner_catx": "ValueError: No catdef JSON document at ZIP root — HARD REJECT",
+      "result_legacy_inner_catx_envelope": "accepted; envelope keys seen ['catx','type']; 1 item, 1 media member",
+      "result_legacy_inner_dual_envelope": "accepted; envelope keys seen ['catio','catx','type']; 1 item, 1 media member",
+      "finding_that_corrected_this_seat": "This seat had weighted the envelope key as the hard break in its first reading of the rulings. The test showed otherwise: the envelope key is a soft break and the inner member name is the hard one. Recorded because the correction is the useful part.",
+      "cta_recheck": "catdef.org/fetch against the canonical bundle, cache-busted: 502 'Upstream body is not valid UTF-8'. Controls: plain JSON via /fetch 200; bundle direct from GitHub 200, 1,680,109 bytes. Renderer at render.catdef.org serving build 001, 36329 bytes, sha256 prefix 35e53d14d2d5d098 — unchanged since the CA-019 step-4 promotion."
+    },
+    "open_spec_question_raised_not_decided": "ft-catx-05: when both catio and catx envelope keys are present and disagree, which governs? Dual-stamping makes disagreement reachable in normal operation. This seat recommends catx wins. It is a recommendation for the Director, not a ruling, and no reader should implement a precedence rule before it is ruled.",
+    "what_this_memo_is_NOT": [
+      "Not a governance decision and not a CA-NNN disposition",
+      "Not an authorization to push, deploy, or merge",
+      "Not a spec change — §3.1 explicitly routes the CATIO Rules change through spec text first",
+      "Not a ruling on envelope-key precedence; that is raised as an open question",
+      "Not a claim that catdef.org#8 is authorized; it is not, and P1 cannot start until it is"
+    ]
+  }
+}
