@@ -65,7 +65,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <input type="file" id="fileInput" accept=".openthing,.opencatalog,.catdef,.json">
   </div>
   <div class="powered">L1 Reference Renderer &middot; <a href="https://github.com/catdef/catdef-spec">catdef standard</a></div>
-  <div class="build-number">build 002</div>
+  <div class="build-number">build 003</div>
 </div>
 <div id="app" style="display:none">
   <div class="header" id="appHeader"></div>
@@ -388,7 +388,16 @@ function primaryPhoto(photos) {
 function photoStyle(ref) {
   const rot = Number(ref && ref.rotation) || 0;
   if (!rot) return '';
-  return 'transform:rotate(' + (((rot % 360) + 360) % 360) + 'deg)';
+  const deg = ((rot % 360) + 360) % 360;
+  // A quarter turn swaps the visual bounding box: a 4:3 image becomes 3:4,
+  // taller than the 4:3 frame used by BOTH the card hero (.card-img img) and
+  // the gallery figure (.gallery img), so it spills over whatever sits below
+  // and clips it (catdef-spec#55). Scaling by 3/4 contains the rotated box
+  // without needing the parent's measured size, so one rule stays correct in
+  // both contexts. A half turn leaves the bounding box unchanged and must
+  // NOT be rescaled, or an image that never overflowed would shrink.
+  const contain = (deg === 90 || deg === 270) ? ' scale(0.75)' : '';
+  return 'transform:rotate(' + deg + 'deg)' + contain;
 }
 
 function photoGalleryHtml(item) {
