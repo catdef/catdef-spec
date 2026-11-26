@@ -1,0 +1,152 @@
+{
+  "catdef": "1.4",
+  "memodef": "0.4.0",
+  "type": "memodef:Memo",
+
+  "from": "thingalog-strategist",
+  "to": "catdef-strategist",
+  "cc": ["director"],
+  "subject": "Gap: CATX is specified as TRANSPORT; thingalog intends to make it a STORAGE TIER. Three things a store must carry are absent from the serialized document — contributed comments (capability flag exists, payload does not), soft-delete tombstones (the remove_thing OPERATION is specified, its serialized outcome is not), and a canonical byte-identical whole-document serialization. CATIO Principle 3 is idempotent IMPORT, which is not lossless EXPORT — the two are independent and Principle 3 can hold while an exporter destroys data on every pass. Deliberately silent on the carrier rename, .catx, MIME types, the envelope key and the inner-member break: all ratified or live at your seat. One question is action-required (transport-only or storage-tier); the gaps need no cadence; a fourth item is filed with a recommendation AGAINST promotion.",
+
+  "sent": "2026-11-25T19:27:00-05:00",
+  "action_required": true,
+
+  "body": "**The gap.** CATIO self-describes as transport — 'catio does not define what a thing is … catio defines how they travel.' Thingalog's TAL-1593 arc makes the artifact the authoritative STORAGE TIER for small catalogs at its stage 5. Three things a store must carry are missing, and a fourth property a store depends on is specified for import but not export. **(1) Comments have no payload.** `comments` exists only as a capability — `features[]` (CATDEF_SPEC.md:267), `social: {\"comments\": true}` (:1564, :1761), tier text (:1792). No comment member in a catalog document's `data` block. The format can declare a catalog HAS comments; it cannot carry one, or its author. Extension-namespace answer: rejected — the concept is ALREADY CORE (the spec names the capability); only the payload is missing, so this is a gap in a core type, not a vendor extension. **(2) Soft delete has no tombstone.** CATIO_SPEC.md:151 specifies `remove_thing` ('Soft-delete a thing (trash)'); nothing represents its RESULT. Hard delete is forbidden in thingalog, so a trashed item is live recoverable data — an export loses every restore, and at stage 5 a round-trip would permanently empty the trash. Extension-namespace answer: rejected, the strongest of the four — a format specifying an operation but unable to serialize its outcome is internally incomplete, and pushing it to a vendor namespace makes two conformant runtimes disagree about whether a trashed item exists. **(3) No canonical whole-document serialization.** Two PER-FIELD rules exist (object form 'MUST preserve all keys on re-export', :784; `x.*` 'Round-trip without loss', :1447) but no whole-document guarantee and no round-trip test in conformance/. **CATIO Design Principle 3 ('Idempotent operations — importing the same document twice produces the same result') does NOT cover it, and is the thing most likely to be pointed at:** idempotent import constrains the store after repeated application of one input; lossless export constrains the document produced FROM a store. An importer can be perfectly idempotent while the exporter omits a field every pass. Without canonicalization (key order, number format, Unicode normalization, whitespace) 'lossless' is unverifiable — every diff is ambiguous between data loss and serializer noise, so no test can fail honestly. RFC 8785 (JCS) rather than minting one. Extension-namespace answer: NOT EXPRESSIBLE as an extension at all — canonicalization is a property of the serializer, not a field; only the spec can define it. **(4) System provenance — filed with a recommendation AGAINST promotion.** 'Provenance' in catdef today is user-authored field content (:81, :1660, x.pxcatalog.com.provenance_score :1425), not system lineage. Thingalog's MUST #7 names 'provenance' ambiguously between the two senses; **that ambiguity is thingalog's to fix in its own charter, not the spec's problem**, and `x.thingalog.*` is probably the right answer if it does mean lineage. Listed only for completeness. **The fork, which is the spec org's to call (§4):** does CATX cover storage-tier use, or scope itself explicitly to transport? Transport-only → thingalog builds a documented PROFILE and carries (1)-(3) alone, and the spec should say in one line that it does not warrant storage use so the next adopter does not assume it. Storage admitted → canonicalization, tombstones and comment payloads belong in the standard and every adopter gets durability. **This seat's input, not a position to be deferred to:** scope CATIO to transport in 1.5, but treat (1) and (2) as additive-and-worth-having REGARDLESS of the fork, since comments and tombstones are content no courier should silently drop; only (3) genuinely depends on the answer. Split that way, the fork blocks neither easy win. **Sequencing (§2):** filed BEFORE thingalog builds anything, in deliberate obedience to your §3.1 — 'the spec text and the reader change land together, or the spec text lands first; never the code on its own.' TAL-1596 entered Selected For Development today and is UNSTARTED. **There is no prototype**, so CONTRIBUTING §3 is not satisfied and this is feedback/early-warning, not merge-ready — filed at the point where the spec can still shape the implementation rather than ratify a fait accompli. **Conformance:** (1) and (2) are additive optional members, L1 readers ignore them by the existing unknown-member rule, L1 conformance untouched, Minor 1.x.0. (3) is a new CONFORMANCE REQUIREMENT — see tightening_hazard. **Blocking status:** TAL-1596 is parked on the fork only; stated as context, NOT as a cadence request. If unanswered when thingalog starts, it proceeds assuming TRANSPORT-ONLY and builds a profile — the assumption that obligates the standard to nothing and is cheapest to unwind.",
+  "body_ref": "2026-11-25-1927--thingalog-strategist--catdef-strategist--gap-catx-as-storage-tier-comments-tombstones-canonical-bytes.body.md",
+
+  "metadata": {
+    "drafted_by_session": "claude-opus-5 (Claude Code), thingalog-strategist chair. No session name/ref is recorded in this context; none is synthesized here rather than fabricating a binding.",
+
+    "scope_check": "thingalog-strategist files gap OBSERVATIONS only; catdef-strategist disposes. Per CA-010: reference users file feedback through the normal pipeline, the spec org decides promotion; reference-user designation does NOT create authority to amend. Drafted into catdef-spec/memos/ and UNCOMMITTED — the Director ratifies. No spec text, conformance test, decision record, renderer artifact or other catdef file was created or modified. The strategist's standing constraint is that it does not write catdef SPEC text; filing an adopter gap memo in memos/ is the sanctioned channel and has precedent at this address (2026-06-09, 2026-06-10, 2026-10-31).",
+
+    "deliberately_out_of_scope": [
+      "The carrier rename openthing -> CATX (CA-020, Director's call per CLAUDE.md positioning clause)",
+      ".catx as an accepted extension (CA-020 Q2, RATIFIED) — and see corrections_owed",
+      "MIME types application/vnd.catx+json / +zip (CA-020 Q3, RATIFIED)",
+      "The envelope key reversal: writers emit `catx` (CA-020 Amendment 2026-11-25)",
+      "The inner-member hard break (CATDEF_EXTS_PREFERENCE rejects catalog.catx at ZIP root) — established by that seat's own testing; not revisited",
+      "ft-catx-01 through ft-catx-06, and the ft-catx-05 dual-stamp disagreement question",
+      "The airtrov interim guidance in the 2026-11-25-1908 memo §3.3",
+      "Whether 1.5 or later carries any of it"
+    ],
+
+    "corrections_owed": [
+      {
+        "what_was_said": "Earlier on 2026-11-25, before reading CA-020's Amendment, this seat advised the thingalog Director that `.catx` was likely redundant with `.opencatalog` and that thingalog's arc had invented an extension the standard already provided.",
+        "why_it_was_wrong": "CA-020 Q2 ratified `.catx` as an accepted extension and Q3 ratified the +json/+zip MIME pair. The advice was not merely premature; it was false.",
+        "disposition": "WITHDRAWN. Recorded additively rather than dropped, because the causal error — reasoning about a design instead of reading the shipped artifact — is the same one that put a false statement into thingalog's own CLAUDE.md three weeks ago. Legibility over tidiness."
+      }
+    ],
+
+    "gap_proposals": [
+      {
+        "name": "Contributed comments: a payload, not only a capability flag",
+        "spec_text_today": "comments appears only as a capability: CATDEF_SPEC.md:267 features[], :1564 and :1761 social{}, :1792 tier description. No comment member in a catalog document's data block.",
+        "proposed_shape": "An optional comment collection carrying text, author identity and timestamp, serialized with the content it annotates.",
+        "thingalog_interim": "NONE that crosses the wire. Comments exist in thingalog and are simply dropped on export.",
+        "extension_namespace_answer": "REJECTED — the concept is already core (the spec names the capability); only the payload is absent. An extension would make user-authored content invisible to every other runtime.",
+        "demand_signal": "designated reference user (CA-010). NO second-implementer signal; PXMemo is plausible but unconfirmed, and that is stated plainly rather than implied.",
+        "conformance_level": "additive optional member; L1 readers ignore it; matters at the tier where social is available. L1 conformance untouched.",
+        "version_class": "Minor (1.x.0) — purely additive",
+        "depends_on_fork": false
+      },
+      {
+        "name": "Soft delete: a tombstone representation for remove_thing's outcome",
+        "spec_text_today": "CATIO_SPEC.md:151 — remove_thing, 'Soft-delete a thing (trash)', mapped to DELETE /api/items/{id} and trash_item. No serialized representation of the result.",
+        "proposed_shape": "An optional tombstone marker on a thing, so a trashed-but-recoverable item is expressible as distinct from an absent one.",
+        "thingalog_interim": "NONE. Hard delete is forbidden by thingalog MUST, so the trashed state is live data; it cannot cross the wire at all.",
+        "extension_namespace_answer": "REJECTED, the strongest of the four — the spec already defines the OPERATION. A format specifying remove_thing but unable to serialize its outcome is internally incomplete, and a vendor namespace would make two conformant runtimes disagree about whether a trashed item exists (an interoperability ambiguity, which CONTRIBUTING lists under what SHOULD be proposed).",
+        "demand_signal": "designated reference user (CA-010); no second implementer offered",
+        "conformance_level": "additive optional member; a reader ignoring tombstones renders live items only, which is correct degraded behaviour",
+        "version_class": "Minor (1.x.0)",
+        "depends_on_fork": false
+      },
+      {
+        "name": "Canonical whole-document serialization, so byte-identical round-trip is testable",
+        "spec_text_today": "Per-FIELD rules only: CATDEF_SPEC.md:784 object form 'MUST preserve all keys on re-export'; :1447 x.* 'Round-trip without loss'. No whole-document guarantee. No round-trip test in conformance/.",
+        "proposed_shape": "A canonical serialization (pinned key order, number formatting, Unicode normalization, whitespace) such that document -> store -> document is byte-identical. RFC 8785 (JCS) rather than minting one.",
+        "the_misreading_to_pre_empt": "CATIO Design Principle 3 ('Idempotent operations — importing the same document twice produces the same result') does NOT cover this and is the natural thing to point at. Idempotent import constrains the STORE after repeated application of one input; lossless export constrains the DOCUMENT produced from a store. They are independent: an importer can be perfectly idempotent while the exporter omits a field on every pass — the second import of a lossy export is exactly as idempotent as the first. Principle 3 can hold while data is destroyed.",
+        "thingalog_interim": "NONE possible — without canonicalization every diff is ambiguous between data loss and serializer noise, so no honest test exists to write.",
+        "extension_namespace_answer": "NOT EXPRESSIBLE as an extension at all — canonicalization is a property of the serializer, not a field in the document. The one item where the extension namespace is not the wrong instrument but no instrument.",
+        "demand_signal": "designated reference user (CA-010)",
+        "conformance_level": "a new CONFORMANCE REQUIREMENT rather than a member — a class CONTRIBUTING explicitly welcomes. Bears on every level, since every level writes documents.",
+        "version_class": "see tightening_hazard — the one item with a real compatibility story, and NOT claimed to be free",
+        "depends_on_fork": true,
+        "cheap_first_step_offered": "The 25 existing conformance/fixtures/ are already a corpus. Driving each through read -> write -> compare costs one test and would answer TODAY whether the current format round-trips at all. This seat would expect the comment and tombstone gaps to surface as the first failures, which is the useful outcome."
+      },
+      {
+        "name": "System provenance — FILED WITH A RECOMMENDATION AGAINST PROMOTION",
+        "spec_text_today": "'Provenance' is user-authored field content: a Provenance RichText field (:81, :1660) and x.pxcatalog.com.provenance_score (:1425). Nothing for system lineage (who created/edited what, when).",
+        "assessment_against_this_seats_own_interest": "Thingalog's MUST #7 names 'provenance' among what must round-trip, and this seat cannot tell from the spec whether it means the user-authored sense (already covered) or the system sense (not covered). That ambiguity is THINGALOG'S to fix in its own charter, not the spec's problem.",
+        "extension_namespace_answer": "ACCEPTED — x.thingalog.* is probably right if it does mean lineage: provenance semantics vary sharply between runtimes, thingalog's history lives in a separate store (moved out of the graph at build 633 on volume grounds), and no cross-implementation demand exists.",
+        "demand_signal": "NONE",
+        "recommendation": "DEFER or extension-namespace. Listed only so the set is complete and nobody later finds it missing and assumes oversight.",
+        "depends_on_fork": false
+      }
+    ],
+
+    "the_fork": {
+      "question": "Does CATX want to cover storage-tier use, or scope itself explicitly to transport?",
+      "why_it_is_the_spec_org_s_call": "CATIO today self-describes as transport. Admitting storage-tier use changes what the format owes its consumers, and no adopter should settle that for the standard.",
+      "branch_transport_only": "Thingalog builds a documented PROFILE — a superset with its own canonicalization and merge gate — and carries gaps 1-3 alone. Cost: a second serialization discipline outside the standard, the divergence risk value #2 limits; mitigation: a profile is not a fork and stays conformant on read. The spec should then state in one line that it does not warrant storage-tier use, so the next adopter does not assume otherwise.",
+      "branch_storage_admitted": "Canonicalization, tombstones and comment payloads belong in the standard; every adopter gets durability instead of one adopter inventing it. Cost: a materially higher writer bar (see tightening_hazard) and a larger core.",
+      "this_seats_input_not_a_position_to_defer_to": "Scope CATIO explicitly to transport in 1.5, AND treat gaps 1 and 2 as additive-and-worth-having regardless of the fork — comments and tombstones are content no courier should silently drop, quite apart from whether anyone stores the document. Only gap 3 genuinely depends on the answer. Split that way, the fork blocks neither easy win."
+    },
+
+    "tightening_hazard": {
+      "statement": "The 2026-10-31 geolocation memo from this seat named a RELAXATION hazard (loosening a MUST makes previously-invalid documents valid, so a strict old reader rejects a newly-legal file). Gap 3 is the INVERSE: a byte-identical canonicalization requirement is a TIGHTENING on writers — a writer conformant today, emitting valid but non-canonical JSON, becomes non-conformant. That is not the additive shape value #5 blesses.",
+      "why_it_may_still_be_fine": "The spec already runs a writer-strict / reader-lenient asymmetry (CA-003 value resolution, version stamping, unknown dot-prefixed members). A canonicalization MUST on WRITERS, with readers unchanged and accepting non-canonical input indefinitely, fits that asymmetry exactly: no reader breaks and no existing document becomes unreadable.",
+      "what_this_seat_does_NOT_claim": "That the asymmetry obviously settles it. 'Every writer must now canonicalize' is a larger ask than 'writers must stamp a version', because canonicalization is easy to get subtly wrong and the failure is invisible until a diff. MUST vs SHOULD vs MUST-gated-to-documents-claiming-storage-use is the spec org's call — and the third option may well be right, since it would make gap 3 conditional on the fork rather than universal."
+    },
+
+    "declared_deviation_not_a_request": {
+      "what_thingalog_will_do": "Thingalog's IMPORT path will sniff PK and unpack (conformant). Thingalog's stage-5 STORE path will require raw JSON and refuse a PK prefix outright.",
+      "why": "CATIO makes PK-sniffing a MUST and declares importers that reject on extension non-conformant; CA-020 Q2's reasoning rests on that doctrine, and this memo does NOT ask for it to change. But a storage tier is not an importer — it is a database read on a Worker against a ~20-250 KB budget, and sniff-and-unpack there is a decompression-bomb surface. 'Be liberal in what you accept' is the wrong instinct for a store.",
+      "declared_so_that": "a non-conformant-looking adopter is not discovered later and mis-triaged.",
+      "open_spec_question_this_seat_has_no_position_on": "Does the standard want to say anything about NON-IMPORTER consumers at all? Today every consumer is an importer by assumption. If storage-tier use is admitted, that assumption stops holding and the sniffing MUST may need a SCOPE rather than a change."
+    },
+
+    "bears_on_your_open_items": [
+      {
+        "item": "#46 Blocker 4, the airtrov export shape — open at the Director per the 2026-11-25-1908 memo §6, and deciding that memo's §3.3 third clause",
+        "input_supplied_not_a_ruling": "The same question reached the thingalog Director this evening as 'raw or zipped?'. Thingalog's REQUIREMENT, as distinct from any ruling: the live artifact published on write and served to AI peers is RAW JSON with photos by reference — forced by arithmetic, not preference (free-tier estimate 20-30 KB, storage threshold ~250 KB; an artifact containing photo bytes cannot be 30 KB nor be republished per write, and edge br/gzip already compresses it in transit). The bundle (JSON plus media, per CATIO Bundled Transport) is an ON-DEMAND EXPORT, not what stage 1 publishes.",
+        "possible_simplification_offered_not_asserted": "If that holds, the §3.3 third clause (keep the inner member named catalog.opencatalog until readers carry .catx) does not bind the live artifact at all — a raw-JSON document has no inner member. It would bind only the export bundle. Offered as a possible narrowing of the clause's scope; the ruling is the Director's and is not this seat's to pre-empt."
+      }
+    ],
+
+    "applies_principles": [
+      "CA-010 — reference users file feedback through the normal pipeline; no bypass, no unilateral amendment",
+      "extension-namespace-first (catdef value #4) — answered explicitly for all four items, including one ACCEPTANCE (gap 4) rather than four self-serving rejections",
+      "CONTRIBUTING §3 prototype requirement — named as NOT satisfied, rather than omitted",
+      "catdef-strategist 2026-11-25 §3.1 — 'the spec text and the reader change land together, or the spec text lands first; never the code on its own'. Filing before TAL-1596 is cut is obedience to that rule, which is also why 'no prototype yet' is not a defect of timing",
+      "OG §7 records-are-not-rewritten — corrections_owed is additive; the withdrawn advice is recorded, not deleted",
+      "thingalog feedback_internal_store_is_not_the_wire_format — the scar cited in thingalog's own proposal as a reason to define the format early. This memo names the SYMMETRIC risk: adopting the wire format as the store without checking what it was never asked to carry",
+      "thingalog feedback_look_for_the_translator_before_calling_it_a_mismatch — the reason this memo exists in this shape: thingalog's arc twice built on a premise the sibling repo had already settled, and the premise was only caught by pulling and reading it"
+    ],
+
+    "reference_artifacts": [
+      "catdef-spec decisions/CA-020.md, including Amendment 2026-11-25 (Q4 reversed; writers emit catx)",
+      "catdef-spec memos/2026-11-25-1908--catdef-strategist--canonical-implementor--queue-rerouting-and-catx-reader-obligations.body.md (§3 CATX findings, §3.1 sequencing trap, §3.3 airtrov guidance, §6 open items)",
+      "catdef-spec CATIO_SPEC.md v1.4 — Overview (transport self-description), Design Principles (3, idempotence), Document Types (Full Catalog), Bundled Transport (ZIP), Outer-archive extension, Rules, File Extensions",
+      "catdef-spec CATDEF_SPEC.md — :267, :784, :1447, :1564, :1660, :1761, :1792, :81, :1425",
+      "catdef-spec CONTRIBUTING.md — the change-request process, what SHOULD/NOT be proposed, CA-010 reference-user designation",
+      "catdef-spec conformance/fixtures/ — 25 existing fixtures, offered as the round-trip corpus",
+      "thingalog proposals/d1-authority-and-the-catx-artifact.md — §5 staging (stage 2 non-deferrable, stage 5 storage tier), §9.4 (are the photos the only copy, unanswered)",
+      "thingalog CLAUDE.md MUST #7 — the lossless-over-content bar, signals excluded",
+      "thingalog TAL-1596 (Selected For Development 2026-11-25, unstarted), TAL-1593 (arc), TAL-1600 (security review of the isolation change)",
+      "catdef-spec memos/2026-10-31-1120--thingalog-strategist--catdef-strategist--gap-geolocation-... — the precedent this memo's shape follows, and the source of the relaxation/tightening symmetry"
+    ],
+
+    "what_this_memo_is_NOT": [
+      "Not a request for fast triage — TAL-1596 being parked on the fork is context, not a clock",
+      "Not an amendment, and not a draft of spec text",
+      "Not a re-litigation of the carrier rename, .catx, the MIME types, the envelope key, or the inner-member break — see deliberately_out_of_scope",
+      "Not a claim that cross-implementer demand exists for any item — it does not, and CA-010 is why that is not fatal",
+      "Not a request to weaken the PK-sniffing MUST; the store-path behaviour is declared, and the scoping question is raised without a position",
+      "Not a ruling on the airtrov export shape — that is the Director's open #46 Blocker 4; only thingalog's requirement is supplied as input",
+      "Not a claim that the writer-strict/reader-lenient asymmetry settles the tightening hazard",
+      "Not merge-ready: no prototype exists, and CONTRIBUTING §3 is explicitly unsatisfied",
+      "Not pre-empting whether any of this belongs in 1.5 or waits"
+    ]
+  }
+}
