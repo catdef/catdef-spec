@@ -50,6 +50,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
 .gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--border);background:var(--border)}
 .gallery figcaption{font-size:11px;color:var(--muted);margin-top:4px}
 .photo-warn{font-size:12px;color:var(--muted);margin-bottom:12px}
+/* Structured field types (catdef-spec#54). */
+.field-note{color:var(--muted);font-size:12px}
+.field-table{border-collapse:collapse;width:100%;font-size:12px}
+.field-table th,.field-table td{border:1px solid var(--border);padding:4px 6px;text-align:left;vertical-align:top}
+.field-table th{background:var(--bg);font-weight:600}
 </style>
 </head>
 <body>
@@ -65,7 +70,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <input type="file" id="fileInput" accept=".openthing,.opencatalog,.catdef,.json">
   </div>
   <div class="powered">L1 Reference Renderer &middot; <a href="https://github.com/catdef/catdef-spec">catdef standard</a></div>
-  <div class="build-number">build 003</div>
+  <div class="build-number">build 004</div>
 </div>
 <div id="app" style="display:none">
   <div class="header" id="appHeader"></div>
@@ -601,6 +606,159 @@ function renderScalarValue(v, opts) {
   return esc(String(v));
 }
 
+// ==== TYPED-FIELDS-BEGIN ====
+// Render a field value according to its DECLARED type (catdef-spec#54).
+//
+// Thirteen types are declared; the five scalar ones already rendered, and
+// all eight structured ones fell through to a raw JSON dump. CA-006 extended
+// the conformance validator for exactly these shapes and the renderer never
+// followed.
+//
+// Dispatch is keyed on field_defs[].type and NEVER on the value's shape.
+// `Date` legitimately appears as both {date,circa} and {start,end} in one
+// file, so inferring the type from which keys are present is wrong today,
+// not merely fragile later. Choosing between those two shapes *within* a
+// field already declared Date is a different act and is required.
+//
+// Every renderer below returns null for a value it does not recognise, and
+// renderTypedValue returns null for any type it does not own. null means
+// "not mine": the caller falls through to its existing generic path, so an
+// unknown or undeclared type is never guessed at.
+
+const EN_DASH = '\u2013';
+
+function renderDateValue(v) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+  if (typeof v.start === 'string' || typeof v.end === 'string') {
+    return esc(String(v.start || '?')) + EN_DASH + esc(String(v.end || '?'));
+  }
+  if (v.date !== undefined && v.date !== null) {
+    return (v.circa ? 'c.\u00a0' : '') + esc(String(v.date));
+  }
+  return null;
+}
+
+function renderNumberValue(v) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+  if (v.min === undefined && v.max === undefined) return null;
+  return esc(String(v.min)) + EN_DASH + esc(String(v.max));
+}
+
+function moneyParts(m) {
+  if (!m || typeof m !== 'object' || m.amount === undefined) return null;
+  return { amount: String(m.amount), currency: m.currency ? String(m.currency) : '' };
+}
+
+function renderMoneyValue(v) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+  const lo = moneyParts(v.low);
+  const hi = moneyParts(v.high);
+  if (lo && hi) {
+    // Collapse the currency when both ends share one; keep both otherwise,
+    // because a mixed-currency range must not look like a single-currency one.
+    if (lo.currency && lo.currency === hi.currency) {
+      return esc(lo.amount + EN_DASH + hi.amount + ' ' + lo.currency);
+    }
+    return esc((lo.amount + ' ' + lo.currency).trim() + ' ' + EN_DASH + ' ' +
+               (hi.amount + ' ' + hi.currency).trim());
+  }
+  const one = moneyParts(v);
+  return one ? esc((one.amount + ' ' + one.currency).trim()) : null;
+}
+
+function renderGeoValue(v) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+  const hasCoords = typeof v.lat === 'number' && typeof v.lng === 'number';
+  const label = (typeof v.label === 'string' && v.label) ? v.label : null;
+  const coords = hasCoords ? v.lat + ', ' + v.lng : null;
+  // A named place renders by name; an unnamed one still renders coordinates
+  // rather than vanishing. Both are representable, which is the half of
+  // catdef-spec#51 the renderer can honour without a spec change.
+  if (label && coords) {
+    return esc(label) + ' <span class="field-note">(' + esc(coords) + ')</span>';
+  }
+  if (label) return esc(label);
+  if (coords) return esc(coords);
+  return null;
+}
+
+function renderLinkObject(v, textKeys, noteKey) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+  if (typeof v.url !== 'string' || !v.url) return null;
+  let text = v.url;
+  for (const k of textKeys) {
+    if (typeof v[k] === 'string' && v[k]) { text = v[k]; break; }
+  }
+  let out = '<a href="' + esc(v.url) + '" target="_blank" rel="noopener noreferrer">' +
+    esc(text) + '</a>';
+  if (noteKey && typeof v[noteKey] === 'string' && v[noteKey]) {
+    out += ' <span class="field-note">' + esc(v[noteKey]) + '</span>';
+  }
+  return out;
+}
+
+// URL: CATDEF_SPEC.md:784 obliges a PRODUCER to preserve every key of the
+// object on re-export. The renderer does not re-export, so that obligation is
+// not discharged here -- but dropping the author's description on the floor
+// is the same loss by another route, so it is rendered too.
+function renderUrlValue(v) { return renderLinkObject(v, ['title'], 'description'); }
+
+function renderCloudFileValue(v) { return renderLinkObject(v, ['filename', 'title'], 'provider'); }
+
+function renderTableCell(cell) {
+  if (cell === undefined || cell === null) return '';
+  if (typeof cell === 'object') {
+    // A nested object in a cell (the canonical file has a photo-region bbox)
+    // is flattened to readable pairs. Dumping JSON here would reintroduce
+    // exactly the defect this function exists to remove.
+    if (Array.isArray(cell)) return cell.map(x => esc(String(x))).join(', ');
+    return Object.keys(cell).map(k => esc(k + ': ' + cell[k])).join(', ');
+  }
+  return renderScalarValue(cell);
+}
+
+function renderTableValue(v) {
+  if (!Array.isArray(v)) return null;
+  // A genuinely empty Table renders as nothing rather than an empty frame.
+  if (!v.length) return '';
+  const rows = v.filter(r => r && typeof r === 'object' && !Array.isArray(r));
+  // Entries that are not row objects are NOT dropped: fall through so the
+  // caller's generic array handling still shows them. Silently discarding
+  // author content is the defect this layer exists to remove, and returning
+  // '' here would do exactly that for a malformed Table.
+  if (!rows.length) return null;
+  const cols = [];
+  rows.forEach(r => Object.keys(r).forEach(k => {
+    if (cols.indexOf(k) === -1) cols.push(k);
+  }));
+  const head = cols.map(c => '<th>' + esc(c) + '</th>').join('');
+  const body = rows.map(r =>
+    '<tr>' + cols.map(c => '<td>' + renderTableCell(r[c]) + '</td>').join('') + '</tr>'
+  ).join('');
+  return '<table class="field-table"><thead><tr>' + head +
+    '</tr></thead><tbody>' + body + '</tbody></table>';
+}
+
+const TYPED_RENDERERS = {
+  Date: renderDateValue,
+  Number: renderNumberValue,
+  Money: renderMoneyValue,
+  GeoLocation: renderGeoValue,
+  URL: renderUrlValue,
+  CloudFile: renderCloudFileValue,
+  Table: renderTableValue,
+};
+
+function renderTypedValue(val, fd, opts) {
+  if (val === undefined || val === null) return null;
+  const type = (fd && typeof fd.type === 'string') ? fd.type : null;
+  if (!type) return null;
+  const fn = Object.prototype.hasOwnProperty.call(TYPED_RENDERERS, type)
+    ? TYPED_RENDERERS[type] : null;
+  return fn ? fn(val, opts) : null;
+}
+// ==== TYPED-FIELDS-END ====
+
 function loadCatdef(json) {
   // Document-declared primary locale, the default when no variant matches
   // the viewer's locale via RFC 4647 Lookup (CATDEF_SPEC.md 1289/1293).
@@ -773,10 +931,22 @@ function renderGrid(items) {
       subHtml = renderScalarValue(desc, { stopPropagation: true });
     } else {
       const src = fieldSource(item);
+      // Same declared-type dispatch as the modal (catdef-spec#54): without it
+      // a structured field reaching the card subtitle renders as raw JSON on
+      // the card face. Table is excluded deliberately -- a table element
+      // inside a one-line subtitle is a layout defect, not an improvement, so
+      // it keeps the existing treatment here.
+      const cardTmpl = (DATA.templates || []).find(t => t.name === item.template);
+      const cardFd = (k) => (cardTmpl && cardTmpl.field_defs)
+        ? cardTmpl.field_defs.find(f => f.label === k) : null;
       subHtml = Object.entries(src)
         .filter(([k]) => !['Title','Name','title','name','id','Notes','Description','description','Photos'].includes(k))
         .slice(0, 2)
-        .map(([k,v]) => renderScalarValue(v, { stopPropagation: true }))
+        .map(([k,v]) => {
+          const fd = cardFd(k);
+          const typed = (fd && fd.type !== 'Table') ? renderTypedValue(v, fd) : null;
+          return typed !== null ? typed : renderScalarValue(v, { stopPropagation: true });
+        })
         .join(' · ');
     }
     const card = document.createElement('div');
@@ -822,7 +992,13 @@ function showModal(item) {
     const val = fieldOf(item, fd.label);
     if (val === undefined || val === null || val === '') return;
     html += '<div class="field"><div class="field-label">' + esc(fd.label) + '</div><div class="field-value">';
-    if (typeof val === 'object' && val !== null && val.value !== undefined && val.unit) {
+    // Declared-type dispatch first: Table is an Array, so it must be claimed
+    // before the Array branch below. null means the type is not owned and the
+    // existing generic handling applies unchanged.
+    const typed = renderTypedValue(val, fd);
+    if (typed !== null) {
+      html += typed;
+    } else if (typeof val === 'object' && val !== null && val.value !== undefined && val.unit) {
       html += esc(val.value + ' ' + val.unit);
     } else if (Array.isArray(val)) {
       // Each chip is rendered through renderScalarValue so chip strings that
