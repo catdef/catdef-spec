@@ -65,7 +65,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-seri
     <input type="file" id="fileInput" accept=".openthing,.opencatalog,.catdef,.json">
   </div>
   <div class="powered">L1 Reference Renderer &middot; <a href="https://github.com/catdef/catdef-spec">catdef standard</a></div>
-  <div class="build-number">build 001</div>
+  <div class="build-number">build 002</div>
 </div>
 <div id="app" style="display:none">
   <div class="header" id="appHeader"></div>
@@ -446,6 +446,96 @@ function fieldSource(item) {
   return out;
 }
 
+// ==== I18N-BEGIN ====
+// Polymorphic translatable fields and the closed-vocabulary policy registry.
+// CATDEF_SPEC.md: §1232 (field shape), §1293 (RFC 4647 §3.4 Lookup +
+// primaryLocale fallback), §1392 (.machine-translate). Value #9 makes policy
+// compliance a conformance requirement, not a suggestion: a runtime that
+// renders structure correctly but ignores a declared policy is NOT conformant.
+// Exercised against this shipped file by conformance/test_renderer_i18n.py.
+
+// Registered policies (§1392). Dot-prefixed keys that are NOT policies are
+// locale variants; unknown dot-prefixed keys are ignored, never rendered.
+const I18N_POLICY_KEYS = { '.machine-translate': 1, '.context': 1 };
+
+// The document's declared primary locale (§1289); null until a catdef loads.
+let PRIMARY_LOCALE = null;
+
+// Viewer locale. navigator is absent under Node, where tests pass it in opts.
+const VIEWER_LOCALE =
+  (typeof navigator !== 'undefined' && navigator.language) || 'en';
+
+function isTranslatableValue(v) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+  for (const k in v) if (k.charAt(0) === '.') return true;
+  return false;
+}
+
+function localeVariants(v) {
+  const out = {};
+  for (const k in v) {
+    if (k.charAt(0) !== '.') continue;
+    if (I18N_POLICY_KEYS[k]) continue;
+    if (typeof v[k] === 'string') out[k.slice(1)] = v[k];
+  }
+  return out;
+}
+
+// RFC 4647 §3.4 (Lookup): progressively shorten the tag until a variant
+// matches. fr-CA -> fr -> (caller then falls back to primaryLocale).
+function lookupVariant(variants, tag) {
+  if (!tag) return undefined;
+  const parts = String(tag).split('-');
+  while (parts.length) {
+    const want = parts.join('-').toLowerCase();
+    for (const k in variants) if (k.toLowerCase() === want) return variants[k];
+    parts.pop();
+  }
+  return undefined;
+}
+
+// Resolve a possibly-translatable value to plain text plus its policies.
+// Non-translatable values pass through untouched, so every call site can
+// route through this safely.
+function resolveTranslatable(v, opts) {
+  opts = opts || {};
+  if (!isTranslatableValue(v)) return { text: v, noTranslate: false };
+
+  const viewer = opts.viewerLocale || VIEWER_LOCALE;
+  const primary = opts.primaryLocale !== undefined ? opts.primaryLocale : PRIMARY_LOCALE;
+  const variants = localeVariants(v);
+  const noTranslate = v['.machine-translate'] === 'Never';
+
+  let text = lookupVariant(variants, viewer);
+  if (text === undefined) text = lookupVariant(variants, primary);
+  if (text === undefined) {
+    // §1293: last-resort fallback to any defined variant MUST warn.
+    const keys = Object.keys(variants).sort();
+    if (keys.length) {
+      console.warn('catdef i18n: no variant matched viewer "' + viewer +
+        '" or primaryLocale "' + primary + '"; falling back to "' + keys[0] + '"');
+      text = variants[keys[0]];
+    } else {
+      text = '';
+    }
+  }
+  return { text: text, noTranslate: noTranslate, context: v['.context'] };
+}
+
+// Plain-text resolution, for attribute contexts (alt=, title=) where markup
+// cannot go. The translate="no" marker must then go on the element itself.
+function resolveText(v, opts) {
+  return resolveTranslatable(v, opts).text;
+}
+
+// Attribute fragment marking an element non-translatable when policy requires
+// it (§1392). Returns '' otherwise, so permitted content is never suppressed.
+function noTranslateAttr(v) {
+  return (isTranslatableValue(v) && v['.machine-translate'] === 'Never')
+    ? ' translate="no"' : '';
+}
+// ==== I18N-END ====
+
 // ── Renderable-path linkification ────────────────────────────
 // File extensions the renderer can render. Path-extension test strips any
 // query/fragment first so "https://host/x.opencatalog?ref=main" still counts.
@@ -483,6 +573,14 @@ function resolveRenderableLink(value) {
 function renderScalarValue(v, opts) {
   opts = opts || {};
   if (v === null || v === undefined) return '';
+  // Polymorphic translatable field: resolve to one variant, then honour the
+  // .machine-translate policy on the wrapper. Serialising the object would
+  // leak every variant and every policy key into the page.
+  if (isTranslatableValue(v)) {
+    const r = resolveTranslatable(v, opts);
+    const inner = renderScalarValue(r.text, opts);
+    return r.noTranslate ? '<span translate="no">' + inner + '</span>' : inner;
+  }
   if (typeof v === 'object') return esc(JSON.stringify(v));
   if (typeof v === 'string') {
     const link = resolveRenderableLink(v);
@@ -495,6 +593,10 @@ function renderScalarValue(v, opts) {
 }
 
 function loadCatdef(json) {
+  // Document-declared primary locale, the default when no variant matches
+  // the viewer's locale via RFC 4647 Lookup (CATDEF_SPEC.md 1289/1293).
+  PRIMARY_LOCALE = typeof json.primaryLocale === 'string' ? json.primaryLocale : null;
+
   // Normalize: handle catio envelope or raw catdef
   let product = json.product || {};
   let templates = json.templates || [];
@@ -640,12 +742,17 @@ function renderGrid(items) {
     return;
   }
   items.forEach((item, idx) => {
-    const title = fieldOf(item, 'Title')
+    const titleRaw = fieldOf(item, 'Title')
       || fieldOf(item, 'Name')
       || fieldOf(item, 'name')
       || fieldOf(item, 'title')
       || fieldOf(item, 'id')
       || '(untitled)';
+    // Resolve before escaping: esc() on a polymorphic object yields the
+    // literal string "[object Object]". Attribute contexts need plain text,
+    // so the translate="no" marker goes on the elements instead.
+    const title = resolveText(titleRaw);
+    const titleNT = noTranslateAttr(titleRaw);
     // Prefer an explicit description-family field; fall back to the legacy
     // top-two-other-fields concat for items that don't carry one. Each
     // value goes through renderScalarValue so renderable paths in the
@@ -671,9 +778,9 @@ function renderGrid(items) {
     const heroSrc = hero ? photoSrc(hero) : null;
     const heroStyle = heroSrc ? photoStyle(hero) : '';
     const imgHtml = heroSrc
-      ? '<img src="' + esc(heroSrc) + '" alt="' + esc(title) + '"' + (heroStyle ? ' style="' + heroStyle + '"' : '') + '>'
+      ? '<img src="' + esc(heroSrc) + '" alt="' + esc(title) + '"' + titleNT + (heroStyle ? ' style="' + heroStyle + '"' : '') + '>'
       : '📷';
-    card.innerHTML = '<div class="card-img">' + imgHtml + '</div><div class="card-body"><div class="card-title">' + esc(title) + '</div><div class="card-sub">' + subHtml + '</div></div>';
+    card.innerHTML = '<div class="card-img">' + imgHtml + '</div><div class="card-body"><div class="card-title"' + titleNT + '>' + esc(title) + '</div><div class="card-sub">' + subHtml + '</div></div>';
     card.onclick = () => showModal(item);
     grid.appendChild(card);
   });
@@ -684,14 +791,15 @@ function showModal(item) {
   // (works for both legacy {fields:{...}} and flat catdef-family items).
   const template = DATA.templates.find(t => t.name === item.template) || { field_defs: inferFieldDefs(item) };
   let html = '<button class="close" onclick="closeModal()">&times;</button>';
-  const headTitle = fieldOf(item, 'Title')
+  const headTitleRaw = fieldOf(item, 'Title')
     || fieldOf(item, 'Name')
     || fieldOf(item, 'name')
     || fieldOf(item, 'title')
     || fieldOf(item, 'id')
     || item.template
     || 'Item';
-  html += '<h2>' + esc(headTitle) + '</h2>';
+  const headTitle = resolveText(headTitleRaw);
+  html += '<h2' + noTranslateAttr(headTitleRaw) + '>' + esc(headTitle) + '</h2>';
 
   // Photos render as images, not as a JSON dump of their transform records.
   html += photoGalleryHtml(item);
